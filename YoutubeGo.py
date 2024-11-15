@@ -25,11 +25,11 @@ class DownloadWorker(QObject):
 
     def convert_bandwidth(self, bandwidth):
         if bandwidth == "High Performance":
-            return None  # Sınırsız hız
+            return None  
         elif bandwidth == "Balanced":
-            return 5000000  # 5M hız
+            return 5000000  
         else:
-            return 1000000  # 1M hız
+            return 1000000  
 
     def run(self):
         if "youtube.com" not in self.url and "youtu.be" not in self.url:
@@ -77,7 +77,7 @@ class DownloadWorker(QObject):
             self.progress_signal.emit(percent, speed, title)
 
         while self.pause:
-            time.sleep(0.1)  # Duraklatma için bekletme
+            time.sleep(0.1) 
 
     def pause_download(self):
         self.pause = True
@@ -87,8 +87,8 @@ class DownloadWorker(QObject):
 
     def cancel_download(self):
         self.cancel = True
-        # İndirilen tüm geçici dosyaları sil
-        for file in set(self.partial_files):  # Tekrarlanan dosya adlarını önlemek için set kullanıyoruz
+        
+        for file in set(self.partial_files):  
             if file and os.path.exists(file):
                 try:
                     os.remove(file)
@@ -102,7 +102,6 @@ class DownloaderApp(QWidget):
         self.setWindowTitle("YoutubeGOV2")
         self.setGeometry(200, 200, 800, 600)
 
-        # Karanlık mod ve geniş arayüz
         self.setStyleSheet("""
             QWidget {
                 background-color: #2b2b2b;
@@ -131,16 +130,15 @@ class DownloaderApp(QWidget):
             }
         """)
 
-        # Ana düzen
+    
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        # URL girişi
+       
         self.url_input = QLineEdit()
         self.layout.addWidget(QLabel("Download URL:"))
         self.layout.addWidget(self.url_input)
 
-        # Klasör seçimi
         self.output_folder = QLineEdit()
         self.layout.addWidget(QLabel("Save Folder:"))
         self.layout.addWidget(self.output_folder)
@@ -148,7 +146,7 @@ class DownloaderApp(QWidget):
         self.browse_button.clicked.connect(self.select_folder)
         self.layout.addWidget(self.browse_button)
 
-        # Çözünürlük ve bant genişliği seçenekleri
+        
         settings_layout = QHBoxLayout()
         self.resolution_combo = QComboBox()
         self.resolution_combo.addItems(['1080', '720', '480', '360', '240', '144'])
@@ -163,7 +161,6 @@ class DownloaderApp(QWidget):
         
         self.layout.addLayout(settings_layout)
 
-        # İndirme butonları
         self.download_video_button = QPushButton("Download Video (MP4)")
         self.download_video_button.clicked.connect(lambda: self.start_download(audio_only=False, is_playlist=False))
         self.layout.addWidget(self.download_video_button)
@@ -180,7 +177,7 @@ class DownloaderApp(QWidget):
         self.download_playlist_mp3_button.clicked.connect(lambda: self.start_download(audio_only=True, is_playlist=True))
         self.layout.addWidget(self.download_playlist_mp3_button)
 
-        # Durdur, devam et ve iptal butonları
+
         self.pause_button = QPushButton("Pause")
         self.pause_button.clicked.connect(self.pause_download)
         self.layout.addWidget(self.pause_button)
@@ -193,16 +190,16 @@ class DownloaderApp(QWidget):
         self.cancel_button.clicked.connect(self.cancel_download)
         self.layout.addWidget(self.cancel_button)
 
-        # İlerleme çubuğu
+        
         self.progress_bar = QProgressBar()
         self.layout.addWidget(QLabel("Download Progress:"))
         self.layout.addWidget(self.progress_bar)
 
-        # İndirme durumu
+        
         self.status_label = QLabel("Status: Waiting for input...")
         self.layout.addWidget(self.status_label)
 
-        # Varsayılan bant genişliği
+       
         self.bandwidth = "1M"
 
     def set_bandwidth(self, value):
@@ -222,7 +219,6 @@ class DownloaderApp(QWidget):
             QMessageBox.warning(self, "Missing Information", "Please enter both URL and save folder.")
             return
 
-        # Yeni iş parçacığı oluştur ve indirmeyi başlat
         self.worker = DownloadWorker(url, resolution, output_path, audio_only=audio_only, is_playlist=is_playlist, bandwidth=self.bandwidth)
         self.worker.progress_signal.connect(self.update_progress)
         self.worker.status_signal.connect(self.update_status)
