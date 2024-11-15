@@ -23,11 +23,18 @@ Whether you're a content creator or a casual user, YouTubeGO is designed to make
     🎧 Podcast & Music Archiving: Keep your favorite tunes in MP3 format.
     🎓 Education & Presentations: Save educational content for offline study or teaching.
 
+📥 How to Use?
 
+    Clone the repository to your local machine:
 
-### FFmpeg Notice
+    git clone https://github.com/Efeckc17/YoutubeGO.git
 
-This project uses **FFmpeg**, a library for handling multimedia data. FFmpeg is licensed under the LGPL or GPL, depending on how it is compiled. For more information about FFmpeg's license, visit the [official FFmpeg website](https://ffmpeg.org/legal.html).
+    Follow the instructions in the documentation to set up dependencies and start the application.
+
+➡️ GitHub Repository
+📢 FFmpeg Notice
+
+This project uses FFmpeg, a library for handling multimedia data. FFmpeg is licensed under the LGPL or GPL, depending on how it is compiled. For more information about FFmpeg's license, visit the official FFmpeg website.
 
 The use of FFmpeg in this project does not imply any modifications to its licensing terms. If you distribute this project, you must comply with the terms of the LGPL or GPL as they apply to FFmpeg.
 
