@@ -14,7 +14,7 @@ Whether you're a content creator or a casual user, YouTubeGO is designed to make
 
 - **Download Playlists & Videos:** Save single videos or entire playlists in just a few clicks.
 - **Multiple Formats:** Supports MP3 (audio 🎶) and MP4 (video 🎬).
-- **Resolution Options:** Download in 1080p, 720p, or even 360p.
+- **Resolution Options:** Download in 8K,4K,2K,1080p, 720p, or even 360p.
 - **Auto Tagging:** Automatically organizes titles and metadata for your files.
 - **Multi-Language Support:** Available in multiple languages for global users.
 - **Ad-Free Experience:** No annoying ads—just smooth downloading!
