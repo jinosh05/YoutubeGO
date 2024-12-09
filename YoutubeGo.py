@@ -53,7 +53,16 @@ class DownloadWorker(QObject):
                 }]
             })
         else:
-            ydl_opts['format'] = f'bestvideo[height<={self.resolution}]+bestaudio/best'
+            if self.resolution == '4320':  
+                ydl_opts['format'] = 'bestvideo[height<=4320]+bestaudio/best'
+            elif self.resolution == '2160':  
+                ydl_opts['format'] = 'bestvideo[height<=2160]+bestaudio/best'
+            elif self.resolution == '1440':  
+                ydl_opts['format'] = 'bestvideo[height<=1440]+bestaudio/best'
+            elif self.resolution == '1080':  
+                ydl_opts['format'] = 'bestvideo[height<=1080]+bestaudio/best'
+            else:
+                ydl_opts['format'] = f'bestvideo[height<={self.resolution}]+bestaudio/best'
         
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -71,7 +80,7 @@ class DownloadWorker(QObject):
             total_bytes = d.get('total_bytes', 1)
             percent = float(downloaded_bytes) / float(total_bytes) * 100 if total_bytes > 0 else 0
             speed = d.get('speed', 0)
-            speed = speed / 1024 / 1024 if speed is not None else 0  # MB/s
+            speed = speed / 1024 / 1024 if speed is not None else 0  
             title = d.get('filename', 'File').split('/')[-1]
             self.partial_files.append(d.get('filename'))
             self.progress_signal.emit(percent, speed, title)
@@ -130,11 +139,9 @@ class DownloaderApp(QWidget):
             }
         """)
 
-    
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-       
         self.url_input = QLineEdit()
         self.layout.addWidget(QLabel("Download URL:"))
         self.layout.addWidget(self.url_input)
@@ -146,10 +153,9 @@ class DownloaderApp(QWidget):
         self.browse_button.clicked.connect(self.select_folder)
         self.layout.addWidget(self.browse_button)
 
-        
         settings_layout = QHBoxLayout()
         self.resolution_combo = QComboBox()
-        self.resolution_combo.addItems(['1080', '720', '480', '360', '240', '144'])
+        self.resolution_combo.addItems(['4320', '2160', '1440', '1080', '720', '480', '360', '240', '144'])
         settings_layout.addWidget(QLabel("Resolution:"))
         settings_layout.addWidget(self.resolution_combo)
 
@@ -177,7 +183,6 @@ class DownloaderApp(QWidget):
         self.download_playlist_mp3_button.clicked.connect(lambda: self.start_download(audio_only=True, is_playlist=True))
         self.layout.addWidget(self.download_playlist_mp3_button)
 
-
         self.pause_button = QPushButton("Pause")
         self.pause_button.clicked.connect(self.pause_download)
         self.layout.addWidget(self.pause_button)
@@ -190,16 +195,13 @@ class DownloaderApp(QWidget):
         self.cancel_button.clicked.connect(self.cancel_download)
         self.layout.addWidget(self.cancel_button)
 
-        
         self.progress_bar = QProgressBar()
         self.layout.addWidget(QLabel("Download Progress:"))
         self.layout.addWidget(self.progress_bar)
 
-        
         self.status_label = QLabel("Status: Waiting for input...")
         self.layout.addWidget(self.status_label)
 
-       
         self.bandwidth = "1M"
 
     def set_bandwidth(self, value):
