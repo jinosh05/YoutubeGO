@@ -228,7 +228,7 @@ class DownloaderApp(QWidget):
         self.thread.start()
 
     def update_progress(self, percent, speed, title):
-        self.progress_bar.setValue(int(percent))
+        self.progress_bar.setValue(int(min(percent, 100)))
         self.status_label.setText(f"Downloading {title} - {percent:.2f}% at {speed:.2f} MB/s")
 
     def update_status(self, status):
