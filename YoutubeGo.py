@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
         self.worker = None
         self.bandwidth = "High Performance"
         self.download_history = []
-        self.setWindowTitle("Universal Video Downloader")
+        self.setWindowTitle("YoutubeGO 3.0")
         self.setGeometry(100, 100, 1280, 800)
         self.progress_signal.connect(self.update_progress)
         self.status_signal.connect(self.update_status)
