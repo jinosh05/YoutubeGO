@@ -33,52 +33,7 @@ YoutubeGO 3.0 is a 🌟 free, fast, and secure tool designed for downloading vid
 
 ---
 
-## 🔧 Installation
 
-### Linux
-
-1. **Clone the Repository:**
-
-   ```bash
-   git clone https://github.com/yourusername/youtubego3.git
-   cd youtubego3
-   ```
-
-2. **Install Dependencies:**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Application:**
-
-   ```bash
-   python3 youtubego3.py
-   ```
-
-4. **Build Executable for Linux:**
-
-   ```bash
-   pyinstaller --onefile --hidden-import=yt_dlp youtubego3.py
-   ./dist/youtubego3
-   ```
-
-### Windows
-
-1. Download and install **Python 3.10+**.
-2. **Install Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Run the Application:**
-   ```bash
-   python youtubego3.py
-   ```
-4. **Build Executable for Windows:**
-   ```bash
-   pyinstaller --onefile --hidden-import=yt_dlp youtubego3.py
-   dist\youtubego3.exe
-   ```
 
 ---
 
