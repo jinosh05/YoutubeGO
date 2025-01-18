@@ -55,7 +55,7 @@ YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with *
   Periodically checks if `ytplaylistdown.com` (or another configured server) is active, showing its status in the UI.
 
 - **Cross-Platform Compatibility**  
-  Built on PyQt5, fully supported on **Linux** and **Windows**.
+  Built on PyQt5, fully supported on **Linux** ,**Macos** and **Windows**.
 
 ---
 
