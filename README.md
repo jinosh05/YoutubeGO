@@ -111,11 +111,17 @@ This project uses **FFmpeg**, a library for processing multimedia data. To enabl
 
 ---
 
+
+
 ## 🔧 Installation and Usage
 
 1. **Clone** or **download** this repository.
 2. Ensure **Python 3.7+** and **PyQt5** are installed.
-3. Install **FFmpeg** if you need audio extraction or merging.
+3. Install **FFmpeg** if you need audio extraction or merging. 
+**brew install ffmpeg for mac**
+**for Linux distributions sudo apt install ffmpeg or sudo pacman -S ffmpeg**
+**For Windows, first download ffmpeg from the site or winget and add the path**
+
 4. Run `python youtube_go_4_2.py` (or the respective main file).
 5. Start downloading with MP4/MP3 modes, queue scheduling, or advanced settings.
 
