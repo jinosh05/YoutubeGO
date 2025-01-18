@@ -52,3 +52,6 @@ Copyright 2025 © Toxi360 (YouTubeGO Project)
 
 ### Notice for FFmpeg
 This software uses FFmpeg for video processing. FFmpeg is licensed under LGPL v2.1 or later and can be used or modified in compliance with that license. For more information, visit [https://ffmpeg.org/legal.html](https://ffmpeg.org/legal.html).
+  
+### Notice for yt-dlp
+This software utilizes yt-dlp for video downloading functionality. yt-dlp is licensed under GPL v2. For more information, visit https://github.com/yt-dlp/yt-dlp.
