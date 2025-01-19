@@ -1,6 +1,6 @@
 # 🎶 YoutubeGO 4.2 🎥
 
-YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It expands on the capabilities of the 3.0 version with new functionality such as  **profile management with social media links**, **FFmpeg detection**, **scheduler for planned downloads**, and an **enhanced queue system**.
+YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It expands on the capabilities of the 4.2 version with new functionality such as  **profile management with social media links**, **FFmpeg detection**, **scheduler for planned downloads**, and an **enhanced queue system**.
 
 ---
 
@@ -85,19 +85,16 @@ YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with *
    - UI label shows **“FFmpeg Found”** (green) or **“FFmpeg Missing”** (red).  
    - If FFmpeg is missing, audio extraction or merging may be limited, and you are prompted to install it.
 
-4. **Server Status**  
-   - Automatic checks (every 60s) to see if `ytplaylistdown.com` is reachable.  
-   - Displays **“Server Active”** or **“Server Inactive”** in the status bar.
 
-5. **Light/Dark Theming**  
+4. **Light/Dark Theming**  
    - Switch instantly between Light and Dark modes from Settings.  
    - The app remembers your preference.
 
-6. **Improved History & Searching**  
+5. **Improved History & Searching**  
    - Enable/disable history logging.  
    - Search by keywords or partial text in the history table.
 
-7. **Performance Tuning**  
+6. **Performance Tuning**  
    - Choose “High,” “Balanced,” or “Normal” (or custom) to limit download rates if desired, or set a proxy.
 
 ---
