@@ -336,10 +336,10 @@ class DownloadQueueWorker(QRunnable):
         except yt_dlp.utils.DownloadError as e:
             if self.cancel:
                 self.status_signal.emit(self.row, "Download Cancelled")
-                self.log_signal.emit(f"Download Cancelled: {title} by {channel}")
+                self.log_signal.e(f"Download Cancelled: {title} by {channel}")
             else:
-                self.status_signal.emit(self.row, "Download Error")
-                self.log_signal.emit(f"Download Error for {title} by {channel}:\n{str(e)}")
+                self.status_signal.e(self.row, "Download Error")
+                self.log_signal.e(f"Download Error for {title} by {channel}:\n{str(e)}")
         except Exception as e:
             self.status_signal.emit(self.row, "Download Error")
             self.log_signal.emit(f"Unexpected Error for {title} by {channel}:\n{str(e)}")
@@ -560,7 +560,7 @@ class MainWindow(QMainWindow):
             "- Large download fix\n\n"
             "Github: https://github.com/Efeckc17\n"
             "Instagram: toxi.dev\n"
-            "Developed by toxi360 under MIT License"
+            "Developed by toxi360"
         )
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         layout.addWidget(lbl)
