@@ -1,126 +1,142 @@
 # 🎶 YoutubeGO 4.2 🎥
 
-YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It expands on the capabilities of the 4.2 version with new functionality such as  **profile management with social media links**, **FFmpeg detection**, **scheduler for planned downloads**, and an **enhanced queue system**.
+YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, and an **enhanced queue system**.
 
 ---
 
-## 🌟 Why Choose YoutubeGO 4.2?
+## 🌟 Key Features
 
 - **Multi-Platform Support**  
-  Download videos and audio from any platform supporting HTTP streams, including YouTube, Vimeo, and more.
+  Download videos and audio from platforms supporting HTTP streams, including YouTube, Vimeo, and more.
 
 - **Playlist Downloads**  
-  Save entire playlists with sequential processing in just a few clicks—now with improved concurrency handling.
+  Save entire playlists with sequential processing in just a few clicks.
 
 - **Multiple Formats**  
-  Download in **MP4** (video) and **MP3** (audio) formats with automatic conversion and merging (video + audio).
+  Download in **MP4** (video) and **MP3** (audio) formats with automatic conversion and merging.
 
 - **High-Resolution Support**  
-  Supports downloads up to **8K, 4K, 2K, 1080p, 720p, 360p**—select your preferred resolution in Settings.
+  Supports downloads up to **8K, 4K, 2K, 1080p, 720p, 360p**. Select your preferred resolution in Settings.
 
 - **Batch Processing**  
-  **Queue multiple downloads** and run them simultaneously (or in a prioritized sequence). You can pause/resume/cancel individual items or entire queues.
+  Queue multiple downloads and manage them simultaneously. Pause, resume, or cancel downloads easily.
 
 - **Audio Extraction**  
-  Extract audio tracks directly in **MP3** format, ideal for music or podcasts. (Requires **FFmpeg**.)
+  Extract audio tracks in **MP3** format, ideal for music or podcasts. (Requires **FFmpeg**.)
 
 - **Profile Management**  
-  **Store your name, profile picture, and social media links** (Instagram, Twitter, YouTube). A dedicated Profile page in the new UI handles these details.
+  Save your name, profile picture, download paths, and social media links. Profiles can be updated directly in the app.
 
-- **Drag & Drop**  
-  Add download URLs by simply dragging and dropping them onto the interface.
+- **Drag & Drop Interface**  
+  Add download URLs by dragging them into the app.
 
 - **Dark & Light Mode**  
-  Switch between modern **Dark** or **Light** themes for better usability and appearance.
+  Switch between Dark and Light themes for better usability.
 
 - **Pause & Resume**  
-  Manage downloads seamlessly without restarting progress; improved concurrency logic prevents conflicts.
-
-- **Performance Control**  
-  Choose **High**, **Balanced**, or **Normal** performance (bandwidth-limiting or proxy can be set in advanced Settings).
+  Manage downloads without restarting progress.
 
 - **Error Handling**  
-  Displays detailed error messages (with logs) to debug issues quickly. Helpful status indicators in the status bar.
-
-- **Download History**  
-  Track and log past downloads with searching and toggling (“Enable History Logging”). Quickly reference previous items.
-
-- **Sequential Downloading & Automatic Merging**  
-  Combines separate video and audio streams into a single file automatically. Queue items can be processed in order.
+  Displays detailed error logs to debug issues.
 
 - **Scheduler**  
-  **Schedule downloads** at specific times or dates, with automated start once the scheduled moment arrives.
+  Schedule downloads to start at a specific time.
+
+- **Download History**  
+  View, search, and manage previous downloads directly in the app.
+
+- **FFmpeg Detection**  
+  Automatically detects FFmpeg installation and prompts for setup if missing.
 
 - **Cross-Platform Compatibility**  
-  Built on PyQt5, fully supported on **Linux** ,**Macos** and **Windows**.
+  Fully supported on **Linux**, **macOS**, and **Windows**.
 
 ---
 
-## 💻 Use Cases
+## 💻 How It Works
 
-- **Offline Access**  
-  Save playlists and videos for offline viewing—no more internet hassles.
+The application leverages the following key components:
 
-- **Content Archiving**  
-  Easily create backups of educational videos, music, and tutorials for future reference.
+- **Python** for the core logic.
+- **PyQt5** for the graphical user interface (GUI).
+- **yt_dlp** for downloading videos and extracting metadata.
+- **FFmpeg** for audio extraction and video merging.
 
-- **Podcast Downloads**  
-  Extract and organize audio content in high-quality MP3 format to enjoy on the go.
+Key modules and classes include:
 
-- **Presentations & Teaching**  
-  Securely store instructional videos for classrooms, lectures, or conferences.
-
----
-
-## 🚀 What's New in 4.2?
-
-1. **Profile Page Enhancements**  
-   Store not just your name and picture, but also **Instagram**, **Twitter**, and **YouTube** links.
-
-2. **Advanced Queue & Scheduler**  
-   - **Queue** improvements: concurrency, pause/resume/cancel all, bandwidth-limiting.  
-   - **Scheduler**: schedule downloads for a future date/time, automatically starting them at the specified moment.
-
-3. **FFmpeg Detection**  
-   - UI label shows **“FFmpeg Found”** (green) or **“FFmpeg Missing”** (red).  
-   - If FFmpeg is missing, audio extraction or merging may be limited, and you are prompted to install it.
-
-
-4. **Light/Dark Theming**  
-   - Switch instantly between Light and Dark modes from Settings.  
-   - The app remembers your preference.
-
-5. **Improved History & Searching**  
-   - Enable/disable history logging.  
-   - Search by keywords or partial text in the history table.
-
-6. **Performance Tuning**  
-   - Choose “High,” “Balanced,” or “Normal” (or custom) to limit download rates if desired, or set a proxy.
+- **`DragDropLineEdit`**: Handles drag-and-drop functionality for URLs.
+- **`UserProfile`**: Manages user profile data including download paths, themes, and social media links.
+- **`MainWindow`**: The main application window, featuring multiple pages such as Home, MP4/MP3 downloads, Queue, and Scheduler.
+- **`DownloadTask`**: Represents individual download tasks with options like resolution, format, and subtitles.
+- **`DownloadQueueWorker`**: Handles concurrent downloads and manages task progress.
 
 ---
 
-## ⚙️ FFmpeg Notice
+## 🚀 New in Version 4.2
 
-This project uses **FFmpeg**, a library for processing multimedia data. To enable all features (especially audio extraction/merging), **FFmpeg** must be available in your system's PATH. FFmpeg is licensed under **LGPL** or **GPL** depending on compilation. For more details, visit the [official FFmpeg website](https://ffmpeg.org).
+1. **Enhanced Profile Management**  
+   Store your name, profile picture, and social media links (Instagram, Twitter, YouTube).
 
----
+2. **Improved Queue System**  
+   Concurrency management, pause/resume all, and bandwidth limiting.
 
+3. **Scheduler**  
+   Schedule downloads for a specific date and time.
 
+4. **FFmpeg Integration**  
+   Detects FFmpeg installation automatically. Displays status (found/missing) in the UI.
 
-## 🔧 Installation and Usage
+5. **Light & Dark Modes**  
+   Instant switching with theme preferences saved automatically.
 
-1. **Clone** or **download** this repository.
-2. Ensure **Python 3.7+** and **PyQt5** are installed.
-3. Install **FFmpeg** if you need audio extraction or merging. 
-**brew install ffmpeg for mac**
-**for Linux distributions sudo apt install ffmpeg or sudo pacman -S ffmpeg**
-**For Windows, first download ffmpeg from the site or winget and add the path**
-
-4. Run `python youtube_go_4_2.py` (or the respective main file).
-5. Start downloading with MP4/MP3 modes, queue scheduling, or advanced settings.
-
-**Enjoy using YoutubeGO 4.2!** We welcome contributions and feedback.
+6. **Download History Management**  
+   Search, enable/disable logging, and delete individual or all history entries.
 
 ---
 
+## ⚙️ Installation
+
+1. Clone or download this repository.
+2. Ensure **Python 3.7+** is installed.
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Install **FFmpeg** for audio and video processing:
+
+   - **macOS**: `brew install ffmpeg`
+   - **Linux**: `sudo apt install ffmpeg` or `sudo pacman -S ffmpeg`
+   - **Windows**: Download from [official FFmpeg site](https://ffmpeg.org) or install via `winget`.
+
+5. Run the application:
+
+   ```bash
+   python youtube_go_4_2.py
+   ```
+
+---
+
+## 🔧 Usage
+
+- Launch the app and configure your profile in the **Settings** or **Profile** page.
+- Use the MP4 or MP3 pages to download videos or extract audio.
+- Add multiple downloads to the queue and manage them from the Queue page.
+- Schedule downloads in advance using the Scheduler.
+
+---
+
+## ⚠️ Notes
+
+- **FFmpeg Required**: Some features, like audio extraction and video merging, depend on FFmpeg. Ensure it’s installed and available in your system PATH.
+- **Third-Party Libraries**: The app uses `yt_dlp` for downloading and metadata extraction. Refer to their [GitHub page](https://github.com/yt-dlp/yt-dlp) for details.
+
+---
+
+## 🙏 Contributions
+
+We welcome contributions to improve YoutubeGO 4.2. Please submit issues or pull requests via GitHub.
+
+**Enjoy using YoutubeGO 4.2!**
 
