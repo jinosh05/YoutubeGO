@@ -139,4 +139,6 @@ Key modules and classes include:
 We welcome contributions to improve YoutubeGO 4.2. Please submit issues or pull requests via GitHub.
 
 **Enjoy using YoutubeGO 4.2!**
- This project is licensed under the Apache License 2.0.
+
+
+ **This project is licensed under the Apache License 2.0.**
