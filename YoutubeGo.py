@@ -1,5 +1,5 @@
 #/*
-#Copyright 2025 © Toxi360 (YouTubeGO Project)
+#Copyright 2024-2025 © Toxi360 (YouTubeGO Project)
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
 #You may obtain a copy of the License at
@@ -128,41 +128,46 @@ def apply_theme(app, theme):
             color: #ffffff;
             background-color: #202020;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
         }
         QLineEdit {
-            border: 1px solid #333;
-            padding: 6px;
+            border: 2px solid #333;
+            padding: 8px;
+            border-radius: 15px;
         }
         QPushButton {
             background-color: #cc0000;
-            padding: 8px 12px;
+            padding: 10px 16px;
+            border-radius: 15px;
         }
         QPushButton:hover {
             background-color: #b30000;
         }
         QListWidget::item {
-            padding: 10px;
+            padding: 12px;
+            border-radius: 10px;
         }
         QListWidget::item:selected {
             background-color: #333333;
-            border-left: 3px solid #cc0000;
+            border-left: 4px solid #cc0000;
+            border-radius: 10px;
         }
         QProgressBar {
             background-color: #333333;
             text-align: center;
             color: #ffffff;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 15px;
+            height: 25px;
         }
         QProgressBar::chunk {
             background-color: #cc0000;
-            border-radius: 12px;
+            border-radius: 15px;
         }
         QMenuBar {
             background-color: #181818;
             color: #ffffff;
-            border-radius: 10px;
+            border-radius: 15px;
         }
         QMenuBar::item:selected {
             background-color: #333333;
@@ -170,26 +175,26 @@ def apply_theme(app, theme):
         QMenu {
             background-color: #202020;
             color: #ffffff;
-            border-radius: 10px;
+            border-radius: 15px;
         }
         QMenu::item:selected {
             background-color: #333333;
         }
         QTableWidget {
             gridline-color: #444444;
-            border: 1px solid #333;
-            border-radius: 12px;
+            border: 2px solid #333;
+            border-radius: 15px;
         }
         QHeaderView::section {
             background-color: #333333;
             color: white;
-            padding: 4px;
-            border: 1px solid #444444;
-            border-radius: 4px;
+            padding: 6px;
+            border: 2px solid #444444;
+            border-radius: 8px;
         }
         QDockWidget {
-            border: 1px solid #333333;
-            border-radius: 12px;
+            border: 2px solid #333333;
+            border-radius: 15px;
         }
         """
     else:
@@ -201,69 +206,74 @@ def apply_theme(app, theme):
         QLabel, QLineEdit, QPushButton, QListWidget, QTextEdit, QTableWidget, QComboBox, QCheckBox {
             color: #000000;
             background-color: #ffffff;
-            border: 1px solid #ccc;
-            border-radius: 12px;
+            border: 2px solid #ccc;
+            border-radius: 15px;
         }
         QLineEdit {
-            border: 1px solid #ccc;
-            padding: 6px;
+            border: 2px solid #ccc;
+            padding: 8px;
+            border-radius: 15px;
         }
         QPushButton {
             background-color: #e0e0e0;
-            padding: 8px 12px;
+            padding: 10px 16px;
+            border-radius: 15px;
         }
         QPushButton:hover {
             background-color: #cccccc;
         }
         QListWidget::item {
-            padding: 10px;
+            padding: 12px;
+            border-radius: 10px;
         }
         QListWidget::item:selected {
             background-color: #ddd;
-            border-left: 3px solid #888;
+            border-left: 4px solid #888;
+            border-radius: 10px;
         }
         QProgressBar {
             background-color: #ddd;
             text-align: center;
             color: #000000;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 15px;
+            height: 25px;
         }
         QProgressBar::chunk {
             background-color: #888;
-            border-radius: 12px;
+            border-radius: 15px;
         }
         QMenuBar {
             background-color: #ebebeb;
             color: #000;
-            border-radius: 10px;
+            border-radius: 15px;
         }
         QMenuBar::item:selected {
             background-color: #dcdcdc;
         }
         QMenu {
-            background-color: #fff;
-            color: #000;
-            border-radius: 10px;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 15px;
         }
         QMenu::item:selected {
             background-color: #dcdcdc;
         }
         QTableWidget {
             gridline-color: #ccc;
-            border: 1px solid #ccc;
-            border-radius: 12px;
+            border: 2px solid #ccc;
+            border-radius: 15px;
         }
         QHeaderView::section {
             background-color: #f0f0f0;
             color: black;
-            padding: 4px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 6px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
         }
         QDockWidget {
-            border: 1px solid #ccc;
-            border-radius: 12px;
+            border: 2px solid #ccc;
+            border-radius: 15px;
         }
         """
     app.setStyleSheet(stylesheet)
@@ -315,7 +325,10 @@ class DownloadQueueWorker(QRunnable):
             "outtmpl": os.path.join(self.task.folder, "%(title)s.%(ext)s"),
             "progress_hooks": [self.progress_hook],
             "noplaylist": not self.task.playlist,
-            "cookiefile": "youtube_cookies.txt"
+            "cookiefile": "youtube_cookies.txt",
+            "retries": 10,
+            "fragment_retries": 10,
+            "retry_sleep_functions": lambda retries: 5
         }
         if self.task.audio_only:
             ydl_opts_download["format"] = "bestaudio/best"
@@ -369,9 +382,28 @@ class DownloadQueueWorker(QRunnable):
                 percent = (downloaded / total) * 100
             if percent > 100:
                 percent = 100
+            speed = d.get("speed", 0)
+            eta = d.get("eta", 0)
             self.progress_signal.emit(self.row, percent)
+            self.log_signal.emit(f"Downloading... {int(percent)}% | Speed: {self.format_speed(speed)} | ETA: {self.format_time(eta)}")
         while self.pause:
             QTimer.singleShot(200, lambda: None)
+    def format_speed(self, speed):
+        if speed > 1_000_000:
+            return f"{speed/1_000_000:.2f} MB/s"
+        elif speed > 1_000:
+            return f"{speed/1_000:.2f} KB/s"
+        else:
+            return f"{speed} B/s"
+    def format_time(self, seconds):
+        mins, secs = divmod(seconds, 60)
+        hours, mins = divmod(mins, 60)
+        if hours:
+            return f"{int(hours)}h {int(mins)}m {int(secs)}s"
+        elif mins:
+            return f"{int(mins)}m {int(secs)}s"
+        else:
+            return f"{int(secs)}s"
     def pause_download(self):
         self.pause = True
         self.status_signal.emit(self.row, "Download Paused")
@@ -399,12 +431,13 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("YoutubeGO 4.2")
-        self.setGeometry(100, 100, 1280, 720)
+        self.setWindowTitle("YoutubeGO 4.3")
+        self.setGeometry(100, 100, 1280, 800)
         self.ffmpeg_found = False
         self.ffmpeg_path = ""
         self.ffmpeg_label = QLabel()
         self.show_logs_btn = QPushButton("Logs")
+        self.show_logs_btn.setFixedWidth(100)
         self.log_dock_visible = True
         self.check_ffmpeg()
         self.user_profile = UserProfile()
@@ -423,6 +456,15 @@ class MainWindow(QMainWindow):
             "scheduler": (7, "Scheduler for planned downloads."),
             "download path": (4, "Download path is in Settings."),
             "theme": (4, "Theme switch is in Settings."),
+            "logs": (8, "Logs section."),
+            "home": (0, "Home page."),
+            "download": (1, "Download pages."),
+            "audio": (2, "Audio download page."),
+            "video": (1, "Video download page."),
+            "planned": (7, "Scheduler for planned downloads."),
+            "issues": (8, "Download issues have been fixed."),
+            "speed": (8, "Speed has been optimized."),
+            "youtubego.org": (0, "Visit youtubego.org for more information."),
         }
         self.progress_signal.connect(self.update_progress)
         self.status_signal.connect(self.update_status)
@@ -464,16 +506,16 @@ class MainWindow(QMainWindow):
         help_menu.addAction(mail_action)
 
         profile_widget = QWidget()
-        profile_layout = QHBoxLayout(profile_widget)
+        profile_layout = QVBoxLayout(profile_widget)
         profile_layout.setContentsMargins(0, 0, 0, 0)
         profile_layout.setSpacing(5)
         self.profile_pic_label = QLabel()
-        self.profile_pic_label.setFixedSize(40, 40)
+        self.profile_pic_label.setFixedSize(60, 60)
         self.set_circular_pixmap(self.profile_pic_label, self.user_profile.data["profile_picture"])
         self.profile_name_label = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-        self.profile_name_label.setFont(QFont("Arial", 10))
-        profile_layout.addWidget(self.profile_pic_label)
-        profile_layout.addWidget(self.profile_name_label)
+        self.profile_name_label.setFont(QFont("Arial", 14))
+        profile_layout.addWidget(self.profile_pic_label, alignment=Qt.AlignCenter)
+        profile_layout.addWidget(self.profile_name_label, alignment=Qt.AlignCenter)
         profile_layout.addStretch()
         menu_bar.setCornerWidget(profile_widget, Qt.TopRightCorner)
 
@@ -481,7 +523,7 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.status_bar)
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
-        self.progress_bar.setMaximumWidth(300)
+        self.progress_bar.setMaximumWidth(400)
         self.progress_bar.setTextVisible(True)
         self.progress_bar.setFormat("0%")
         self.progress_bar.setStyleSheet("font-weight: bold;")
@@ -493,8 +535,6 @@ class MainWindow(QMainWindow):
         else:
             self.ffmpeg_label.setText("FFmpeg Missing")
             self.ffmpeg_label.setStyleSheet("color: red; font-weight: bold;")
-        self.show_logs_btn.setFixedWidth(60)
-        self.show_logs_btn.clicked.connect(self.toggle_logs)
         self.status_bar.addWidget(self.show_logs_btn)
         self.status_bar.addWidget(self.status_label)
         self.status_bar.addPermanentWidget(self.ffmpeg_label)
@@ -508,27 +548,27 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
         top_bar = QWidget()
-        top_bar.setMinimumHeight(60)
+        top_bar.setMinimumHeight(80)
         tb_layout = QHBoxLayout(top_bar)
-        tb_layout.setContentsMargins(10, 5, 10, 5)
-        tb_layout.setSpacing(10)
-        self.logo_label = QLabel("YoutubeGO 4.2")
-        self.logo_label.setFont(QFont("Arial", 14, QFont.Bold))
+        tb_layout.setContentsMargins(10, 10, 10, 10)
+        tb_layout.setSpacing(20)
+        self.logo_label = QLabel("YoutubeGO 4.3")
+        self.logo_label.setFont(QFont("Arial", 22, QFont.Bold))
         tb_layout.addWidget(self.logo_label, alignment=Qt.AlignVCenter | Qt.AlignLeft)
         search_container = QWidget()
         sc_layout = QHBoxLayout(search_container)
-        sc_layout.setSpacing(5)
+        sc_layout.setSpacing(10)
         sc_layout.setContentsMargins(0, 0, 0, 0)
         self.top_search_edit = QLineEdit()
-        self.top_search_edit.setPlaceholderText("Search something...")
-        self.top_search_edit.setFixedHeight(30)
+        self.top_search_edit.setPlaceholderText("Search in app...")
+        self.top_search_edit.setFixedHeight(40)
         self.search_btn = QPushButton("Search")
-        self.search_btn.setFixedHeight(30)
+        self.search_btn.setFixedHeight(40)
         sc_layout.addWidget(self.top_search_edit)
         sc_layout.addWidget(self.search_btn)
         self.search_result_list = QListWidget()
         self.search_result_list.setVisible(False)
-        self.search_result_list.setFixedHeight(150)
+        self.search_result_list.setFixedHeight(250)
         self.search_result_list.itemClicked.connect(self.search_item_clicked)
         tb_layout.addWidget(search_container, stretch=1, alignment=Qt.AlignVCenter)
         main_layout.addWidget(top_bar)
@@ -555,10 +595,10 @@ class MainWindow(QMainWindow):
         self.main_stack.addWidget(self.page_queue)
         self.main_stack.addWidget(self.page_scheduler)
         self.side_menu = QListWidget()
-        self.side_menu.setFixedWidth(130)
+        self.side_menu.setFixedWidth(200)
         self.side_menu.setSelectionMode(QAbstractItemView.SingleSelection)
         self.side_menu.setFlow(QListWidget.TopToBottom)
-        self.side_menu.setSpacing(2)
+        self.side_menu.setSpacing(10)
         menu_items = ["Home", "MP4", "MP3", "History", "Settings", "Profile", "Queue", "Scheduler"]
         for item_name in menu_items:
             self.side_menu.addItem(item_name)
@@ -571,13 +611,13 @@ class MainWindow(QMainWindow):
 
     def set_circular_pixmap(self, label, image_path):
         if image_path and os.path.exists(image_path):
-            pixmap = QPixmap(image_path).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            mask = QPixmap(40, 40)
+            pixmap = QPixmap(image_path).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            mask = QPixmap(60, 60)
             mask.fill(Qt.transparent)
             painter = QPainter(mask)
             painter.setRenderHint(QPainter.Antialiasing)
             painter.setBrush(QBrush(Qt.white))
-            painter.drawEllipse(0, 0, 40, 40)
+            painter.drawEllipse(0, 0, 60, 60)
             painter.end()
             pixmap.setMask(mask.createMaskFromColor(Qt.transparent))
             label.setPixmap(pixmap)
@@ -588,17 +628,21 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel(
-            "Home Page - Welcome to YoutubeGO 4.2\n\n"
+            "Home Page - Welcome to YoutubeGO 4.3\n\n"
             "New Features:\n"
             "- Automatic cookie usage\n"
             "- Modern rounded UI\n"
-            "- Large download fix\n\n"
+            "- Large download fix\n"
+            "- Download issues fixed\n"
+            "- Speed optimized\n\n"
+            "Website:youtubego.org\n"
             "Github: https://github.com/Efeckc17\n"
             "Instagram: toxi.dev\n"
             "Developed by toxi360"
         )
-        lbl.setFont(QFont("Arial", 16, QFont.Bold))
+        lbl.setFont(QFont("Arial", 18, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
+        lbl.setOpenExternalLinks(True)
         layout.addWidget(lbl)
         layout.addStretch()
         return w
@@ -607,7 +651,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Download MP4")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         self.mp4_url = DragDropLineEdit("Paste or drag a link here...")
@@ -633,7 +677,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Download MP3")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         self.mp3_url = DragDropLineEdit("Paste or drag a link here...")
@@ -659,7 +703,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Download History")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         self.history_table = QTableWidget()
@@ -698,7 +742,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Settings")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         g_con = QGroupBox("Max Concurrent Downloads")
@@ -709,6 +753,7 @@ class MainWindow(QMainWindow):
         self.concurrent_combo.currentIndexChanged.connect(self.set_max_concurrent_downloads)
         g_layout.addWidget(QLabel("Concurrent:"))
         g_layout.addWidget(self.concurrent_combo)
+        g_con.setLayout(g_layout)
         layout.addWidget(g_con)
         g_tech = QGroupBox("Technical / Appearance")
         fl = QFormLayout(g_tech)
@@ -723,6 +768,7 @@ class MainWindow(QMainWindow):
         theme_btn = QPushButton("Apply Theme")
         theme_btn.clicked.connect(self.change_theme_clicked)
         fl.addWidget(theme_btn)
+        g_tech.setLayout(fl)
         layout.addWidget(g_tech)
         g_res = QGroupBox("Default Resolution")
         r_hl = QHBoxLayout(g_res)
@@ -734,6 +780,7 @@ class MainWindow(QMainWindow):
         a_btn = QPushButton("Apply")
         a_btn.clicked.connect(self.apply_resolution)
         r_hl.addWidget(a_btn)
+        g_res.setLayout(r_hl)
         layout.addWidget(g_res)
         g_path = QGroupBox("Download Path")
         p_hl = QHBoxLayout(g_path)
@@ -745,6 +792,7 @@ class MainWindow(QMainWindow):
         p_hl.addWidget(QLabel("Folder:"))
         p_hl.addWidget(self.download_path_edit)
         p_hl.addWidget(b_br)
+        g_path.setLayout(p_hl)
         layout.addWidget(g_path)
         layout.addStretch()
         return w
@@ -753,7 +801,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Profile Page - Customize your details")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         form_layout = QFormLayout()
@@ -771,7 +819,7 @@ class MainWindow(QMainWindow):
             if path:
                 pic_btn.setProperty("selected_path", path)
                 pic_label.setText(os.path.basename(path))
-                pixmap = QPixmap(path).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                pixmap = QPixmap(path).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.profile_pic_label.setPixmap(pixmap)
                 self.profile_name_label.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         def remove_pic():
@@ -812,12 +860,12 @@ class MainWindow(QMainWindow):
                     QMessageBox.critical(self, "Error", str(e))
                     return
                 self.user_profile.set_profile(name, dest_pic, self.user_profile.get_download_path())
-                pixmap = QPixmap(dest_pic).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                pixmap = QPixmap(dest_pic).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.profile_pic_label.setPixmap(pixmap)
             else:
                 self.user_profile.set_profile(name, self.user_profile.data["profile_picture"], self.user_profile.get_download_path())
                 if self.user_profile.data["profile_picture"]:
-                    pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                     self.profile_pic_label.setPixmap(pixmap)
                 else:
                     self.profile_pic_label.setPixmap(QPixmap())
@@ -837,7 +885,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Download Queue")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         self.queue_table = QTableWidget()
@@ -874,7 +922,7 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel("Scheduler (Planned Downloads)")
-        lbl.setFont(QFont("Arial", 12, QFont.Bold))
+        lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         self.scheduler_table = QTableWidget()
@@ -898,12 +946,12 @@ class MainWindow(QMainWindow):
         profile_info_widget = QWidget()
         profile_info_layout = QHBoxLayout(profile_info_widget)
         profile_info_layout.setContentsMargins(0, 0, 0, 0)
-        profile_info_layout.setSpacing(5)
+        profile_info_layout.setSpacing(10)
         self.scheduler_profile_pic = QLabel()
-        self.scheduler_profile_pic.setFixedSize(40, 40)
+        self.scheduler_profile_pic.setFixedSize(60, 60)
         self.set_circular_pixmap(self.scheduler_profile_pic, self.user_profile.data["profile_picture"])
         self.scheduler_profile_name = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-        self.scheduler_profile_name.setFont(QFont("Arial", 10))
+        self.scheduler_profile_name.setFont(QFont("Arial", 14))
         profile_info_layout.addWidget(self.scheduler_profile_pic)
         profile_info_layout.addWidget(self.scheduler_profile_name)
         profile_info_layout.addStretch()
@@ -926,7 +974,7 @@ class MainWindow(QMainWindow):
         matches_found = False
         for k, v in self.search_map.items():
             if query in k:
-                item = QListWidgetItem(f"{k}: {v[1]}")
+                item = QListWidgetItem(f"{k.capitalize()}: {v[1]}")
                 item.setData(Qt.UserRole, v[0])
                 self.search_result_list.addItem(item)
                 matches_found = True
@@ -1061,8 +1109,6 @@ class MainWindow(QMainWindow):
                     audio = ("audio" in typ)
                     playlist = ("playlist" in typ)
                     current_format = "mp4"
-                    if "video" in typ and "playlist" in typ:
-                        current_format = "mp4"
                     row_idx = r
                     tsk = DownloadTask(
                         url,
@@ -1197,8 +1243,7 @@ class MainWindow(QMainWindow):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 0, QTableWidgetItem(title))
             self.queue_table.setItem(row, 1, QTableWidgetItem(channel))
-            self.history_table.setItem(row, 0, QTableWidgetItem(title))
-            self.history_table.setItem(row, 1, QTableWidgetItem(channel))
+            self.add_history_entry(title, channel, self.queue_table.item(row, 2).text(), "Downloading")
 
     def open_download_folder(self):
         folder = self.user_profile.get_download_path()
@@ -1214,7 +1259,7 @@ class MainWindow(QMainWindow):
             color = "red"
         elif any(k in text.lower() for k in ["warning","warn"]):
             color = "yellow"
-        elif any(k in text.lower() for k in ["completed","started","queued","fetching"]):
+        elif any(k in text.lower() for k in ["completed","started","queued","fetching","downloading"]):
             color = "green"
         elif "cancel" in text.lower():
             color = "orange"
@@ -1321,7 +1366,7 @@ class MainWindow(QMainWindow):
 
     def update_profile_ui(self):
         if self.user_profile.data["profile_picture"]:
-            pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.profile_pic_label.setPixmap(pixmap)
             self.scheduler_profile_pic.setPixmap(pixmap)
         else:
@@ -1329,118 +1374,6 @@ class MainWindow(QMainWindow):
             self.scheduler_profile_pic.setPixmap(QPixmap())
         self.profile_name_label.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         self.scheduler_profile_name.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-
-class DownloadQueueWorker(QRunnable):
-    def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None):
-        super().__init__()
-        self.task = task
-        self.row = row
-        self.progress_signal = progress_signal
-        self.status_signal = status_signal
-        self.log_signal = log_signal
-        self.info_signal = info_signal
-        self.pause = False
-        self.cancel = False
-        self.partial_files = []
-    def run(self):
-        if not os.path.exists("youtube_cookies.txt"):
-            with open("youtube_cookies.txt", "w") as cf:
-                cf.write("# Netscape HTTP Cookie File\n# This is a generated cookie file.\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
-        ydl_opts_info = {
-            "quiet": True,
-            "skip_download": True,
-            "cookiefile": "youtube_cookies.txt"
-        }
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
-                info = ydl.extract_info(self.task.url, download=False)
-                title = info.get("title", "No Title")
-                channel = info.get("uploader", "Unknown Channel")
-                if self.info_signal and self.row is not None:
-                    self.info_signal.emit(self.row, title, channel)
-        except Exception as e:
-            self.status_signal.emit(self.row, "Download Error")
-            self.log_signal.emit(f"Failed to fetch video info for {self.task.url}\n{str(e)}")
-            return
-        ydl_opts_download = {
-            "outtmpl": os.path.join(self.task.folder, "%(title)s.%(ext)s"),
-            "progress_hooks": [self.progress_hook],
-            "noplaylist": not self.task.playlist,
-            "cookiefile": "youtube_cookies.txt"
-        }
-        if self.task.audio_only:
-            ydl_opts_download["format"] = "bestaudio/best"
-            ydl_opts_download["postprocessors"] = [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192"
-            }]
-        else:
-            if self.task.output_format.lower() == "mp4":
-                ydl_opts_download["format"] = "bestvideo[vcodec*=\"avc1\"]+bestaudio[acodec*=\"mp4a\"]/best"
-                ydl_opts_download["merge_output_format"] = "mp4"
-            else:
-                ydl_opts_download["format"] = "bestvideo+bestaudio/best"
-                ydl_opts_download["merge_output_format"] = self.task.output_format
-        if self.task.subtitles:
-            ydl_opts_download["writesubtitles"] = True
-            ydl_opts_download["allsubtitles"] = True
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
-                ydl.download([self.task.url])
-            self.status_signal.emit(self.row, "Download Completed")
-            self.log_signal.emit(f"Download Completed: {title} by {channel}")
-        except yt_dlp.utils.DownloadError as e:
-            if self.cancel:
-                self.status_signal.emit(self.row, "Download Cancelled")
-                self.log_signal.emit(f"Download Cancelled: {title} by {channel}")
-            else:
-                self.status_signal.emit(self.row, "Download Error")
-                self.log_signal.emit(f"Download Error for {title} by {channel}:\n{str(e)}")
-        except Exception as e:
-            self.status_signal.emit(self.row, "Download Error")
-            self.log_signal.emit(f"Unexpected Error for {title} by {channel}:\n{str(e)}")
-    def progress_hook(self, d):
-        if self.cancel:
-            raise yt_dlp.utils.DownloadError("Cancelled")
-        if d["status"] == "downloading":
-            downloaded = d.get("downloaded_bytes", 0)
-            est_total = d.get("total_bytes_estimate", 0)
-            exact_total = d.get("total_bytes", 0)
-            total = 0
-            if exact_total > 0:
-                total = exact_total
-            elif est_total > 0:
-                total = est_total
-            if total <= 0:
-                percent = 0
-            else:
-                if downloaded > total:
-                    downloaded = total
-                percent = (downloaded / total) * 100
-            if percent > 100:
-                percent = 100
-            self.progress_signal.emit(self.row, percent)
-        while self.pause:
-            QTimer.singleShot(200, lambda: None)
-    def pause_download(self):
-        self.pause = True
-        self.status_signal.emit(self.row, "Download Paused")
-        self.log_signal.emit("Download Paused")
-    def resume_download(self):
-        self.pause = False
-        self.status_signal.emit(self.row, "Download Resumed")
-        self.log_signal.emit("Download Resumed")
-    def cancel_download(self):
-        self.cancel = True
-        for f in set(self.partial_files):
-            if f and os.path.exists(f):
-                try:
-                    os.remove(f)
-                except:
-                    pass
-        self.status_signal.emit(self.row, "Download Cancelled")
-        self.log_signal.emit("Download Cancelled")
 
 def main():
     app = QApplication(sys.argv)
