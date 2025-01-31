@@ -1,6 +1,6 @@
-# 🎶 YoutubeGO 4.2 🎥
+# 🎶 YoutubeGO 4.3🎥
 
-YoutubeGO 4.2 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, and an **enhanced queue system**.
+YoutubeGO 4.3 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, and an **enhanced queue system**.
 
 ---
 
@@ -72,7 +72,7 @@ Key modules and classes include:
 
 ---
 
-## 🚀 New in Version 4.2
+## 🚀 New in Version 4.3
 
 1. **Enhanced Profile Management**  
    Store your name, profile picture, and social media links (Instagram, Twitter, YouTube).
@@ -113,7 +113,7 @@ Key modules and classes include:
 5. Run the application:
 
    ```bash
-   python youtube_go_4_2.py
+   python youtube_go_4_3.py
    ```
 
 ---
@@ -136,9 +136,9 @@ Key modules and classes include:
 
 ## 🙏 Contributions
 
-We welcome contributions to improve YoutubeGO 4.2. Please submit issues or pull requests via GitHub.
+We welcome contributions to improve YoutubeGO 4.3. Please submit issues or pull requests via GitHub.
 
-**Enjoy using YoutubeGO 4.2!**
+**Enjoy using YoutubeGO 4.3!**
 
 
  **This project is licensed under the Apache License 2.0.**
