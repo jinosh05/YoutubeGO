@@ -12,7 +12,6 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 #*/ 
-
 import sys
 import os
 import json
@@ -21,13 +20,13 @@ import subprocess
 import shutil
 import yt_dlp
 from PyQt5.QtCore import Qt, pyqtSignal, QThreadPool, QRunnable, QTimer, QDateTime
-from PyQt5.QtGui import QColor, QFont, QPixmap, QPainter, QBrush, QPen
+from PyQt5.QtGui import QColor, QFont, QPixmap, QPainter, QBrush, QPen, QIcon
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QStackedWidget,
     QListWidget, QAbstractItemView, QDockWidget, QTextEdit, QProgressBar, QStatusBar,
     QMenuBar, QAction, QLabel, QLineEdit, QFileDialog, QDialog, QDialogButtonBox,
     QFormLayout, QGroupBox, QCheckBox, QMessageBox, QTableWidget, QTableWidgetItem,
-    QHeaderView, QPushButton, QDateTimeEdit, QComboBox, QListWidgetItem
+    QHeaderView, QPushButton, QDateTimeEdit, QComboBox, QListWidgetItem, QSystemTrayIcon, QMenu
 )
 
 class DragDropLineEdit(QLineEdit):
@@ -302,13 +301,17 @@ class DownloadQueueWorker(QRunnable):
         self.cancel = False
         self.partial_files = []
     def run(self):
-        if not os.path.exists("youtube_cookies.txt"):
-            with open("youtube_cookies.txt", "w") as cf:
-                cf.write("# Netscape HTTP Cookie File\n# This is a generated cookie file.\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
+        try:
+            if not os.path.exists("youtube_cookies.txt"):
+                with open("youtube_cookies.txt", "w") as cf:
+                    cf.write("# Netscape HTTP Cookie File\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
+        except:
+            pass
         ydl_opts_info = {
             "quiet": True,
             "skip_download": True,
-            "cookiefile": "youtube_cookies.txt"
+            "cookiefile": "youtube_cookies.txt",
+            "ignoreerrors": True
         }
         try:
             with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
@@ -328,15 +331,18 @@ class DownloadQueueWorker(QRunnable):
             "cookiefile": "youtube_cookies.txt",
             "retries": 10,
             "fragment_retries": 10,
-            "retry_sleep_functions": lambda retries: 5
+            "retry_sleep_functions": lambda retries: 5,
+            "ignoreerrors": True
         }
         if self.task.audio_only:
             ydl_opts_download["format"] = "bestaudio/best"
-            ydl_opts_download["postprocessors"] = [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192"
-            }]
+            ydl_opts_download["postprocessors"] = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "192"
+                }
+            ]
         else:
             if self.task.output_format.lower() == "mp4":
                 ydl_opts_download["format"] = "bestvideo[vcodec*=\"avc1\"]+bestaudio[acodec*=\"mp4a\"]/best"
@@ -385,14 +391,16 @@ class DownloadQueueWorker(QRunnable):
             speed = d.get("speed", 0)
             eta = d.get("eta", 0)
             self.progress_signal.emit(self.row, percent)
-            self.log_signal.emit(f"Downloading... {int(percent)}% | Speed: {self.format_speed(speed)} | ETA: {self.format_time(eta)}")
+            self.log_signal.emit(
+                f"Downloading... {int(percent)}% | Speed: {self.format_speed(speed)} | ETA: {self.format_time(eta)}"
+            )
         while self.pause:
             QTimer.singleShot(200, lambda: None)
     def format_speed(self, speed):
-        if speed > 1_000_000:
-            return f"{speed/1_000_000:.2f} MB/s"
-        elif speed > 1_000:
-            return f"{speed/1_000:.2f} KB/s"
+        if speed > 1000000:
+            return f"{speed/1000000:.2f} MB/s"
+        elif speed > 1000:
+            return f"{speed/1000:.2f} KB/s"
         else:
             return f"{speed} B/s"
     def format_time(self, seconds):
@@ -428,17 +436,15 @@ class MainWindow(QMainWindow):
     status_signal = pyqtSignal(int, str)
     log_signal = pyqtSignal(str)
     info_signal = pyqtSignal(int, str, str)
-
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("YoutubeGO 4.3")
+        self.setWindowTitle("YoutubeGO 4.4")
         self.setGeometry(100, 100, 1280, 800)
         self.ffmpeg_found = False
         self.ffmpeg_path = ""
         self.ffmpeg_label = QLabel()
-        self.show_logs_btn = QPushButton("Logs")
-        self.show_logs_btn.setFixedWidth(100)
         self.log_dock_visible = True
+        self.show_logs_btn = QPushButton("Logs")
         self.check_ffmpeg()
         self.user_profile = UserProfile()
         self.thread_pool = QThreadPool()
@@ -474,6 +480,36 @@ class MainWindow(QMainWindow):
         apply_theme(QApplication.instance(), self.user_profile.get_theme())
         if not self.user_profile.is_profile_complete():
             self.prompt_user_profile()
+        self.init_tray_icon()
+
+    def init_tray_icon(self):
+        self.tray_icon = QSystemTrayIcon(QIcon(""), self)
+        tray_menu = QMenu()
+        restore_action = QAction("Restore", self)
+        quit_action = QAction("Quit", self)
+        restore_action.triggered.connect(self.showNormal)
+        quit_action.triggered.connect(self.quit_app)
+        tray_menu.addAction(restore_action)
+        tray_menu.addAction(quit_action)
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.setToolTip("YoutubeGO 4.4")
+        self.tray_icon.show()
+        if not self.ffmpeg_found:
+            self.tray_icon.showMessage(
+                "FFmpeg missing",
+                "Please download it from the official website.",
+                QSystemTrayIcon.Critical,
+                3000
+            )
+
+    def closeEvent(self, event):
+        self.hide()
+        self.tray_icon.showMessage("YoutubeGO 4.4", "Application is running in the tray", QSystemTrayIcon.Information, 2000)
+        event.ignore()
+
+    def quit_app(self):
+        self.tray_icon.hide()
+        QApplication.quit()
 
     def check_ffmpeg(self):
         path = shutil.which("ffmpeg")
@@ -504,21 +540,6 @@ class MainWindow(QMainWindow):
         mail_action = QAction("Github: https://github.com/Efeckc17", self)
         mail_action.triggered.connect(lambda: QMessageBox.information(self, "GitHub", "https://github.com/Efeckc17"))
         help_menu.addAction(mail_action)
-
-        profile_widget = QWidget()
-        profile_layout = QVBoxLayout(profile_widget)
-        profile_layout.setContentsMargins(0, 0, 0, 0)
-        profile_layout.setSpacing(5)
-        self.profile_pic_label = QLabel()
-        self.profile_pic_label.setFixedSize(60, 60)
-        self.set_circular_pixmap(self.profile_pic_label, self.user_profile.data["profile_picture"])
-        self.profile_name_label = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-        self.profile_name_label.setFont(QFont("Arial", 14))
-        profile_layout.addWidget(self.profile_pic_label, alignment=Qt.AlignCenter)
-        profile_layout.addWidget(self.profile_name_label, alignment=Qt.AlignCenter)
-        profile_layout.addStretch()
-        menu_bar.setCornerWidget(profile_widget, Qt.TopRightCorner)
-
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
         self.progress_bar = QProgressBar()
@@ -535,6 +556,7 @@ class MainWindow(QMainWindow):
         else:
             self.ffmpeg_label.setText("FFmpeg Missing")
             self.ffmpeg_label.setStyleSheet("color: red; font-weight: bold;")
+        self.show_logs_btn.clicked.connect(self.toggle_logs)
         self.status_bar.addWidget(self.show_logs_btn)
         self.status_bar.addWidget(self.status_label)
         self.status_bar.addPermanentWidget(self.ffmpeg_label)
@@ -548,11 +570,29 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
         top_bar = QWidget()
-        top_bar.setMinimumHeight(80)
+        top_bar.setMinimumHeight(100)
         tb_layout = QHBoxLayout(top_bar)
         tb_layout.setContentsMargins(10, 10, 10, 10)
         tb_layout.setSpacing(20)
-        self.logo_label = QLabel("YoutubeGO 4.3")
+        profile_container = QVBoxLayout()
+        self.profile_pic_label = QLabel()
+        self.profile_pic_label.setFixedSize(50, 50)
+        self.set_circular_pixmap(self.profile_pic_label, self.user_profile.data["profile_picture"])
+        self.profile_name_label = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
+        self.profile_name_label.setFont(QFont("Arial", 10))
+        profile_container.addWidget(self.profile_pic_label, alignment=Qt.AlignCenter)
+        profile_container.addWidget(self.profile_name_label, alignment=Qt.AlignCenter)
+        pref_string = (
+            f"Resolution: {self.user_profile.get_default_resolution()}\n"
+            f"Theme: {self.user_profile.get_theme()}\n"
+            f"Download Path: {self.user_profile.get_download_path()}\n"
+            f"Proxy: {self.user_profile.get_proxy()}\n"
+        )
+        profile_widget = QWidget()
+        profile_widget.setLayout(profile_container)
+        profile_widget.setToolTip(pref_string)
+        tb_layout.addWidget(profile_widget, alignment=Qt.AlignLeft)
+        self.logo_label = QLabel("YoutubeGO 4.4")
         self.logo_label.setFont(QFont("Arial", 22, QFont.Bold))
         tb_layout.addWidget(self.logo_label, alignment=Qt.AlignVCenter | Qt.AlignLeft)
         search_container = QWidget()
@@ -609,15 +649,23 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(bottom_area)
         self.search_btn.clicked.connect(self.top_search_clicked)
 
+    def toggle_logs(self):
+        if self.log_dock_visible:
+            self.log_dock.hide()
+            self.log_dock_visible = False
+        else:
+            self.log_dock.show()
+            self.log_dock_visible = True
+
     def set_circular_pixmap(self, label, image_path):
         if image_path and os.path.exists(image_path):
-            pixmap = QPixmap(image_path).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            mask = QPixmap(60, 60)
+            pixmap = QPixmap(image_path).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            mask = QPixmap(50, 50)
             mask.fill(Qt.transparent)
             painter = QPainter(mask)
             painter.setRenderHint(QPainter.Antialiasing)
             painter.setBrush(QBrush(Qt.white))
-            painter.drawEllipse(0, 0, 60, 60)
+            painter.drawEllipse(0, 0, 50, 50)
             painter.end()
             pixmap.setMask(mask.createMaskFromColor(Qt.transparent))
             label.setPixmap(pixmap)
@@ -628,14 +676,14 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QVBoxLayout(w)
         lbl = QLabel(
-            "Home Page - Welcome to YoutubeGO 4.3\n\n"
+            "Home Page - Welcome to YoutubeGO 4.4\n\n"
             "New Features:\n"
             "- Automatic cookie usage\n"
             "- Modern rounded UI\n"
             "- Large download fix\n"
             "- Download issues fixed\n"
             "- Speed optimized\n\n"
-            "Website:youtubego.org\n"
+            "Website: youtubego.org\n"
             "Github: https://github.com/Efeckc17\n"
             "Instagram: toxi.dev\n"
             "Developed by toxi360"
@@ -819,7 +867,7 @@ class MainWindow(QMainWindow):
             if path:
                 pic_btn.setProperty("selected_path", path)
                 pic_label.setText(os.path.basename(path))
-                pixmap = QPixmap(path).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                pixmap = QPixmap(path).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.profile_pic_label.setPixmap(pixmap)
                 self.profile_name_label.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         def remove_pic():
@@ -860,12 +908,12 @@ class MainWindow(QMainWindow):
                     QMessageBox.critical(self, "Error", str(e))
                     return
                 self.user_profile.set_profile(name, dest_pic, self.user_profile.get_download_path())
-                pixmap = QPixmap(dest_pic).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                pixmap = QPixmap(dest_pic).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.profile_pic_label.setPixmap(pixmap)
             else:
                 self.user_profile.set_profile(name, self.user_profile.data["profile_picture"], self.user_profile.get_download_path())
                 if self.user_profile.data["profile_picture"]:
-                    pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                     self.profile_pic_label.setPixmap(pixmap)
                 else:
                     self.profile_pic_label.setPixmap(QPixmap())
@@ -948,10 +996,10 @@ class MainWindow(QMainWindow):
         profile_info_layout.setContentsMargins(0, 0, 0, 0)
         profile_info_layout.setSpacing(10)
         self.scheduler_profile_pic = QLabel()
-        self.scheduler_profile_pic.setFixedSize(60, 60)
+        self.scheduler_profile_pic.setFixedSize(50, 50)
         self.set_circular_pixmap(self.scheduler_profile_pic, self.user_profile.data["profile_picture"])
         self.scheduler_profile_name = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-        self.scheduler_profile_name.setFont(QFont("Arial", 14))
+        self.scheduler_profile_name.setFont(QFont("Arial", 10))
         profile_info_layout.addWidget(self.scheduler_profile_pic)
         profile_info_layout.addWidget(self.scheduler_profile_name)
         profile_info_layout.addStretch()
@@ -986,14 +1034,6 @@ class MainWindow(QMainWindow):
         self.side_menu.setCurrentRow(page_index)
         self.search_result_list.clear()
         self.search_result_list.setVisible(False)
-
-    def toggle_logs(self):
-        if self.log_dock_visible:
-            self.log_dock.hide()
-            self.log_dock_visible = False
-        else:
-            self.log_dock.show()
-            self.log_dock_visible = True
 
     def prompt_user_profile(self):
         dialog = QDialog(self)
@@ -1230,14 +1270,16 @@ class MainWindow(QMainWindow):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 4, QTableWidgetItem(st))
         self.status_label.setText(st)
-        if "Error" in st:
-            QMessageBox.critical(self, "Error", st)
-        elif "Completed" in st:
-            user_choice = QMessageBox.question(
-                self, "Download Completed", "Open Download Folder?", QMessageBox.Yes | QMessageBox.No
-            )
+        if "Download Completed" in st:
+            self.tray_icon.showMessage("YoutubeGO 4.4", "Download Completed", QSystemTrayIcon.Information, 3000)
+            user_choice = QMessageBox.question(self, "Download Completed", "Open Download Folder?", QMessageBox.Yes | QMessageBox.No)
             if user_choice == QMessageBox.Yes:
                 self.open_download_folder()
+        elif "Download Error" in st:
+            self.tray_icon.showMessage("YoutubeGO 4.4", "Download Error Occurred", QSystemTrayIcon.Critical, 3000)
+            QMessageBox.critical(self, "Error", st)
+        elif "Cancelled" in st:
+            self.tray_icon.showMessage("YoutubeGO 4.4", "Download Cancelled", QSystemTrayIcon.Warning, 3000)
 
     def update_queue_info(self, row, title, channel):
         if row is not None and row < self.queue_table.rowCount():
@@ -1366,7 +1408,7 @@ class MainWindow(QMainWindow):
 
     def update_profile_ui(self):
         if self.user_profile.data["profile_picture"]:
-            pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.profile_pic_label.setPixmap(pixmap)
             self.scheduler_profile_pic.setPixmap(pixmap)
         else:
