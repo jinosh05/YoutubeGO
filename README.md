@@ -1,10 +1,9 @@
-```md
 # 🎶 YoutubeGO 4.4 🎥
 
 YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, **enhanced queue system**, and **system tray support**.
 
 ---
-🌍 **Official Website:** [https://youtubego.org](https://youtubego.org)  
+🌍 **Official Website:** [https://youtubego.org](https://youtubego.org)
 ---
 
 ## 🌟 Key Features
@@ -121,27 +120,7 @@ winget install FFmpeg
 
 # Run the application
 python youtube_go_4_4.py
-```
-
----
-
-## 🔧 Usage
-
-```bash
-# Launch the app
-python youtube_go_4_4.py
-```
-
-- Configure your profile in the **Settings** or **Profile** page.
-- Use the MP4 or MP3 pages to download videos or extract audio.
-- Add multiple downloads to the queue and manage them from the Queue page.
-- Schedule downloads in advance using the Scheduler.
-
----
-
-## ⚠️ Notes
-
-```bash
+⚠️ Notes
 # FFmpeg Required
 # Some features, like audio extraction and video merging, depend on FFmpeg.
 # Ensure it’s installed and available in your system PATH.
@@ -150,21 +129,12 @@ python youtube_go_4_4.py
 # The app uses yt_dlp for downloading and metadata extraction.
 # Refer to their GitHub page for details.
 https://github.com/yt-dlp/yt-dlp
-```
-
----
-
-## 🙏 Contributions
-
-```bash
+🙏 Contributions
 # We welcome contributions to improve YoutubeGO 4.4.
 # Please submit issues or pull requests via GitHub.
 
 # Enjoy using YoutubeGO 4.4!
-🚀  
-```
+🚀
 
-```bash
 # License
 # This project is licensed under the Apache License 2.0.
-```
