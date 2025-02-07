@@ -1,9 +1,9 @@
-# 🎶 YoutubeGO 4.4🎥
+# 🎶 YoutubeGO 4.4 🎥
 
-YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, and an **enhanced queue system**.
+YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, **enhanced queue system**, and **system tray support**.
 
 ---
-https://youtubego.org
+🌍 **Official Website:** [https://youtubego.org](https://youtubego.org)  
 ---
 
 ## 🌟 Key Features
@@ -55,44 +55,39 @@ https://youtubego.org
 
 ---
 
-## 💻 How It Works
-
-The application leverages the following key components:
-
-- **Python** for the core logic.
-- **PyQt5** for the graphical user interface (GUI).
-- **yt_dlp** for downloading videos and extracting metadata.
-- **FFmpeg** for audio extraction and video merging.
-
-Key modules and classes include:
-
-- **`DragDropLineEdit`**: Handles drag-and-drop functionality for URLs.
-- **`UserProfile`**: Manages user profile data including download paths, themes, and social media links.
-- **`MainWindow`**: The main application window, featuring multiple pages such as Home, MP4/MP3 downloads, Queue, and Scheduler.
-- **`DownloadTask`**: Represents individual download tasks with options like resolution, format, and subtitles.
-- **`DownloadQueueWorker`**: Handles concurrent downloads and manages task progress.
-
----
-
 ## 🚀 New in Version 4.4
 
-1. **Enhanced Profile Management**  
-   Store your name, profile picture, and social media links (Instagram, Twitter, YouTube).
+### 🔥 System Tray Integration
+- The application now runs in the **system tray** when minimized, keeping it accessible without cluttering the taskbar.
+- Quick access menu to restore or quit the app.
 
-2. **Improved Queue System**  
-   Concurrency management, pause/resume all, and bandwidth limiting.
+### 🔥 Improved Notification System
+- **Download Complete**: A notification appears when a download finishes.
+- **Download Failed**: Alerts are displayed if an error occurs during download.
+- **Download Canceled**: Users receive a warning when a download is canceled.
 
-3. **Scheduler**  
-   Schedule downloads for a specific date and time.
+### 🔥 Enhanced Download System
+- Fixed issues with **large file downloads** that caused freezes.
+- Improved **stability and efficiency** of the download process.
+- Better support for **multiple simultaneous downloads**.
 
-4. **FFmpeg Integration**  
-   Detects FFmpeg installation automatically. Displays status (found/missing) in the UI.
+### 🔥 Profile Management Upgrades
+- Store your **name, profile picture, and social media links** (Instagram, Twitter, YouTube).
+- Improved UI for editing and updating user details.
 
-5. **Light & Dark Modes**  
-   Instant switching with theme preferences saved automatically.
+### 🔥 Queue System Optimization
+- **Concurrency management**: Set a limit for simultaneous downloads.
+- **Pause & Resume All**: Manage all queued downloads easily.
+- **Bandwidth Limiting Support** (via proxy settings).
 
-6. **Download History Management**  
-   Search, enable/disable logging, and delete individual or all history entries.
+### 🔥 Scheduler for Planned Downloads
+- Schedule downloads for a specific **date and time**.
+- Improved UI for managing scheduled downloads.
+
+### 🔥 Other Improvements
+- **Better UI animations and responsiveness.**
+- **Logs now include color-coded messages** for better readability.
+- **Search & filter options in history and queue management.**
 
 ---
 
@@ -104,43 +99,28 @@ Key modules and classes include:
 
    ```bash
    pip install -r requirements.txt
-   ```
+	4.	Install FFmpeg for audio and video processing:
+	•	macOS: brew install ffmpeg
+	•	Linux: sudo apt install ffmpeg or sudo pacman -S ffmpeg
+	•	Windows: Download from official FFmpeg site or install via winget.
+	5.	Run the application: python youtube_go_4_4.py or python3 youtube_go_4_4.py
+🔧 Usage
+	•	Launch the app and configure your profile in the Settings or Profile page.
+	•	Use the MP4 or MP3 pages to download videos or extract audio.
+	•	Add multiple downloads to the queue and manage them from the Queue page.
+	•	Schedule downloads in advance using the Scheduler.
+⚠️ Notes
+	•	FFmpeg Required: Some features, like audio extraction and video merging, depend on FFmpeg. Ensure it’s installed and available in your system PATH.
+	•	Third-Party Libraries: The app uses yt_dlp for downloading and metadata extraction. Refer to their GitHub page for details.
 
-4. Install **FFmpeg** for audio and video processing:
-
-   - **macOS**: `brew install ffmpeg`
-   - **Linux**: `sudo apt install ffmpeg` or `sudo pacman -S ffmpeg`
-   - **Windows**: Download from [official FFmpeg site](https://ffmpeg.org) or install via `winget`.
-
-5. Run the application:
-
-   ```bash
-   python youtube_go_4_3.py
-   ```
-
----
-
-## 🔧 Usage
-
-- Launch the app and configure your profile in the **Settings** or **Profile** page.
-- Use the MP4 or MP3 pages to download videos or extract audio.
-- Add multiple downloads to the queue and manage them from the Queue page.
-- Schedule downloads in advance using the Scheduler.
-
----
-
-## ⚠️ Notes
-
-- **FFmpeg Required**: Some features, like audio extraction and video merging, depend on FFmpeg. Ensure it’s installed and available in your system PATH.
-- **Third-Party Libraries**: The app uses `yt_dlp` for downloading and metadata extraction. Refer to their [GitHub page](https://github.com/yt-dlp/yt-dlp) for details.
-
----
-
-## 🙏 Contributions
+🙏 Contributions
 
 We welcome contributions to improve YoutubeGO 4.4. Please submit issues or pull requests via GitHub.
 
-**Enjoy using YoutubeGO 4.4!**
+Enjoy using YoutubeGO 4.4! 🚀
 
+This project is licensed under the Apache License 2.0.
 
- **This project is licensed under the Apache License 2.0.**
+   
+
+   
