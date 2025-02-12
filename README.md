@@ -120,7 +120,7 @@ sudo pacman -S ffmpeg
 winget install FFmpeg
 
 # Run the application
-python youtube_go_4_4.py
+python YoutubeGo.py
 ```
 
 ---
@@ -129,7 +129,7 @@ python youtube_go_4_4.py
 
 ```bash
 # Launch the app
-python youtube_go_4_4.py
+python YoutubeGo.py
 ```
 
 - Configure your profile in the **Settings** or **Profile** page.
