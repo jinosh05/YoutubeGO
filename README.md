@@ -129,7 +129,7 @@ python YoutubeGo.py
 
 ```bash
 # Launch the app
-python YoutubeGo.py
+python YoutubeGo.py or python3 YoutubeGo.py
 ```
 
 - Configure your profile in the **Settings** or **Profile** page.
