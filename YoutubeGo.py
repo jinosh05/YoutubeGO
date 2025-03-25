@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# Note: I forgot to write the description for this commit :(
 import sys, os, json, platform, subprocess, shutil, time, yt_dlp
 from PyQt5.QtCore import Qt, pyqtSignal, QThreadPool, QRunnable, QTimer, QDateTime
 from PyQt5.QtGui import QColor, QFont, QPixmap, QPainter, QBrush, QIcon
