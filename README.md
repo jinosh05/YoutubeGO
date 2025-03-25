@@ -35,9 +35,6 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 - **Dark & Light Mode**  
   Switch between Dark and Light themes for better usability.
 
-- **Pause & Resume**  
-  Manage downloads without restarting progress.
-
 - **Error Handling**  
   Displays detailed error logs to debug issues.
 
