@@ -1,25 +1,24 @@
-"""
-Copyright 2024-2025 © Toxi360 (YouTubeGO Project)
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
-# Note: I forgot to write the description for this commit :(
-import sys, os, json, platform, subprocess, shutil, time, yt_dlp
-from PyQt5.QtCore import Qt, pyqtSignal, QThreadPool, QRunnable, QTimer, QDateTime
-from PyQt5.QtGui import QColor, QFont, QPixmap, QPainter, QBrush, QIcon
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QStackedWidget, QListWidget, QAbstractItemView, QDockWidget, QTextEdit, QProgressBar, QStatusBar, QMenuBar, QAction, QLabel, QLineEdit, QFileDialog, QDialog, QDialogButtonBox, QFormLayout, QGroupBox, QCheckBox, QMessageBox, QTableWidget, QTableWidgetItem, QHeaderView, QPushButton, QDateTimeEdit, QComboBox, QListWidgetItem, QSystemTrayIcon, QMenu
-
-HISTORY_FILE = "history.json"
-
+import os
+import sys
+import platform
+import subprocess
+import shutil
+import json
+from PyQt5.QtWidgets import QMainWindow, QLabel, QProgressBar, QStatusBar, QDockWidget, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QLineEdit, QPushButton, QListWidgetItem, QFileDialog, QApplication, QMenuBar, QAction, QMessageBox, QSystemTrayIcon, QMenu, QDialog, QFormLayout, QDialogButtonBox, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QGroupBox, QDateTimeEdit
+from PyQt5.QtCore import Qt, pyqtSignal, QThreadPool, QTimer, QDateTime
+from PyQt5.QtGui import QFont, QIcon, QPixmap, QPainter
+from core.profile import UserProfile
+from core.utils import apply_theme, set_circular_pixmap
+from core.utils import format_speed, format_time
+from core.downloader import DownloadTask, DownloadQueueWorker
+from core.history import load_history_initial, save_history, add_history_entry, delete_selected_history, delete_all_history, search_history
+from PyQt5.QtWidgets import QStackedWidget, QAbstractItemView, QDialogButtonBox
+from PyQt5.QtWidgets import QLabel, QFormLayout
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QGroupBox
+from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QTableWidget
+from PyQt5.QtWidgets import QComboBox
 
 class DragDropLineEdit(QLineEdit):
     def __init__(self, placeholder="Enter or drag a link here..."):
@@ -32,228 +31,6 @@ class DragDropLineEdit(QLineEdit):
     def dropEvent(self, e):
         txt = e.mimeData().text().strip()
         self.setText(txt.replace("file://", "") if not txt.startswith("http") else txt)
-
-class UserProfile:
-    def __init__(self, profile_path="user_profile.json"):
-        self.profile_path = profile_path
-        self.data = {"name": "", "profile_picture": "", "default_resolution": "720p", "download_path": os.getcwd(), "history_enabled": True, "theme": "Dark", "proxy": "", "social_media_links": {"instagram": "", "twitter": "", "youtube": ""}}
-        self.load_profile()
-    def load_profile(self):
-        if os.path.exists(self.profile_path):
-            with open(self.profile_path, "r") as f:
-                try:
-                    self.data = json.load(f)
-                    if "social_media_links" not in self.data:
-                        self.data["social_media_links"] = {"instagram":"","twitter":"","youtube":""}
-                        self.save_profile()
-                except:
-                    self.save_profile()
-        else:
-            self.save_profile()
-    def save_profile(self):
-        with open(self.profile_path, "w") as f:
-            json.dump(self.data, f, indent=4)
-    def set_profile(self, name, profile_picture, download_path):
-        self.data["name"] = name
-        self.data["profile_picture"] = profile_picture
-        self.data["download_path"] = download_path
-        self.save_profile()
-    def set_social_media_links(self, insta, tw, yt):
-        self.data["social_media_links"]["instagram"] = insta
-        self.data["social_media_links"]["twitter"] = tw
-        self.data["social_media_links"]["youtube"] = yt
-        self.save_profile()
-    def remove_profile_picture(self):
-        if os.path.exists(self.data["profile_picture"]):
-            try:
-                os.remove(self.data["profile_picture"])
-            except:
-                pass
-        self.data["profile_picture"] = ""
-        self.save_profile()
-    def get_download_path(self):
-        return self.data.get("download_path", os.getcwd())
-    def get_proxy(self):
-        return self.data.get("proxy", "")
-    def set_proxy(self, proxy):
-        self.data["proxy"] = proxy
-        self.save_profile()
-    def get_theme(self):
-        return self.data.get("theme", "Dark")
-    def set_theme(self, theme):
-        self.data["theme"] = theme
-        self.save_profile()
-    def get_default_resolution(self):
-        return self.data.get("default_resolution", "720p")
-    def set_default_resolution(self, resolution):
-        self.data["default_resolution"] = resolution
-        self.save_profile()
-    def is_history_enabled(self):
-        return self.data.get("history_enabled", True)
-    def set_history_enabled(self, enabled):
-        self.data["history_enabled"] = enabled
-        self.save_profile()
-    def is_profile_complete(self):
-        return bool(self.data["name"])
-
-# Uygulama teması için stil ayarları
-def apply_theme(app, theme):
-    if theme == "Dark":
-        stylesheet = """
-        QMainWindow { background-color:#181818; border-radius:20px; }
-        QLabel,QLineEdit,QPushButton,QListWidget,QTextEdit,QTableWidget,QComboBox,QCheckBox { color:#ffffff; background-color:#202020; border:none; border-radius:15px; }
-        QLineEdit { border:2px solid #333; padding:8px; border-radius:15px; }
-        QPushButton { background-color:#cc0000; padding:10px 16px; border-radius:15px; }
-        QPushButton:hover { background-color:#b30000; }
-        QListWidget::item { padding:12px; border-radius:10px; }
-        QListWidget::item:selected { background-color:#333333; border-left:4px solid #cc0000; border-radius:10px; }
-        QProgressBar { background-color:#333333; text-align:center; color:#ffffff; font-weight:bold; border-radius:15px; height:25px; }
-        QProgressBar::chunk { background-color:#cc0000; border-radius:15px; }
-        QMenuBar { background-color:#181818; color:#ffffff; border-radius:15px; }
-        QMenuBar::item:selected { background-color:#333333; }
-        QMenu { background-color:#202020; color:#ffffff; border-radius:15px; }
-        QMenu::item:selected { background-color:#333333; }
-        QTableWidget { gridline-color:#444444; border:2px solid #333; border-radius:15px; }
-        QHeaderView::section { background-color:#333333; color:white; padding:6px; border:2px solid #444444; border-radius:8px; }
-        QDockWidget { border:2px solid #333333; border-radius:15px; }
-        """
-    else:
-        stylesheet = """
-        QMainWindow { background-color:#f2f2f2; border-radius:20px; }
-        QLabel,QLineEdit,QPushButton,QListWidget,QTextEdit,QTableWidget,QComboBox,QCheckBox { color:#000000; background-color:#ffffff; border:2px solid #ccc; border-radius:15px; }
-        QLineEdit { border:2px solid #ccc; padding:8px; border-radius:15px; }
-        QPushButton { background-color:#e0e0e0; padding:10px 16px; border-radius:15px; }
-        QPushButton:hover { background-color:#cccccc; }
-        QListWidget::item { padding:12px; border-radius:10px; }
-        QListWidget::item:selected { background-color:#ddd; border-left:4px solid #888; border-radius:10px; }
-        QProgressBar { background-color:#ddd; text-align:center; color:#000000; font-weight:bold; border-radius:15px; height:25px; }
-        QProgressBar::chunk { background-color:#888; border-radius:15px; }
-        QMenuBar { background-color:#ebebeb; color:#000; border-radius:15px; }
-        QMenuBar::item:selected { background-color:#dcdcdc; }
-        QMenu { background-color:#ffffff; color:#000000; border-radius:15px; }
-        QMenu::item:selected { background-color:#dcdcdc; }
-        QTableWidget { gridline-color:#ccc; border:2px solid #ccc; border-radius:15px; }
-        QHeaderView::section { background-color:#f0f0f0; color:black; padding:6px; border:2px solid #ccc; border-radius:8px; }
-        QDockWidget { border:2px solid #ccc; border-radius:15px; }
-        """
-    app.setStyleSheet(stylesheet)
-
-
-class DownloadTask:
-    def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False):
-        self.url = url
-        self.resolution = resolution
-        self.folder = folder
-        self.proxy = proxy
-        self.audio_only = audio_only
-        self.playlist = playlist
-        self.subtitles = subtitles
-        self.output_format = output_format
-        self.from_queue = from_queue
-
-
-class DownloadQueueWorker(QRunnable):
-    def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None):
-        super().__init__()
-        self.task = task
-        self.row = row
-        self.progress_signal = progress_signal
-        self.status_signal = status_signal
-        self.log_signal = log_signal
-        self.info_signal = info_signal
-        self.cancel = False
-        self.partial_files = []
-    def run(self):
-        if not os.path.exists("youtube_cookies.txt"):
-            try:
-                with open("youtube_cookies.txt", "w") as cf:
-                    cf.write("# Netscape HTTP Cookie File\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
-            except:
-                pass
-        ydl_opts_info = {"quiet": True, "skip_download": True, "cookiefile": "youtube_cookies.txt", "ignoreerrors": True}
-        if self.task.playlist:
-            self.log_signal.emit("Playlist indexing in progress...")
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
-                info = ydl.extract_info(self.task.url, download=False)
-                title = info.get("title", "No Title")
-                channel = info.get("uploader", "Unknown Channel")
-                if self.info_signal is not None and self.row is not None:
-                    self.info_signal.emit(self.row, title, channel)
-        except Exception as e:
-            self.status_signal.emit(self.row, "Download Error")
-            self.log_signal.emit(f"Failed to fetch video info for {self.task.url}\n{str(e)}")
-            return
-
-        ydl_opts_download = {
-            "outtmpl": os.path.join(self.task.folder, "%(title)s.%(ext)s"),
-            "progress_hooks": [self.progress_hook],
-            "noplaylist": not self.task.playlist,
-            "cookiefile": "youtube_cookies.txt",
-            "retries": 10,
-            "fragment_retries": 10,
-            "retry_sleep_functions": lambda retries: 5,
-            "ignoreerrors": True,
-            "proxy": self.task.proxy if self.task.proxy else None,
-            "socket_timeout": 10
-        }
-        if self.task.audio_only:
-            ydl_opts_download["format"] = "bestaudio/best"
-            ydl_opts_download["postprocessors"] = [{"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "192"}]
-        else:
-            if self.task.output_format.lower() == "mp4":
-             
-                ydl_opts_download["format"] = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best'
-                ydl_opts_download["merge_output_format"] = "mp4"
-            else:
-                ydl_opts_download["format"] = "bestvideo+bestaudio/best"
-                ydl_opts_download["merge_output_format"] = self.task.output_format
-        if self.task.subtitles:
-            ydl_opts_download["writesubtitles"] = True
-            ydl_opts_download["allsubtitles"] = True
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
-                ydl.download([self.task.url])
-            self.status_signal.emit(self.row, "Download Completed")
-            self.log_signal.emit(f"Download Completed: {title} by {channel}")
-        except yt_dlp.utils.DownloadError as e:
-            if self.cancel:
-                self.status_signal.emit(self.row, "Download Cancelled")
-                self.log_signal.emit(f"Download Cancelled: {title} by {channel}")
-            else:
-                self.status_signal.emit(self.row, "Download Error")
-                self.log_signal.emit(f"Download Error for {title} by {channel}:\n{str(e)}")
-        except Exception as e:
-            self.status_signal.emit(self.row, "Download Error")
-            self.log_signal.emit(f"Unexpected Error for {title} by {channel}:\n{str(e)}")
-    def progress_hook(self, d):
-        if self.cancel:
-            raise yt_dlp.utils.DownloadError("Cancelled")
-        if d["status"] == "downloading":
-            downloaded = d.get("downloaded_bytes", 0) or 0
-            total = d.get("total_bytes") or d.get("total_bytes_estimate", 0)
-            percent = (downloaded / total) * 100 if total > 0 else 0
-            speed = d.get("speed", 0) or 0
-            eta = d.get("eta", 0) or 0
-            self.progress_signal.emit(self.row, percent)
-            self.log_signal.emit(f"Downloading... {int(percent)}% | Speed: {self.format_speed(speed)} | ETA: {self.format_time(eta)}")
-    def format_speed(self, speed):
-        if speed > 1000000:
-            return f"{speed / 1000000:.2f} MB/s"
-        elif speed > 1000:
-            return f"{speed / 1000:.2f} KB/s"
-        else:
-            return f"{speed} B/s"
-    def format_time(self, seconds):
-        m, s = divmod(seconds, 60)
-        h, m = divmod(m, 60)
-        if h:
-            return f"{int(h)}h {int(m)}m {int(s)}s"
-        elif m:
-            return f"{int(m)}m {int(s)}s"
-        else:
-            return f"{int(s)}s"
-
 
 class MainWindow(QMainWindow):
     progress_signal = pyqtSignal(int, float)
@@ -285,6 +62,7 @@ class MainWindow(QMainWindow):
             self.prompt_user_profile()
         self.init_tray_icon()
         self.load_history_initial()
+
     def init_tray_icon(self):
         pixmap = QPixmap(64, 64)
         pixmap.fill(Qt.transparent)
@@ -308,13 +86,16 @@ class MainWindow(QMainWindow):
         self.tray_icon.show()
         if not self.ffmpeg_found:
             self.tray_icon.showMessage("FFmpeg missing", "Please download it from the official website.", QSystemTrayIcon.Critical, 3000)
+
     def closeEvent(self, event):
         self.hide()
         self.tray_icon.showMessage("YoutubeGO 4.4", "Application is running in the tray", QSystemTrayIcon.Information, 2000)
         event.ignore()
+
     def quit_app(self):
         self.tray_icon.hide()
         QApplication.quit()
+
     def check_ffmpeg(self):
         path = shutil.which("ffmpeg")
         if path:
@@ -323,6 +104,7 @@ class MainWindow(QMainWindow):
         else:
             self.ffmpeg_found = False
             self.ffmpeg_path = ""
+
     def init_ui(self):
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu("File")
@@ -380,7 +162,7 @@ class MainWindow(QMainWindow):
         profile_container = QVBoxLayout()
         self.profile_pic_label = QLabel()
         self.profile_pic_label.setFixedSize(50, 50)
-        self.set_circular_pixmap(self.profile_pic_label, self.user_profile.data["profile_picture"])
+        set_circular_pixmap(self.profile_pic_label, self.user_profile.data["profile_picture"])
         self.profile_name_label = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         self.profile_name_label.setFont(QFont("Arial", 10))
         profile_container.addWidget(self.profile_pic_label, alignment=Qt.AlignCenter)
@@ -446,6 +228,7 @@ class MainWindow(QMainWindow):
         bottom_layout.addWidget(self.side_menu)
         main_layout.addWidget(bottom_area)
         self.search_btn.clicked.connect(self.top_search_clicked)
+
     def toggle_logs(self):
         if self.log_dock_visible:
             self.log_dock.hide()
@@ -453,20 +236,7 @@ class MainWindow(QMainWindow):
         else:
             self.log_dock.show()
             self.log_dock_visible = True
-    def set_circular_pixmap(self, label, image_path):
-        if image_path and os.path.exists(image_path):
-            pixmap = QPixmap(image_path).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            mask = QPixmap(50, 50)
-            mask.fill(Qt.transparent)
-            painter = QPainter(mask)
-            painter.setRenderHint(QPainter.Antialiasing)
-            painter.setBrush(QBrush(Qt.white))
-            painter.drawEllipse(0, 0, 50, 50)
-            painter.end()
-            pixmap.setMask(mask.createMaskFromColor(Qt.transparent))
-            label.setPixmap(pixmap)
-        else:
-            label.setPixmap(QPixmap())
+
     def create_page_home(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -477,6 +247,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(lbl)
         layout.addStretch()
         return w
+
     def create_page_mp4(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -499,6 +270,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(hl)
         layout.addStretch()
         return w
+
     def create_page_mp3(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -521,6 +293,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(hl)
         layout.addStretch()
         return w
+
     def create_page_history(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -539,9 +312,9 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.history_table)
         hl = QHBoxLayout()
         del_sel_btn = QPushButton("Delete Selected")
-        del_sel_btn.clicked.connect(self.delete_selected_history)
+        del_sel_btn.clicked.connect(lambda: delete_selected_history(self.history_table, self.append_log))
         del_all_btn = QPushButton("Delete All")
-        del_all_btn.clicked.connect(self.delete_all_history)
+        del_all_btn.clicked.connect(lambda: delete_all_history(self.history_table, self.confirm_delete_all, self.append_log))
         hist_ck = QCheckBox("Enable History Logging")
         hist_ck.setChecked(self.user_profile.is_history_enabled())
         hist_ck.stateChanged.connect(self.toggle_history_logging)
@@ -553,12 +326,13 @@ class MainWindow(QMainWindow):
         self.search_hist_edit = QLineEdit()
         self.search_hist_edit.setPlaceholderText("Search in history...")
         s_btn = QPushButton("Search")
-        s_btn.clicked.connect(self.search_history)
+        s_btn.clicked.connect(self.search_history_in_table)
         s_hl.addWidget(self.search_hist_edit)
         s_hl.addWidget(s_btn)
         layout.addLayout(s_hl)
         layout.addStretch()
         return w
+
     def create_page_settings(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -617,6 +391,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(g_path)
         layout.addStretch()
         return w
+
     def create_page_profile(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -628,7 +403,9 @@ class MainWindow(QMainWindow):
         self.profile_name_edit = QLineEdit()
         self.profile_name_edit.setText(self.user_profile.data["name"])
         form_layout.addRow("Name:", self.profile_name_edit)
-        pic_label = QLabel(os.path.basename(self.user_profile.data["profile_picture"]) if self.user_profile.data["profile_picture"] else "No file selected.")
+        pic_label = QLabel("No file selected.")
+        if self.user_profile.data["profile_picture"]:
+            pic_label.setText(os.path.basename(self.user_profile.data["profile_picture"]))
         pic_btn = QPushButton("Change Picture")
         remove_pic_btn = QPushButton("Remove Picture")
         remove_pic_btn.setVisible(bool(self.user_profile.data["profile_picture"]))
@@ -639,7 +416,6 @@ class MainWindow(QMainWindow):
                 pic_label.setText(os.path.basename(path))
                 pixmap = QPixmap(path).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.profile_pic_label.setPixmap(pixmap)
-                self.profile_name_label.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         def remove_pic():
             self.user_profile.remove_profile_picture()
             pic_label.setText("No file selected.")
@@ -694,6 +470,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(save_btn)
         layout.addStretch()
         return w
+
     def create_page_queue(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -724,6 +501,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(hl)
         layout.addStretch()
         return w
+
     def create_page_scheduler(self):
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -755,7 +533,7 @@ class MainWindow(QMainWindow):
         profile_info_layout.setSpacing(10)
         self.scheduler_profile_pic = QLabel()
         self.scheduler_profile_pic.setFixedSize(50, 50)
-        self.set_circular_pixmap(self.scheduler_profile_pic, self.user_profile.data["profile_picture"])
+        set_circular_pixmap(self.scheduler_profile_pic, self.user_profile.data["profile_picture"])
         self.scheduler_profile_name = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         self.scheduler_profile_name.setFont(QFont("Arial", 10))
         profile_info_layout.addWidget(self.scheduler_profile_pic)
@@ -767,8 +545,10 @@ class MainWindow(QMainWindow):
         self.scheduler_timer.timeout.connect(self.check_scheduled_downloads)
         self.scheduler_timer.start(10000)
         return w
+
     def side_menu_changed(self, index):
         self.main_stack.setCurrentIndex(index)
+
     def top_search_clicked(self):
         query = self.top_search_edit.text().lower().strip()
         self.search_result_list.clear()
@@ -784,11 +564,13 @@ class MainWindow(QMainWindow):
                 matches_found = True
         if matches_found:
             self.search_result_list.setVisible(True)
+
     def search_item_clicked(self, item):
         page_index = item.data(Qt.UserRole)
         self.side_menu.setCurrentRow(page_index)
         self.search_result_list.clear()
         self.search_result_list.setVisible(False)
+
     def prompt_user_profile(self):
         dialog = QDialog(self)
         dialog.setWindowTitle("Create User Profile")
@@ -833,6 +615,7 @@ class MainWindow(QMainWindow):
         bb.accepted.connect(on_ok)
         bb.rejected.connect(on_cancel)
         dialog.exec_()
+
     def add_queue_item_dialog(self):
         d = QDialog(self)
         d.setWindowTitle("Add to Queue")
@@ -873,12 +656,13 @@ class MainWindow(QMainWindow):
                 dtp += " - Playlist"
             self.queue_table.setItem(row, 3, QTableWidgetItem(dtp))
             self.queue_table.setItem(row, 4, QTableWidgetItem("0%"))
-            self.add_history_entry("Fetching...", "Fetching...", u, "Queued")
+            add_history_entry(self.history_table, "Fetching...", "Fetching...", u, "Queued", self.user_profile.is_history_enabled())
             self.run_task(task, row)
             d.accept()
         b_ok.accepted.connect(on_ok)
         b_ok.rejected.connect(lambda: d.reject())
         d.exec_()
+
     def start_queue(self):
         count_started = 0
         for r in range(self.queue_table.rowCount()):
@@ -896,12 +680,14 @@ class MainWindow(QMainWindow):
                     self.queue_table.setItem(r, 4, QTableWidgetItem("Started"))
                     count_started += 1
         self.append_log("Queue started.")
+
     def remove_scheduled_item(self):
         sel = set()
         for it in self.scheduler_table.selectedItems():
             sel.add(it.row())
         for r in sorted(sel, reverse=True):
             self.scheduler_table.removeRow(r)
+
     def add_scheduled_dialog(self):
         d = QDialog(self)
         d.setWindowTitle("Add Scheduled Download")
@@ -940,6 +726,7 @@ class MainWindow(QMainWindow):
         bb.accepted.connect(on_ok)
         bb.rejected.connect(lambda: d.reject())
         d.exec_()
+
     def check_scheduled_downloads(self):
         now = QDateTime.currentDateTime()
         for r in range(self.scheduler_table.rowCount()):
@@ -954,6 +741,7 @@ class MainWindow(QMainWindow):
                 task = DownloadTask(u, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=False, subtitles=s, from_queue=True)
                 self.run_task(task, r)
                 self.scheduler_table.setItem(r, 4, QTableWidgetItem("Started"))
+
     def start_download_simple(self, url_edit, audio=False, playlist=False):
         link = url_edit.text().strip()
         if not link:
@@ -963,20 +751,23 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Input Error", "Invalid URL format.")
             return
         task = DownloadTask(link, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, from_queue=False)
-        self.add_history_entry("Fetching...", "Fetching...", link, "Queued")
+        add_history_entry(self.history_table, "Fetching...", "Fetching...", link, "Queued", self.user_profile.is_history_enabled())
         self.run_task(task, None)
+
     def run_task(self, task, row):
         if task.playlist:
             self.tray_icon.showMessage("YoutubeGO 4.4", "Playlist indexing, please wait...", QSystemTrayIcon.Information, 5000)
         worker = DownloadQueueWorker(task, row, self.progress_signal, self.status_signal, self.log_signal, self.info_signal)
         self.thread_pool.start(worker)
         self.active_workers.append(worker)
+
     def update_progress(self, row, percent):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 4, QTableWidgetItem(f"{int(percent)}%"))
         self.progress_bar.setValue(int(percent))
         self.progress_bar.setFormat(f"{int(percent)}%")
         self.status_label.setText(f"Downloading... {percent:.2f}%")
+
     def update_status(self, row, st):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 4, QTableWidgetItem(st))
@@ -991,11 +782,13 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error", st)
         elif "Cancelled" in st:
             self.tray_icon.showMessage("YoutubeGO 4.4", "Download Cancelled", QSystemTrayIcon.Warning, 3000)
+
     def update_queue_info(self, row, title, channel):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 0, QTableWidgetItem(title))
             self.queue_table.setItem(row, 1, QTableWidgetItem(channel))
-            self.add_history_entry(title, channel, self.queue_table.item(row, 2).text(), "Downloading")
+            add_history_entry(self.history_table, title, channel, self.queue_table.item(row, 2).text(), "Downloading", self.user_profile.is_history_enabled())
+
     def open_download_folder(self):
         folder = self.user_profile.get_download_path()
         if platform.system() == "Windows":
@@ -1004,6 +797,7 @@ class MainWindow(QMainWindow):
             subprocess.run(["open", folder])
         else:
             subprocess.run(["xdg-open", folder])
+
     def append_log(self, text):
         c = "white"
         if any(k in text.lower() for k in ["error","fail"]):
@@ -1019,80 +813,36 @@ class MainWindow(QMainWindow):
         self.log_text_edit.setTextColor(QColor("white"))
         if "playlist indexing in progress" in text.lower():
             self.tray_icon.showMessage("YoutubeGO 4.4", "Playlist indexing in progress. Please wait...", QSystemTrayIcon.Information, 5000)
-    def add_history_entry(self, title, channel, url, stat):
-        if not self.user_profile.is_history_enabled():
-            return
-        row = self.history_table.rowCount()
-        self.history_table.insertRow(row)
-        self.history_table.setItem(row, 0, QTableWidgetItem(title))
-        self.history_table.setItem(row, 1, QTableWidgetItem(channel))
-        self.history_table.setItem(row, 2, QTableWidgetItem(url))
-        self.history_table.setItem(row, 3, QTableWidgetItem(stat))
-        self.save_history()
-    def delete_selected_history(self):
-        selected_rows = set()
-        for it in self.history_table.selectedItems():
-            selected_rows.add(it.row())
-        for r in sorted(selected_rows, reverse=True):
-            self.history_table.removeRow(r)
-        self.append_log(f"Deleted {len(selected_rows)} history entries.")
-        self.save_history()
-    def delete_all_history(self):
-        ans = QMessageBox.question(self, "Delete All", "Are you sure?", QMessageBox.Yes | QMessageBox.No)
-        if ans == QMessageBox.Yes:
-            self.history_table.setRowCount(0)
-            self.append_log("All history deleted.")
-            self.save_history()
+
     def toggle_history_logging(self, state):
         en = (state == Qt.Checked)
         self.user_profile.set_history_enabled(en)
         self.append_log(f"History logging {'enabled' if en else 'disabled'}.")
-    def search_history(self):
+
+    def search_history_in_table(self):
         txt = self.search_hist_edit.text().lower().strip()
-        for r in range(self.history_table.rowCount()):
-            hide = True
-            for c in range(self.history_table.columnCount()):
-                it = self.history_table.item(r, c)
-                if it and txt in it.text().lower():
-                    hide = False
-                    break
-            self.history_table.setRowHidden(r, hide)
-    def set_max_concurrent_downloads(self, idx):
-        val = self.concurrent_combo.currentText()
-        self.max_concurrent_downloads = int(val)
-        self.append_log(f"Max concurrent downloads set to {val}")
-    def change_theme_clicked(self):
-        new_theme = self.theme_combo.currentText()
-        self.user_profile.set_theme(new_theme)
-        apply_theme(QApplication.instance(), new_theme)
-        self.append_log(f"Theme changed to '{new_theme}'.")
-    def apply_resolution(self):
-        sr = self.res_combo.currentText()
-        self.user_profile.set_default_resolution(sr)
-        prx = self.proxy_edit.text().strip()
-        self.user_profile.set_proxy(prx)
-        self.append_log(f"Resolution set: {sr}, Proxy: {prx}")
-        QMessageBox.information(self, "Settings", f"Resolution: {sr}\nProxy: {prx}")
-    def select_download_path(self):
-        folder = QFileDialog.getExistingDirectory(self, "Select Download Folder")
-        if folder:
-            self.user_profile.set_profile(self.user_profile.data["name"], self.user_profile.data["profile_picture"], folder)
-            self.download_path_edit.setText(folder)
-            self.append_log(f"Download path changed to {folder}")
-    def cancel_active(self):
-        for w in self.active_workers:
-            w.cancel = True
+        search_history(self.history_table, txt)
+
+    def confirm_delete_all(self):
+        ans = QMessageBox.question(self, "Delete All", "Are you sure?", QMessageBox.Yes | QMessageBox.No)
+        return ans == QMessageBox.Yes
+
+    def load_history_initial(self):
+        load_history_initial(self.history_table)
+
     def reset_profile(self):
         if os.path.exists(self.user_profile.profile_path):
             os.remove(self.user_profile.profile_path)
         QMessageBox.information(self, "Reset Profile", "Profile data removed. Please restart.")
         self.append_log("Profile has been reset.")
+
     def restart_application(self):
         self.append_log("Restarting application...")
         QMessageBox.information(self, "Restart", "The application will now restart.")
         self.close()
         python_exe = sys.executable
         os.execl(python_exe, python_exe, *sys.argv)
+
     def update_profile_ui(self):
         if self.user_profile.data["profile_picture"]:
             pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -1103,36 +853,33 @@ class MainWindow(QMainWindow):
             self.scheduler_profile_pic.setPixmap(QPixmap())
         self.profile_name_label.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
         self.scheduler_profile_name.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-    def save_history(self):
-        history = []
-        for r in range(self.history_table.rowCount()):
-            entry = {"title": self.history_table.item(r,0).text(), "channel": self.history_table.item(r,1).text(), "url": self.history_table.item(r,2).text(), "status": self.history_table.item(r,3).text()}
-            history.append(entry)
-        with open(HISTORY_FILE, "w") as f:
-            json.dump(history, f, indent=4)
-    def load_history_initial(self):
-        if not os.path.exists(HISTORY_FILE):
-            with open(HISTORY_FILE, "w") as f:
-                json.dump([], f, indent=4)
-        else:
-            try:
-                with open(HISTORY_FILE, "r") as f:
-                    history = json.load(f)
-                    for entry in history:
-                        row = self.history_table.rowCount()
-                        self.history_table.insertRow(row)
-                        self.history_table.setItem(row, 0, QTableWidgetItem(entry.get("title", "")))
-                        self.history_table.setItem(row, 1, QTableWidgetItem(entry.get("channel", "")))
-                        self.history_table.setItem(row, 2, QTableWidgetItem(entry.get("url", "")))
-                        self.history_table.setItem(row, 3, QTableWidgetItem(entry.get("status", "")))
-            except:
-                pass
 
-def main():
-    app = QApplication(sys.argv)
-    win = MainWindow()
-    win.show()
-    sys.exit(app.exec_())
+    def set_max_concurrent_downloads(self, idx):
+        val = self.concurrent_combo.currentText()
+        self.max_concurrent_downloads = int(val)
+        self.append_log(f"Max concurrent downloads set to {val}")
 
-if __name__ == "__main__":
-    main()
+    def change_theme_clicked(self):
+        new_theme = self.theme_combo.currentText()
+        self.user_profile.set_theme(new_theme)
+        apply_theme(QApplication.instance(), new_theme)
+        self.append_log(f"Theme changed to '{new_theme}'.")
+
+    def apply_resolution(self):
+        sr = self.res_combo.currentText()
+        self.user_profile.set_default_resolution(sr)
+        prx = self.proxy_edit.text().strip()
+        self.user_profile.set_proxy(prx)
+        self.append_log(f"Resolution set: {sr}, Proxy: {prx}")
+        QMessageBox.information(self, "Settings", f"Resolution: {sr}\nProxy: {prx}")
+
+    def select_download_path(self):
+        folder = QFileDialog.getExistingDirectory(self, "Select Download Folder")
+        if folder:
+            self.user_profile.set_profile(self.user_profile.data["name"], self.user_profile.data["profile_picture"], folder)
+            self.download_path_edit.setText(folder)
+            self.append_log(f"Download path changed to {folder}")
+
+    def cancel_active(self):
+        for w in self.active_workers:
+            w.cancel = True

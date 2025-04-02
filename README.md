@@ -1,6 +1,10 @@
 # 🎶 YoutubeGO 4.4 🎥
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
+[![Build](https://img.shields.io/badge/Build-Stable-brightgreen)]()
 
-YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, offering advanced features and a developer-friendly interface. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, **enhanced queue system**, and **system tray support**.
+
+YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, now with a **modular structure** for better maintainability and scalability. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, **enhanced queue system**, and **system tray support**.
 
 ---
 🌍 **Official Website:** [https://youtubego.org](https://youtubego.org)  
@@ -51,31 +55,36 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
   Fully supported on **Linux**, **macOS**, and **Windows**.
 
 ---
-![New interface](YoutubeGo.png)
+
+![New interface](assets/YoutubeGo.png)
 
 ## 🚀 New in Version 4.4
 
+### 🔥 Modular Codebase
+- **Code has been fully refactored** into `core/`, `ui/`, and `tests/` directories.
+- Easier to maintain, extend and contribute.
+
 ### 🔥 System Tray Integration
-- The application now runs in the **system tray** when minimized, keeping it accessible without cluttering the taskbar.
+- Application now runs in the **system tray** when minimized.
 - Quick access menu to restore or quit the app.
 
 ### 🔥 Improved Notification System
-- **Download Complete**: A notification appears when a download finishes.
-- **Download Failed**: Alerts are displayed if an error occurs during download.
-- **Download Canceled**: Users receive a warning when a download is canceled.
+- **Download Complete** notifications.
+- **Download Failed** alerts.
+- **Download Canceled** warnings.
 
 ### 🔥 Enhanced Download System
-- Fixed issues with **large file downloads** that caused freezes.
-- Improved **stability and efficiency** of the download process.
+- Fixed issues with **large file downloads**.
+- Improved **stability and efficiency**.
 - Better support for **multiple simultaneous downloads**.
 
 ### 🔥 Profile Management Upgrades
-- Store your **name, profile picture, and social media links** (Instagram, Twitter, YouTube).
+- Store your **name, profile picture, and social media links**.
 - Improved UI for editing and updating user details.
 
 ### 🔥 Queue System Optimization
-- **Concurrency management**: Set a limit for simultaneous downloads.
-- **Pause & Resume All**: Manage all queued downloads easily.
+- **Concurrency management**: Limit simultaneous downloads.
+- **Pause & Resume All**: Manage queued downloads easily.
 - **Bandwidth Limiting Support** (via proxy settings).
 
 ### 🔥 Scheduler for Planned Downloads
@@ -84,8 +93,8 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 
 ### 🔥 Other Improvements
 - **Better UI animations and responsiveness.**
-- **Logs now include color-coded messages** for better readability.
-- **Search & filter options in history and queue management.**
+- **Logs now include color-coded messages**.
+- **Search & filter options** in history and queue.
 
 ---
 
@@ -115,7 +124,6 @@ sudo pacman -S ffmpeg
 
 # Windows (via winget)
 winget install FFmpeg
-
 ```
 
 ---
@@ -124,7 +132,7 @@ winget install FFmpeg
 
 ```bash
 # Launch the app
-python YoutubeGo.py 
+python main.py
 ```
 
 - Configure your profile in the **Settings** or **Profile** page.
@@ -156,10 +164,11 @@ https://github.com/yt-dlp/yt-dlp
 # Please submit issues or pull requests via GitHub.
 
 # Enjoy using YoutubeGO 4.4!
-🚀  
+🚀
 ```
 
 ```bash
 # License
 # This project is licensed under the Apache License 2.0.
 ```
+

@@ -1,7 +1,5 @@
-PyQt5
-yt-dlp
-
-# ffmpeg must be installed on the system.
-# For Linux: sudo apt install ffmpeg or sudo pacman -S ffmpeg
-# For macOS: brew install ffmpeg
-# For Windows: Download from https://ffmpeg.org/download.html and add to system PATH.
+PyQt5>=5.15.11
+yt-dlp>=2025.3.26
+requests>=2.32.3
+psutil>=7.0.0
+rich>=13.9.4
