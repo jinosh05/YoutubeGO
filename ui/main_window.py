@@ -747,9 +747,9 @@ class MainWindow(QMainWindow):
         if not link:
             QMessageBox.warning(self, "Error", "No URL given.")
             return
-        if not (link.startswith("http://") or link.startswith("https://")):
-            QMessageBox.warning(self, "Input Error", "Invalid URL format.")
-            return
+        # if not (link.startswith("http://") or link.startswith("https://")):
+        #     QMessageBox.warning(self, "Input Error", "Invalid URL format.")
+        #     return
         task = DownloadTask(link, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, from_queue=False)
         add_history_entry(self.history_table, "Fetching...", "Fetching...", link, "Queued", self.user_profile.is_history_enabled())
         self.run_task(task, None)
