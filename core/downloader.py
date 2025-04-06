@@ -69,7 +69,7 @@ class DownloadQueueWorker(QRunnable):
             ydl_opts_download["postprocessors"] = [{"key": "FFmpegExtractAudio", "nopostoverwrites": False, "preferredcodec": "mp3", "preferredquality": "0"}]
         else:
             if self.task.output_format.lower() == "mp4":
-                ydl_opts_download["format_sort"] = "ext"
+                ydl_opts_download["format_sort"] = ["ext"]
             else:
                 ydl_opts_download["format"] = "bv*+ba/b"
                 ydl_opts_download["merge_output_format"] = self.task.output_format
