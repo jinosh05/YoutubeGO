@@ -6,10 +6,9 @@
 
 YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, now with a **modular structure** for better maintainability and scalability. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, **enhanced queue system**, and **system tray support**.
 
----
-🌍 **Official Website:** [https://youtubego.org](https://youtubego.org)
-                         [![Join Discord](https://img.shields.io/discord/121234567890?label=Join%20Us%20on%20Discord&logo=discord&style=for-the-badge)](https://discord.gg/DasCasQWCt)
----
+[![Visit Website](https://img.shields.io/badge/Visit%20Website-blue?style=for-the-badge&logo=google-chrome)](https://youtubego.org)
+[![Join Discord](https://img.shields.io/badge/Join%20Discord-5865F2?style=for-the-badge&logo=discord)](https://discord.gg/DasCasQWCt)
+
 
 ## 🌟 Key Features
 
