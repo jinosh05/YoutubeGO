@@ -8,7 +8,7 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 
 [![Visit Website](https://img.shields.io/badge/Visit%20Website-blue?style=for-the-badge&logo=google-chrome)](https://youtubego.org)
 [![Join Discord](https://img.shields.io/badge/Join%20Discord-5865F2?style=for-the-badge&logo=discord)](https://discord.gg/DasCasQWCt)
-
+⚠️ This project is not affiliated with YouTube or Google. It is an open-source tool built independently.
 [🇷🇺 Русский](README.ru.md)
 ## 🌟 Key Features
 
@@ -171,4 +171,5 @@ https://github.com/yt-dlp/yt-dlp
 # License
 # This project is licensed under the Apache License 2.0.
 ```
+
 
