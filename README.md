@@ -9,7 +9,7 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 [![Visit Website](https://img.shields.io/badge/Visit%20Website-blue?style=for-the-badge&logo=google-chrome)](https://youtubego.org)
 [![Join Discord](https://img.shields.io/badge/Join%20Discord-5865F2?style=for-the-badge&logo=discord)](https://discord.gg/DasCasQWCt)
 
-
+[🇷🇺 Русский](README.ru.md)
 ## 🌟 Key Features
 
 - **Multi-Platform Support**  
