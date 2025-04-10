@@ -3,5 +3,8 @@ __pycache__/
 *.pyo
 *.pyd
 *.png
+*.mp4
+*.mp3
 user_profile.json
 youtube_cookies.txt
+history.json

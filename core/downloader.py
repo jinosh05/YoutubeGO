@@ -31,18 +31,42 @@ class DownloadQueueWorker(QRunnable):
         self.cancel = False
 
     def run(self):
+        
         if not os.path.exists("youtube_cookies.txt"):
             try:
                 with open("youtube_cookies.txt", "w") as cf:
                     cf.write("# Netscape HTTP Cookie File\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
-            except:
-                pass
-        ydl_opts_info = {"quiet": True, "skip_download": True, "cookiefile": "youtube_cookies.txt", "ignoreerrors": True}
+            except Exception as e:
+                self.log_signal.emit(f"Cookie file oluşturulamadı: {str(e)}")
+        
+        ydl_opts_info = {
+            "quiet": True,
+            "skip_download": True,
+            "cookiefile": "youtube_cookies.txt",
+            "ignoreerrors": True
+        }
+
         if self.task.playlist:
             self.log_signal.emit("Playlist indexing in progress...")
+
+      
         try:
             with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
                 info = ydl.extract_info(self.task.url, download=False)
+                if info is None:
+                    self.status_signal.emit(self.row, "Video Unavailable")
+                    self.log_signal.emit(f"Failed to extract info from: {self.task.url}\nThe video may be private, deleted, or age-restricted.")
+                    return
+
+                
+                if "entries" in info and isinstance(info["entries"], list):
+                    if info["entries"] and info["entries"][0]:
+                        info = info["entries"][0]
+                    else:
+                        self.status_signal.emit(self.row, "Playlist Error")
+                        self.log_signal.emit(f"Playlist entries not found or empty for: {self.task.url}")
+                        return
+
                 title = info.get("title", "No Title")
                 channel = info.get("uploader", "Unknown Channel")
                 if self.info_signal is not None and self.row is not None:
@@ -51,6 +75,8 @@ class DownloadQueueWorker(QRunnable):
             self.status_signal.emit(self.row, "Download Error")
             self.log_signal.emit(f"Failed to fetch video info for {self.task.url}\n{str(e)}")
             return
+
+        
         ydl_opts_download = {
             "outtmpl": os.path.join(self.task.folder, "%(title)s.%(ext)s"),
             "progress_hooks": [self.progress_hook],
@@ -63,19 +89,28 @@ class DownloadQueueWorker(QRunnable):
             "proxy": self.task.proxy if self.task.proxy else None,
             "socket_timeout": 10
         }
+
         if self.task.audio_only:
             ydl_opts_download["final_ext"] = "mp3"
             ydl_opts_download["format"] = "ba/b"
-            ydl_opts_download["postprocessors"] = [{"key": "FFmpegExtractAudio", "nopostoverwrites": False, "preferredcodec": "mp3", "preferredquality": "0"}]
+            ydl_opts_download["postprocessors"] = [{
+                "key": "FFmpegExtractAudio",
+                "nopostoverwrites": False,
+                "preferredcodec": "mp3",
+                "preferredquality": "0"
+            }]
         else:
             if self.task.output_format.lower() == "mp4":
                 ydl_opts_download["format_sort"] = ["ext"]
             else:
                 ydl_opts_download["format"] = "bv*+ba/b"
                 ydl_opts_download["merge_output_format"] = self.task.output_format
+
         if self.task.subtitles:
             ydl_opts_download["writesubtitles"] = True
             ydl_opts_download["allsubtitles"] = True
+
+       
         try:
             with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
                 ydl.download([self.task.url])
@@ -83,7 +118,7 @@ class DownloadQueueWorker(QRunnable):
         except yt_dlp.utils.DownloadError as e:
             if self.cancel:
                 self.status_signal.emit(self.row, "Download Cancelled")
-                self.log_signal.emit(f"Download Cancelled")
+                self.log_signal.emit("Download Cancelled")
             else:
                 self.status_signal.emit(self.row, "Download Error")
                 self.log_signal.emit(f"Download Error:\n{str(e)}")
