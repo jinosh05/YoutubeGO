@@ -1,0 +1,44 @@
+name: 🐛 Bug Report
+description: Report a reproducible bug in YoutubeGO
+title: "[BUG] "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: What steps did you take to make this bug appear?
+      placeholder: |
+        1. Open the app
+        2. Paste a video URL
+        3. Click download
+        4. Error message appears
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: OS and App Version
+      placeholder: e.g. Windows 11, YoutubeGO v4.4.1
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Screenshots / Logs
+      placeholder: Paste any logs or add screenshots that help explain the issue
+
+  - type: dropdown
+    attributes:
+      label: Is this issue reproducible?
+      options:
+        - Always
+        - Sometimes
+        - Rarely
+        - Could not reproduce
