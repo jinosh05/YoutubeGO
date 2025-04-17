@@ -1,5 +1,5 @@
 import os, sys, platform, subprocess, shutil, json
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QProgressBar, QStatusBar, QDockWidget, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QLineEdit, QPushButton, QListWidgetItem, QFileDialog, QMenuBar, QAction, QMessageBox, QSystemTrayIcon, QMenu, QDialog, QFormLayout, QDialogButtonBox, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QGroupBox, QDateTimeEdit, QStackedWidget, QAbstractItemView, QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QProgressBar, QStatusBar, QDockWidget, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QLineEdit, QPushButton, QListWidgetItem, QFileDialog, QMenuBar, QAction, QMessageBox, QSystemTrayIcon, QMenu, QDialog, QFormLayout, QDialogButtonBox, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QGroupBox, QDateTimeEdit, QStackedWidget, QAbstractItemView, QGraphicsDropShadowEffect, QFrame
 from PyQt5.QtCore import Qt, pyqtSignal, QThreadPool, QTimer, QDateTime
 from PyQt5.QtGui import QFont, QIcon, QPixmap, QPainter, QColor
 from core.profile import UserProfile
@@ -16,15 +16,19 @@ class AnimatedButton(QPushButton):
         super().__init__(text)
         self.setStyleSheet("""
             QPushButton {
-                background-color: #444;
+                background-color: #ff4444;
                 color: white;
                 border: none;
-                border-radius: 5px;
+                border-radius: 6px;
                 padding: 8px 16px;
                 font-weight: bold;
+                font-size: 11pt;
             }
             QPushButton:hover {
-                background-color: #666;
+                background-color: #ff6666;
+            }
+            QPushButton:pressed {
+                background-color: #cc3333;
             }
         """)
         self.setCursor(Qt.PointingHandCursor)
@@ -76,8 +80,9 @@ class MainWindow(QMainWindow):
         self.status_signal.connect(self.update_status)
         self.log_signal.connect(self.append_log)
         self.info_signal.connect(self.update_queue_info)
+        self.current_theme = self.user_profile.get_theme()  
         self.init_ui()
-        apply_theme(QApplication.instance(), self.user_profile.get_theme())
+        self.apply_current_theme()  
         if not self.user_profile.is_profile_complete():
             self.prompt_user_profile()
         self.init_tray_icon()
@@ -150,12 +155,24 @@ class MainWindow(QMainWindow):
         self.progress_bar.setStyleSheet("font-weight: bold;")
         self.status_label = QLabel("Ready")
         if self.ffmpeg_found:
-            self.ffmpeg_label.setText("FFmpeg Found")
-            self.ffmpeg_label.setStyleSheet("color: green; font-weight: bold;")
-            self.ffmpeg_label.setToolTip(self.ffmpeg_path)
+            self.ffmpeg_label = QLabel("✓ FFmpeg Ready")
+            self.ffmpeg_label.setStyleSheet("""
+                color: #4CAF50;
+                font-weight: bold;
+                padding: 5px 10px;
+                border-radius: 10px;
+                background: rgba(76, 175, 80, 0.1);
+            """)
         else:
-            self.ffmpeg_label.setText("FFmpeg Missing")
-            self.ffmpeg_label.setStyleSheet("color: red; font-weight: bold;")
+            self.ffmpeg_label = QLabel("⚠️ FFmpeg Required")
+            self.ffmpeg_label.setStyleSheet("""
+                color: #FFC107;
+                font-weight: bold;
+                padding: 5px 10px;
+                border-radius: 10px;
+                background: rgba(255, 193, 7, 0.1);
+            """)
+        self.ffmpeg_label.setToolTip(self.ffmpeg_path if self.ffmpeg_found else "Please download FFmpeg from the official website")
         self.show_logs_btn.clicked.connect(self.toggle_logs)
         self.status_bar.addWidget(self.show_logs_btn)
         self.status_bar.addWidget(self.status_label)
@@ -212,6 +229,8 @@ class MainWindow(QMainWindow):
         bottom_layout = QHBoxLayout(bottom_area)
         bottom_layout.setSpacing(0)
         bottom_layout.setContentsMargins(0, 0, 0, 0)
+        
+        
         self.main_stack = QStackedWidget()
         self.page_home = self.create_page_home()
         self.page_mp4 = self.create_page_mp4()
@@ -221,6 +240,7 @@ class MainWindow(QMainWindow):
         self.page_profile = self.create_page_profile()
         self.page_queue = self.create_page_queue()
         self.page_scheduler = self.create_page_scheduler()
+        
         self.main_stack.addWidget(self.page_home)
         self.main_stack.addWidget(self.page_mp4)
         self.main_stack.addWidget(self.page_mp3)
@@ -229,18 +249,61 @@ class MainWindow(QMainWindow):
         self.main_stack.addWidget(self.page_profile)
         self.main_stack.addWidget(self.page_queue)
         self.main_stack.addWidget(self.page_scheduler)
+        
+        
+        side_menu_container = QWidget()
+        side_menu_container.setFixedWidth(240)  
+        side_menu_layout = QHBoxLayout(side_menu_container)
+        side_menu_layout.setSpacing(0)
+        side_menu_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Add separator line
+        separator = QFrame()
+        separator.setFrameShape(QFrame.VLine)
+        separator.setStyleSheet("""
+            QFrame {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 rgba(255, 255, 255, 0.1),
+                    stop:0.5 rgba(255, 255, 255, 0.2),
+                    stop:1 rgba(255, 255, 255, 0.1));
+                width: 1px;
+            }
+        """)
+        
         self.side_menu = QListWidget()
-        self.side_menu.setFixedWidth(200)
+        self.side_menu.setFixedWidth(220)
         self.side_menu.setSelectionMode(QAbstractItemView.SingleSelection)
         self.side_menu.setFlow(QListWidget.TopToBottom)
-        self.side_menu.setSpacing(10)
-        menu_items = ["Home","MP4","MP3","History","Settings","Profile","Queue","Scheduler"]
+        self.side_menu.setSpacing(2)
+        self.side_menu.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.side_menu.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.side_menu.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        
+        menu_items = ["Home", "MP4", "MP3", "History", "Settings", "Profile", "Queue", "Scheduler"]
         for item_name in menu_items:
-            self.side_menu.addItem(item_name)
+            item = QListWidgetItem(f"{self.get_menu_icon(item_name)}  {item_name}")
+            item.setTextAlignment(Qt.AlignLeft)
+            self.side_menu.addItem(item)
+        
+        
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(20)
+        shadow.setXOffset(0)
+        shadow.setYOffset(0)
+        shadow.setColor(QColor(0, 0, 0, 50))
+        self.side_menu.setGraphicsEffect(shadow)
+        
         self.side_menu.setCurrentRow(0)
         self.side_menu.currentRowChanged.connect(self.side_menu_changed)
+        
+        
+        side_menu_layout.addWidget(self.side_menu)
+        side_menu_layout.addWidget(separator)
+        
+        
+        bottom_layout.addWidget(side_menu_container)
         bottom_layout.addWidget(self.main_stack, stretch=1)
-        bottom_layout.addWidget(self.side_menu)
+        
         main_layout.addWidget(bottom_area)
         self.search_btn.clicked.connect(self.top_search_clicked)
     def toggle_logs(self):
@@ -422,8 +485,6 @@ class MainWindow(QMainWindow):
             if path:
                 pic_btn.setProperty("selected_path", path)
                 pic_label.setText(os.path.basename(path))
-                pixmap = QPixmap(path).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                self.profile_pic_label.setPixmap(pixmap)
         def remove_pic():
             self.user_profile.remove_profile_picture()
             pic_label.setText("No file selected.")
@@ -533,19 +594,6 @@ class MainWindow(QMainWindow):
         hl.addWidget(b_add)
         hl.addWidget(b_remove)
         layout.addLayout(hl)
-        profile_info_widget = QWidget()
-        profile_info_layout = QHBoxLayout(profile_info_widget)
-        profile_info_layout.setContentsMargins(0, 0, 0, 0)
-        profile_info_layout.setSpacing(10)
-        self.scheduler_profile_pic = QLabel()
-        self.scheduler_profile_pic.setFixedSize(50, 50)
-        set_circular_pixmap(self.scheduler_profile_pic, self.user_profile.data["profile_picture"])
-        self.scheduler_profile_name = QLabel(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-        self.scheduler_profile_name.setFont(QFont("Arial", 10))
-        profile_info_layout.addWidget(self.scheduler_profile_pic)
-        profile_info_layout.addWidget(self.scheduler_profile_name)
-        profile_info_layout.addStretch()
-        layout.addWidget(profile_info_widget)
         layout.addStretch()
         self.scheduler_timer = QTimer()
         self.scheduler_timer.timeout.connect(self.check_scheduled_downloads)
@@ -756,8 +804,8 @@ class MainWindow(QMainWindow):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 4, QTableWidgetItem(f"{int(percent)}%"))
         self.progress_bar.setValue(int(percent))
-        self.progress_bar.setFormat(f"{int(percent)}%")
-        self.status_label.setText(f"Downloading... {percent:.2f}%")
+        self.progress_bar.setFormat(f" {int(percent)}%")
+        self.status_label.setText(f"Downloading... {percent:.1f}%")
     def update_status(self, row, st):
         if row is not None and row < self.queue_table.rowCount():
             self.queue_table.setItem(row, 4, QTableWidgetItem(st))
@@ -827,21 +875,379 @@ class MainWindow(QMainWindow):
         if self.user_profile.data["profile_picture"]:
             pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.profile_pic_label.setPixmap(pixmap)
-            self.scheduler_profile_pic.setPixmap(pixmap)
         else:
             self.profile_pic_label.setPixmap(QPixmap())
-            self.scheduler_profile_pic.setPixmap(QPixmap())
         self.profile_name_label.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
-        self.scheduler_profile_name.setText(self.user_profile.data["name"] if self.user_profile.data["name"] else "User")
     def set_max_concurrent_downloads(self, idx):
         val = self.concurrent_combo.currentText()
         self.max_concurrent_downloads = int(val)
         self.append_log(f"Max concurrent downloads set to {val}")
     def change_theme_clicked(self):
-        new_theme = self.theme_combo.currentText()
-        self.user_profile.set_theme(new_theme)
-        apply_theme(QApplication.instance(), new_theme)
-        self.append_log(f"Theme changed to '{new_theme}'.")
+        theme = self.theme_combo.currentText()
+        self.user_profile.set_theme(theme)
+        if theme == "Dark":
+            self.setStyleSheet(self.get_dark_theme())
+        else:
+            self.setStyleSheet(self.get_light_theme())
+        self.append_log(f"Theme changed to '{theme}'.")
+    def apply_current_theme(self):
+        if self.current_theme == "Dark":
+            self.setStyleSheet(self.get_dark_theme())
+        else:
+            self.setStyleSheet(self.get_light_theme())
+    def get_dark_theme(self):
+        return """
+            QWidget { 
+                font-family: 'Segoe UI', sans-serif; 
+                font-size: 10pt;
+                color: white; 
+                background-color: #1e1e1e;
+            }
+            QPushButton { 
+                background-color: #ff4444; 
+                color: white; 
+                border-radius: 6px; 
+                padding: 8px 16px; 
+                font-weight: bold;
+                font-size: 11pt;
+            }
+            QPushButton:hover { 
+                background-color: #ff6666; 
+            }
+            QPushButton:pressed { 
+                background-color: #cc3333; 
+            }
+            QLineEdit, QComboBox { 
+                padding: 8px; 
+                border: 1px solid #666; 
+                border-radius: 4px;
+                background-color: #333;
+                color: white;
+            }
+            QComboBox::drop-down {
+                border: none;
+                background-color: #333;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border: none;
+            }
+            QLabel {
+                color: white;
+                font-size: 11pt;
+            }
+            QGroupBox {
+                color: white;
+                border: 1px solid #666;
+                margin-top: 1.5em;
+                padding-top: 0.7em;
+                font-size: 11pt;
+            }
+            QGroupBox::title {
+                color: white;
+                background-color: #1e1e1e;
+                padding: 0 5px;
+            }
+            QTableWidget {
+                color: white;
+                gridline-color: #666;
+                background-color: #333;
+                border: 1px solid #666;
+            }
+            QTableWidget::item {
+                color: white;
+            }
+            QHeaderView::section {
+                background-color: #444;
+                color: white;
+                padding: 5px;
+                border: 1px solid #666;
+            }
+            QListWidget {
+                color: white;
+                background-color: #1e1e1e;
+                border: none;
+                border-radius: 15px 0 0 15px;
+                padding: 15px 10px;
+            }
+            QListWidget::item {
+                color: white;
+                background-color: transparent;
+                padding: 15px;
+                margin: 4px;
+                border-radius: 12px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+            QListWidget::item:selected {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+                color: white;
+            }
+            QListWidget::item:hover:!selected {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            QTextEdit {
+                color: white;
+                background-color: #333;
+                border: 1px solid #666;
+            }
+            QCheckBox {
+                color: white;
+                font-size: 11pt;
+            }
+            QRadioButton {
+                color: white;
+                font-size: 11pt;
+            }
+            QMenuBar {
+                background-color: #333;
+                color: white;
+            }
+            QMenuBar::item {
+                background-color: #333;
+                color: white;
+            }
+            QMenuBar::item:selected {
+                background-color: #444;
+            }
+            QMenu {
+                background-color: #333;
+                color: white;
+            }
+            QMenu::item:selected {
+                background-color: #444;
+            }
+            QFormLayout > QLabel {
+                color: white;
+                font-size: 11pt;
+                font-weight: bold;
+                background: none;
+            }
+            QStatusBar {
+                color: white;
+                background-color: #333;
+            }
+            QProgressBar {
+                border: none;
+                border-radius: 10px;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white;
+                text-align: center;
+                font-weight: bold;
+                height: 20px;
+                margin: 0px 10px;
+            }
+            QProgressBar::chunk {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+                border-radius: 10px;
+            }
+            
+            QStatusBar {
+                background-color: #1e1e1e;
+                color: white;
+                padding: 5px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            QStatusBar QLabel {
+                padding: 5px 10px;
+                border-radius: 10px;
+            }
+            
+            QStatusBar QPushButton {
+                padding: 5px 15px;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: none;
+            }
+            
+            QStatusBar QPushButton:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            QFrame#separator {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 rgba(255, 255, 255, 0.1),
+                    stop:0.5 rgba(255, 255, 255, 0.2),
+                    stop:1 rgba(255, 255, 255, 0.1));
+                width: 1px;
+            }
+        """
+    def get_light_theme(self):
+        return """
+            QWidget { 
+                font-family: 'Segoe UI', sans-serif; 
+                font-size: 10pt;
+                color: #333; 
+                background-color: #f5f5f5;
+            }
+            QPushButton { 
+                background-color: #ff4444; 
+                color: white; 
+                border-radius: 6px; 
+                padding: 8px 16px; 
+                font-weight: bold;
+                font-size: 11pt;
+            }
+            QPushButton:hover { 
+                background-color: #ff6666; 
+            }
+            QPushButton:pressed { 
+                background-color: #cc3333; 
+            }
+            QLineEdit, QComboBox { 
+                padding: 8px; 
+                border: 1px solid #ccc; 
+                border-radius: 4px;
+                background-color: white;
+                color: #333;
+            }
+            QComboBox::drop-down {
+                border: none;
+                background-color: white;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border: none;
+            }
+            QLabel {
+                color: #333;
+                font-size: 11pt;
+            }
+            QGroupBox {
+                color: #333;
+                border: 1px solid #ccc;
+                margin-top: 1.5em;
+                padding-top: 0.7em;
+                font-size: 11pt;
+            }
+            QGroupBox::title {
+                color: #333;
+                background-color: #f5f5f5;
+                padding: 0 5px;
+            }
+            QTableWidget {
+                color: #333;
+                gridline-color: #ccc;
+                background-color: white;
+                border: 1px solid #ccc;
+            }
+            QTableWidget::item {
+                color: #333;
+            }
+            QHeaderView::section {
+                background-color: #f0f0f0;
+                color: #333;
+                padding: 5px;
+                border: 1px solid #ccc;
+            }
+            QListWidget {
+                color: #333;
+                background-color: #f5f5f5;
+                border: none;
+                border-radius: 15px 0 0 15px;
+                padding: 15px 10px;
+            }
+            QListWidget::item {
+                color: #333;
+                background-color: transparent;
+                padding: 15px;
+                margin: 4px;
+                border-radius: 12px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+            QListWidget::item:selected {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+                color: white;
+            }
+            QListWidget::item:hover:!selected {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+            QTextEdit {
+                color: #333;
+                background-color: white;
+                border: 1px solid #ccc;
+            }
+            QCheckBox {
+                color: #333;
+                font-size: 11pt;
+            }
+            QRadioButton {
+                color: #333;
+                font-size: 11pt;
+            }
+            QMenuBar {
+                background-color: #f0f0f0;
+                color: #333;
+            }
+            QMenuBar::item {
+                background-color: #f0f0f0;
+                color: #333;
+            }
+            QMenuBar::item:selected {
+                background-color: #e0e0e0;
+            }
+            QMenu {
+                background-color: white;
+                color: #333;
+            }
+            QMenu::item:selected {
+                background-color: #e0e0e0;
+            }
+            QFormLayout > QLabel {
+                color: #333;
+                font-size: 11pt;
+                font-weight: bold;
+                background: none;
+            }
+            QStatusBar {
+                background-color: #f5f5f5;
+                color: #333;
+                padding: 5px;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            QProgressBar {
+                border: none;
+                border-radius: 10px;
+                background-color: rgba(0, 0, 0, 0.05);
+                color: #333;
+                text-align: center;
+                font-weight: bold;
+                height: 20px;
+                margin: 0px 10px;
+            }
+            QProgressBar::chunk {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+                border-radius: 10px;
+            }
+            
+            QStatusBar QLabel {
+                padding: 5px 10px;
+                border-radius: 10px;
+            }
+            
+            QStatusBar QPushButton {
+                padding: 5px 15px;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.05);
+                color: #333;
+                border: none;
+            }
+            
+            QStatusBar QPushButton:hover {
+                background: rgba(0, 0, 0, 0.1);
+            }
+            
+            QFrame#separator {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 rgba(0, 0, 0, 0.1),
+                    stop:0.5 rgba(0, 0, 0, 0.2),
+                    stop:1 rgba(0, 0, 0, 0.1));
+                width: 1px;
+            }
+        """
     def apply_resolution(self):
         sr = self.res_combo.currentText()
         self.user_profile.set_default_resolution(sr)
@@ -859,15 +1265,30 @@ class MainWindow(QMainWindow):
         for w in self.active_workers:
             w.cancel = True
 
+    def get_menu_icon(self, name):
+        icons = {
+            "Home": "🏠",
+            "MP4": "🎥",
+            "MP3": "🎵",
+            "History": "📜",
+            "Settings": "⚙️",
+            "Profile": "👤",
+            "Queue": "📋",
+            "Scheduler": "⏰"
+        }
+        return icons.get(name, "")
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
-    app.setStyleSheet("""
-        QWidget { font-family: 'Segoe UI', sans-serif; font-size: 10pt; }
-        QPushButton { background-color: #444; color: white; border-radius: 5px; padding: 8px 16px; font-weight: bold; }
-        QPushButton:hover { background-color: #666; }
-        QLineEdit, QComboBox { padding: 5px; border: 1px solid #666; border-radius: 4px; }
-    """)
+    
+    
     window = MainWindow()
+    theme = window.user_profile.get_theme()
+    if theme == "Dark":
+        window.setStyleSheet(window.get_dark_theme())
+    else:
+        window.setStyleSheet(window.get_light_theme())
+    
     window.show()
     sys.exit(app.exec_())

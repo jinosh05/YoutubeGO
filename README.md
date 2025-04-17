@@ -56,7 +56,7 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 
 ---
 
-![New interface](assets/YoutubeGo.png)
+![New interface](assets/youtubeGo.png)
 
 ## 🚀 New in Version 4.4
 
