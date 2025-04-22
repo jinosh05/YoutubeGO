@@ -1,17 +1,27 @@
 # 🎶 YoutubeGO 4.4 🎥
+
+### 🛠️ Tech Stack
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
+[![Languages](https://img.shields.io/github/languages/top/Efeckc17/YoutubeGO)](https://github.com/Efeckc17/YoutubeGO)
+
+### 📊 Project Stats
+[![Code size](https://img.shields.io/github/languages/code-size/Efeckc17/YoutubeGO)](https://github.com/Efeckc17/YoutubeGO)
+[![Last commit](https://img.shields.io/github/last-commit/Efeckc17/YoutubeGO)](https://github.com/Efeckc17/YoutubeGO/commits)
+[![Stars](https://img.shields.io/github/stars/Efeckc17/YoutubeGO?style=social)](https://github.com/Efeckc17/YoutubeGO/stargazers)
+[![Forks](https://img.shields.io/github/forks/Efeckc17/YoutubeGO?style=social)](https://github.com/Efeckc17/YoutubeGO/network/members)
+
+### 📜 Legal 
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
-[![Build](https://img.shields.io/badge/Build-Stable-brightgreen)]()
 
 
-YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with **Python** and **PyQt5**, now with a **modular structure** for better maintainability and scalability. It includes robust functionality such as **profile management**, **FFmpeg detection**, **scheduler for planned downloads**, **drag-and-drop support**, **enhanced queue system**, and **system tray support**.
 
-[![Visit Website](https://img.shields.io/badge/Visit%20Website-blue?style=for-the-badge&logo=google-chrome)](https://youtubego.org)
-[![Join Discord](https://img.shields.io/badge/Join%20Discord-5865F2?style=for-the-badge&logo=discord)](https://discord.gg/youtubego)
-⚠️ This project is not affiliated with YouTube or Google. It is an open-source tool built independently.
-[🇷🇺 Русский](README.ru.md)
+## 🌐 Languages
+
+ | 🇷🇺 [Русский](README.ru.md)
+
 ## 🌟 Key Features
 
+### 🎯 Core Features
 - **Multi-Platform Support**  
   Download videos and audio from platforms supporting HTTP streams, including YouTube, Vimeo, and more.
 
@@ -24,6 +34,7 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 - **High-Resolution Support**  
   Supports downloads up to **8K, 4K, 2K, 1080p, 720p, 360p**. Select your preferred resolution in Settings.
 
+### 🛠️ Advanced Features
 - **Batch Processing**  
   Queue multiple downloads and manage them simultaneously. Pause, resume, or cancel downloads easily.
 
@@ -36,6 +47,7 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 - **Drag & Drop Interface**  
   Add download URLs by dragging them into the app.
 
+### 🎨 User Experience
 - **Dark & Light Mode**  
   Switch between Dark and Light themes for better usability.
 
@@ -48,15 +60,12 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 - **Download History**  
   View, search, and manage previous downloads directly in the app.
 
+### 🔧 Technical Features
 - **FFmpeg Detection**  
   Automatically detects FFmpeg installation and prompts for setup if missing.
 
 - **Cross-Platform Compatibility**  
   Fully supported on **Linux**, **macOS**, and **Windows**.
-
----
-
-![New interface](assets/youtubeGo.png)
 
 ## 🚀 New in Version 4.4
 
@@ -96,7 +105,13 @@ YoutubeGO 4.4 is a **free, fast, and secure** multimedia downloader built with *
 - **Logs now include color-coded messages**.
 - **Search & filter options** in history and queue.
 
----
+## 📸 Screenshots
+
+<div align="center">
+  <img src="assets/homepage.png" alt="Homepage" width="300"/>
+  <img src="assets/history.png" alt="History" width="300"/>
+  <img src="assets/settings.png" alt="Settings" width="300"/>
+</div>
 
 ## ⚙️ Installation
 
@@ -126,8 +141,6 @@ sudo pacman -S ffmpeg
 winget install FFmpeg
 ```
 
----
-
 ## 🔧 Usage
 
 ```bash
@@ -140,22 +153,18 @@ python main.py
 - Add multiple downloads to the queue and manage them from the Queue page.
 - Schedule downloads in advance using the Scheduler.
 
----
-
 ## ⚠️ Notes
 
 ```bash
 # FFmpeg Required
 # Some features, like audio extraction and video merging, depend on FFmpeg.
-# Ensure it’s installed and available in your system PATH.
+# Ensure it's installed and available in your system PATH.
 
 # Third-Party Libraries
 # The app uses yt_dlp for downloading and metadata extraction.
 # Refer to their GitHub page for details.
 https://github.com/yt-dlp/yt-dlp
 ```
-
----
 
 ## 🙏 Contributions
 
@@ -171,5 +180,9 @@ https://github.com/yt-dlp/yt-dlp
 # License
 # This project is licensed under the Apache License 2.0.
 ```
+
+## ⚠️ Legal Notice
+
+YoutubeGO is an independent open-source project. It operates independently from YouTube and Google, performing downloads and other operations without using their APIs. This project is not bound by YouTube's terms of service or rules.
 
 
