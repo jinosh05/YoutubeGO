@@ -67,6 +67,12 @@ class DownloadQueueWorker(QRunnable):
                         self.log_signal.emit(f"Playlist entries not found or empty for: {self.task.url}")
                         return
 
+                if "formats" in info:
+                    self.log_signal.emit("\nAvailable formats:")
+                    for f in info["formats"]:
+                        if f.get("vcodec") != "none" and f.get("acodec") != "none":
+                            self.log_signal.emit(f"Format: {f.get('format_id')} | Resolution: {f.get('width')}x{f.get('height')} | Ext: {f.get('ext')}")
+
                 title = info.get("title", "No Title")
                 channel = info.get("uploader", "Unknown Channel")
                 if self.info_signal is not None and self.row is not None:
@@ -100,11 +106,44 @@ class DownloadQueueWorker(QRunnable):
                 "preferredquality": "0"
             }]
         else:
-            if self.task.output_format.lower() == "mp4":
-                ydl_opts_download["format_sort"] = ["ext"]
+            if self.task.resolution == "144p":
+                format_str = "bv*[height<=144]+ba/b[height<=144]"
+            elif self.task.resolution == "240p":
+                format_str = "bv*[height<=240]+ba/b[height<=240]"
+            elif self.task.resolution == "360p":
+                format_str = "bv*[height<=360]+ba/b[height<=360]"
+            elif self.task.resolution == "480p":
+                format_str = "bv*[height<=480]+ba/b[height<=480]"
+            elif self.task.resolution == "720p":
+                format_str = "bv*[height<=720]+ba/b[height<=720]"
+            elif self.task.resolution == "1080p":
+                format_str = "bv*[height<=1080]+ba/b[height<=1080]"
+            elif self.task.resolution == "1440p":
+                format_str = "bv*[height<=1440]+ba/b[height<=1440]"
+            elif self.task.resolution == "2160p":
+                format_str = "bv*[height<=2160]+ba/b[height<=2160]"
+            elif self.task.resolution == "4320p":
+                format_str = "bv*[height<=4320]+ba/b[height<=4320]"
             else:
-                ydl_opts_download["format"] = "bv*+ba/b"
+                format_str = "bv*+ba/b"
+
+            ydl_opts_download["format"] = format_str
+            ydl_opts_download["format_sort"] = ["res", "ext:mp4:m4a", "size", "br", "asr"]
+            ydl_opts_download["prefer_free_formats"] = False
+            ydl_opts_download["retries"] = 10
+            ydl_opts_download["fragment_retries"] = 10
+            ydl_opts_download["retry_sleep_functions"] = lambda retries: 5
+            ydl_opts_download["format_selector"] = "best"
+            
+            if self.task.output_format.lower() == "mp4":
+                ydl_opts_download["merge_output_format"] = "mp4"
+            else:
                 ydl_opts_download["merge_output_format"] = self.task.output_format
+
+            ydl_opts_download["postprocessors"] = [{
+                "key": "FFmpegVideoRemuxer",
+                "preferedformat": self.task.output_format.lower()
+            }]
 
         if self.task.subtitles:
             ydl_opts_download["writesubtitles"] = True
