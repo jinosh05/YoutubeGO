@@ -1,0 +1,38 @@
+name: Build and Release for macOS
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build macOS Binary and DMG
+        run: |
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo main.py
+          mkdir -p dmg/YoutubeGo
+          cp dist/YoutubeGo dmg/YoutubeGo/
+          hdiutil create -volname YoutubeGo -srcfolder dmg/YoutubeGo -ov -format UDZO YoutubeGo.dmg
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: YoutubeGo.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}

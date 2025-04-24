@@ -1,0 +1,48 @@
+name: Build and Release AppImage
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libfuse2
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Download appimagetool
+        run: |
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+      - name: Build AppImage
+        run: |
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo main.py
+          mkdir -p AppDir/usr/bin
+          cp dist/YoutubeGo AppDir/usr/bin/
+          echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nIcon=app\nType=Application\nCategories=Utility;" > AppDir/YoutubeGo.desktop
+          ln -s usr/bin/YoutubeGo AppDir/AppRun
+          chmod +x AppDir/AppRun
+          ./appimagetool-x86_64.AppImage AppDir
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: YoutubeGo*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
