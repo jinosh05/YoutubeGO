@@ -1,0 +1,35 @@
+name: Build and Release YoutubeGo
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build YoutubeGo EXE
+        run: |
+          pyinstaller --noconfirm --onefile --name YoutubeGo main.py
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/YoutubeGo.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
