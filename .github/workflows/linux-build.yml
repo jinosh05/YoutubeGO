@@ -35,7 +35,7 @@ jobs:
           pyinstaller --noconfirm --onefile --windowed --name YoutubeGo main.py
           mkdir -p AppDir/usr/bin
           cp dist/YoutubeGo AppDir/usr/bin/
-          echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nIcon=app\nType=Application\nCategories=Utility;" > AppDir/YoutubeGo.desktop
+          echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nType=Application\nCategories=Utility;" > AppDir/YoutubeGo.desktop
           ln -s usr/bin/YoutubeGo AppDir/AppRun
           chmod +x AppDir/AppRun
           ./appimagetool-x86_64.AppImage AppDir
