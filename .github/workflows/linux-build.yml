@@ -33,11 +33,23 @@ jobs:
       - name: Build AppImage
         run: |
           pyinstaller --noconfirm --onefile --windowed --name YoutubeGo main.py
+          
+          # Temiz AppDir hazırla
+          rm -rf AppDir
           mkdir -p AppDir/usr/bin
           cp dist/YoutubeGo AppDir/usr/bin/
-          echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nType=Application\nCategories=Utility;" > AppDir/YoutubeGo.desktop
+          
+          # Boş ikon koy
+          echo -n > AppDir/app.png
+          
+          # Desktop dosyası oluştur
+          echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nIcon=app\nType=Application\nCategories=Utility;" > AppDir/YoutubeGo.desktop
+
+          # AppRun ayarı
           ln -s usr/bin/YoutubeGo AppDir/AppRun
           chmod +x AppDir/AppRun
+
+          # AppImage oluştur
           ./appimagetool-x86_64.AppImage AppDir
 
       - name: Upload to GitHub Releases
