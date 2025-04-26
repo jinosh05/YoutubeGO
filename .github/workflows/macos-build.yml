@@ -23,16 +23,17 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build macOS Binary and DMG
+      - name: Build macOS App and ZIP
         run: |
-          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo main.py
-          mkdir -p dmg/YoutubeGo
-          cp dist/YoutubeGo dmg/YoutubeGo/
-          hdiutil create -volname YoutubeGo -srcfolder dmg/YoutubeGo -ov -format UDZO YoutubeGo.dmg
+          pyinstaller --noconfirm --windowed --name YoutubeGo main.py
+          mkdir -p output
+          cp -r dist/YoutubeGo.app output/
+          cd output
+          zip -r YoutubeGo-macOS.zip YoutubeGo.app
 
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: YoutubeGo.dmg
+          files: output/YoutubeGo-macOS.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

@@ -13,7 +13,9 @@
 ### 📜 Legal 
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
 
-
+### 🌐 Links
+[![Website](https://img.shields.io/badge/Visit-Website-blue)](https://youtubego.org)
+[![Discord](https://img.shields.io/badge/Join-Discord-7289DA)](https://discord.gg/youtubego)
 
 ## 🌐 Languages
 

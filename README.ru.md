@@ -14,8 +14,9 @@
 ### 📜 Юридическая
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
 
-
-
+### 🌐 Ссылки
+[![Сайт](https://img.shields.io/badge/Посетить-Сайт-blue)](https://youtubego.org)
+[![Discord](https://img.shields.io/badge/Присоединиться-Discord-7289DA)](https://discord.gg/youtubego)
 
 ## 🌐 Языки
 

@@ -107,25 +107,28 @@ class DownloadQueueWorker(QRunnable):
             }]
         else:
             if self.task.resolution == "144p":
-                format_str = "bv*[height<=144]+ba/b[height<=144]"
+                format_str = "(bestvideo[height=144]/bestvideo[height<=144]/best[height<=144])+bestaudio/best"
             elif self.task.resolution == "240p":
-                format_str = "bv*[height<=240]+ba/b[height<=240]"
+                format_str = "(bestvideo[height=240]/bestvideo[height<=240]/best[height<=240])+bestaudio/best"
             elif self.task.resolution == "360p":
-                format_str = "bv*[height<=360]+ba/b[height<=360]"
+                format_str = "(bestvideo[height=360]/bestvideo[height<=360]/best[height<=360])+bestaudio/best"
             elif self.task.resolution == "480p":
-                format_str = "bv*[height<=480]+ba/b[height<=480]"
+                format_str = "(bestvideo[height=480]/bestvideo[height<=480]/best[height<=480])+bestaudio/best"
             elif self.task.resolution == "720p":
-                format_str = "bv*[height<=720]+ba/b[height<=720]"
+                format_str = "(bestvideo[height=720]/bestvideo[height<=720]/best[height<=720])+bestaudio/best"
             elif self.task.resolution == "1080p":
-                format_str = "bv*[height<=1080]+ba/b[height<=1080]"
+                format_str = "(bestvideo[height=1080]/bestvideo[height<=1080]/best[height<=1080])+bestaudio/best"
             elif self.task.resolution == "1440p":
-                format_str = "bv*[height<=1440]+ba/b[height<=1440]"
+                format_str = "(bestvideo[height=1440]/bestvideo[height<=1440]/best[height<=1440])+bestaudio/best"
             elif self.task.resolution == "2160p":
-                format_str = "bv*[height<=2160]+ba/b[height<=2160]"
+                format_str = "(bestvideo[height=2160]/bestvideo[height<=2160]/best[height<=2160])+bestaudio/best"
             elif self.task.resolution == "4320p":
-                format_str = "bv*[height<=4320]+ba/b[height<=4320]"
+                format_str = "(bestvideo[height=4320]/bestvideo[height<=4320]/best[height<=4320])+bestaudio/best"
             else:
-                format_str = "bv*+ba/b"
+                format_str = "bestvideo+bestaudio/best"
+
+            if self.task.audio_only:
+                format_str = "bestaudio/best"
 
             ydl_opts_download["format"] = format_str
             ydl_opts_download["format_sort"] = ["res", "ext:mp4:m4a", "size", "br", "asr"]
