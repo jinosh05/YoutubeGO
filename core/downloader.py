@@ -1,7 +1,7 @@
 import os
 import yt_dlp
 from PyQt5.QtCore import QRunnable
-from core.utils import format_speed, format_time
+from core.utils import format_speed, format_time, get_data_dir
 
 class DownloadTask:
     def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False):
@@ -25,7 +25,7 @@ class DownloadQueueWorker(QRunnable):
         self.log_signal = log_signal
         self.info_signal = info_signal
         self.cancel = False
-        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+        self.data_dir = get_data_dir()
         if not os.path.exists(self.data_dir):
             os.makedirs(self.data_dir)
         self.cookie_file = os.path.join(self.data_dir, "youtube_cookies.txt")
@@ -147,12 +147,11 @@ class DownloadQueueWorker(QRunnable):
             except Exception as e:
                 self.log_signal.emit(f"Format configuration failed, falling back to basic format: {str(e)}")
                 ydl_opts_download["format"] = "best"
-                
+
         if self.task.subtitles:
             ydl_opts_download["writesubtitles"] = True
             ydl_opts_download["allsubtitles"] = True
 
-       
         try:
             with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
                 ydl.download([self.task.url])

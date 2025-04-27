@@ -1,8 +1,9 @@
 import os
 import json
 from PyQt5.QtWidgets import QTableWidgetItem
+from core.utils import get_data_dir
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DATA_DIR = get_data_dir()
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 HISTORY_FILE = os.path.join(DATA_DIR, "history.json")

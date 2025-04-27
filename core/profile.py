@@ -1,11 +1,12 @@
 import os
 import json
 import shutil
+from core.utils import get_data_dir, get_images_dir
 
 class UserProfile:
     def __init__(self, profile_path="user_profile.json"):
-        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
-        self.images_dir = os.path.join(self.data_dir, "images")
+        self.data_dir = get_data_dir()
+        self.images_dir = get_images_dir()
         if not os.path.exists(self.images_dir):
             os.makedirs(self.images_dir)
         self.profile_path = os.path.join(self.data_dir, profile_path)

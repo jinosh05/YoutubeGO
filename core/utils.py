@@ -1,5 +1,8 @@
 from PyQt5.QtGui import QPixmap, QPainter, QBrush, QColor
 from PyQt5.QtCore import Qt
+import os
+import sys
+from pathlib import Path
 
 def apply_theme(app, theme):
 
@@ -37,3 +40,30 @@ def format_time(seconds):
         return f"{int(m)}m {int(s)}s"
     else:
         return f"{int(s)}s"
+
+def get_data_dir():
+    """
+    Get the application data directory path.
+    On Windows: %APPDATA%/YoutubeGO
+    On Linux: ~/.local/share/youtubego
+    On macOS: ~/Library/Application Support/YoutubeGO
+    """
+    if sys.platform == 'win32':
+        base_dir = os.getenv('APPDATA')
+    elif sys.platform == 'darwin':
+        base_dir = os.path.expanduser('~/Library/Application Support')
+    else:  
+        base_dir = os.path.expanduser('~/.local/share')
+
+    data_dir = os.path.join(base_dir, 'YoutubeGO')
+    os.makedirs(data_dir, exist_ok=True)
+
+    # Create subdirectories
+    images_dir = os.path.join(data_dir, 'images')
+    os.makedirs(images_dir, exist_ok=True)
+
+    return data_dir
+
+def get_images_dir():
+    """Get the directory path for profile images."""
+    return os.path.join(get_data_dir(), 'images')
