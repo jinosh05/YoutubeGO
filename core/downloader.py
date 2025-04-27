@@ -1,9 +1,5 @@
 import os
 import yt_dlp
-import shutil
-import subprocess
-import time
-import platform
 from PyQt5.QtCore import QRunnable
 from core.utils import format_speed, format_time
 
@@ -29,12 +25,16 @@ class DownloadQueueWorker(QRunnable):
         self.log_signal = log_signal
         self.info_signal = info_signal
         self.cancel = False
+        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+        if not os.path.exists(self.data_dir):
+            os.makedirs(self.data_dir)
+        self.cookie_file = os.path.join(self.data_dir, "youtube_cookies.txt")
 
     def run(self):
         
-        if not os.path.exists("youtube_cookies.txt"):
+        if not os.path.exists(self.cookie_file):
             try:
-                with open("youtube_cookies.txt", "w") as cf:
+                with open(self.cookie_file, "w") as cf:
                     cf.write("# Netscape HTTP Cookie File\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
             except Exception as e:
                 self.log_signal.emit(f"Cookie file oluşturulamadı: {str(e)}")
@@ -42,7 +42,7 @@ class DownloadQueueWorker(QRunnable):
         ydl_opts_info = {
             "quiet": True,
             "skip_download": True,
-            "cookiefile": "youtube_cookies.txt",
+            "cookiefile": self.cookie_file,
             "ignoreerrors": True
         }
 
@@ -87,18 +87,20 @@ class DownloadQueueWorker(QRunnable):
             "outtmpl": os.path.join(self.task.folder, "%(title)s.%(ext)s"),
             "progress_hooks": [self.progress_hook],
             "noplaylist": not self.task.playlist,
-            "cookiefile": "youtube_cookies.txt",
+            "cookiefile": self.cookie_file,
             "retries": 10,
             "fragment_retries": 10,
-            "retry_sleep_functions": lambda retries: 5,
             "ignoreerrors": True,
             "proxy": self.task.proxy if self.task.proxy else None,
-            "socket_timeout": 10
+            "socket_timeout": 10,
+            "no_warnings": True,
+            "quiet": False,
+            "updatetime": False
         }
 
         if self.task.audio_only:
             ydl_opts_download["final_ext"] = "mp3"
-            ydl_opts_download["format"] = "ba/b"
+            ydl_opts_download["format"] = "ba[ext=m4a]/ba/b"
             ydl_opts_download["postprocessors"] = [{
                 "key": "FFmpegExtractAudio",
                 "nopostoverwrites": False,
@@ -106,48 +108,46 @@ class DownloadQueueWorker(QRunnable):
                 "preferredquality": "0"
             }]
         else:
-            if self.task.resolution == "144p":
-                format_str = "(bestvideo[height=144]/bestvideo[height<=144]/best[height<=144])+bestaudio/best"
-            elif self.task.resolution == "240p":
-                format_str = "(bestvideo[height=240]/bestvideo[height<=240]/best[height<=240])+bestaudio/best"
-            elif self.task.resolution == "360p":
-                format_str = "(bestvideo[height=360]/bestvideo[height<=360]/best[height<=360])+bestaudio/best"
-            elif self.task.resolution == "480p":
-                format_str = "(bestvideo[height=480]/bestvideo[height<=480]/best[height<=480])+bestaudio/best"
-            elif self.task.resolution == "720p":
-                format_str = "(bestvideo[height=720]/bestvideo[height<=720]/best[height<=720])+bestaudio/best"
-            elif self.task.resolution == "1080p":
-                format_str = "(bestvideo[height=1080]/bestvideo[height<=1080]/best[height<=1080])+bestaudio/best"
-            elif self.task.resolution == "1440p":
-                format_str = "(bestvideo[height=1440]/bestvideo[height<=1440]/best[height<=1440])+bestaudio/best"
-            elif self.task.resolution == "2160p":
-                format_str = "(bestvideo[height=2160]/bestvideo[height<=2160]/best[height<=2160])+bestaudio/best"
-            elif self.task.resolution == "4320p":
-                format_str = "(bestvideo[height=4320]/bestvideo[height<=4320]/best[height<=4320])+bestaudio/best"
-            else:
-                format_str = "bestvideo+bestaudio/best"
+            try:
+                if self.task.resolution == "144p":
+                    format_str = "(bestvideo[height<=144]+bestaudio/best[height<=144]/best)"
+                elif self.task.resolution == "240p":
+                    format_str = "(bestvideo[height<=240]+bestaudio/best[height<=240]/best)"
+                elif self.task.resolution == "360p":
+                    format_str = "(bestvideo[height<=360]+bestaudio/best[height<=360]/best)"
+                elif self.task.resolution == "480p":
+                    format_str = "(bestvideo[height<=480]+bestaudio/best[height<=480]/best)"
+                elif self.task.resolution == "720p":
+                    format_str = "(bestvideo[height<=720]+bestaudio/best[height<=720]/best)"
+                elif self.task.resolution == "1080p":
+                    format_str = "(bestvideo[height<=1080]+bestaudio/best[height<=1080]/best)"
+                elif self.task.resolution == "1440p":
+                    format_str = "(bestvideo[height<=1440]+bestaudio/best[height<=1440]/best)"
+                elif self.task.resolution == "2160p":
+                    format_str = "(bestvideo[height<=2160]+bestaudio/best[height<=2160]/best)"
+                elif self.task.resolution == "4320p":
+                    format_str = "(bestvideo[height<=4320]+bestaudio/best[height<=4320]/best)"
+                else:
+                    format_str = "bestvideo+bestaudio/best"
 
-            if self.task.audio_only:
-                format_str = "bestaudio/best"
+                ydl_opts_download["format"] = format_str
+                ydl_opts_download["format_sort"] = ["res", "ext:mp4:m4a", "size", "br", "asr"]
+                ydl_opts_download["prefer_free_formats"] = False
 
-            ydl_opts_download["format"] = format_str
-            ydl_opts_download["format_sort"] = ["res", "ext:mp4:m4a", "size", "br", "asr"]
-            ydl_opts_download["prefer_free_formats"] = False
-            ydl_opts_download["retries"] = 10
-            ydl_opts_download["fragment_retries"] = 10
-            ydl_opts_download["retry_sleep_functions"] = lambda retries: 5
-            ydl_opts_download["format_selector"] = "best"
-            
-            if self.task.output_format.lower() == "mp4":
-                ydl_opts_download["merge_output_format"] = "mp4"
-            else:
-                ydl_opts_download["merge_output_format"] = self.task.output_format
+                if self.task.output_format.lower() == "mp4":
+                    ydl_opts_download["merge_output_format"] = "mp4"
+                else:
+                    ydl_opts_download["merge_output_format"] = self.task.output_format
 
-            ydl_opts_download["postprocessors"] = [{
-                "key": "FFmpegVideoRemuxer",
-                "preferedformat": self.task.output_format.lower()
-            }]
+                ydl_opts_download["postprocessors"] = [{
+                    "key": "FFmpegVideoRemuxer",
+                    "preferedformat": self.task.output_format.lower()
+                }]
 
+            except Exception as e:
+                self.log_signal.emit(f"Format configuration failed, falling back to basic format: {str(e)}")
+                ydl_opts_download["format"] = "best"
+                
         if self.task.subtitles:
             ydl_opts_download["writesubtitles"] = True
             ydl_opts_download["allsubtitles"] = True
@@ -162,8 +162,15 @@ class DownloadQueueWorker(QRunnable):
                 self.status_signal.emit(self.row, "Download Cancelled")
                 self.log_signal.emit("Download Cancelled")
             else:
-                self.status_signal.emit(self.row, "Download Error")
-                self.log_signal.emit(f"Download Error:\n{str(e)}")
+                self.log_signal.emit(f"Download failed with format {ydl_opts_download['format']}, trying basic format")
+                ydl_opts_download["format"] = "best"
+                try:
+                    with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
+                        ydl.download([self.task.url])
+                    self.status_signal.emit(self.row, "Download Completed (Basic Format)")
+                except Exception as e2:
+                    self.status_signal.emit(self.row, "Download Error")
+                    self.log_signal.emit(f"All download attempts failed:\n{str(e2)}")
         except Exception as e:
             self.status_signal.emit(self.row, "Download Error")
             self.log_signal.emit(f"Unexpected Error:\n{str(e)}")

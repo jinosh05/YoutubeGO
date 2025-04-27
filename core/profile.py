@@ -1,9 +1,14 @@
 import os
 import json
+import shutil
 
 class UserProfile:
     def __init__(self, profile_path="user_profile.json"):
-        self.profile_path = profile_path
+        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+        self.images_dir = os.path.join(self.data_dir, "images")
+        if not os.path.exists(self.images_dir):
+            os.makedirs(self.images_dir)
+        self.profile_path = os.path.join(self.data_dir, profile_path)
         self.data = {"name": "", "profile_picture": "", "default_resolution": "720p", "download_path": os.getcwd(), "history_enabled": True, "theme": "Dark", "proxy": "", "social_media_links": {"instagram": "", "twitter": "", "youtube": ""}}
         self.load_profile()
 
@@ -25,8 +30,28 @@ class UserProfile:
             json.dump(self.data, f, indent=4)
 
     def set_profile(self, name, profile_picture, download_path):
+        if profile_picture:
+            
+            filename = f"profile_{os.path.basename(profile_picture)}"  
+            new_path = os.path.join(self.images_dir, filename)
+            
+            
+            old_pic = self.data["profile_picture"]
+            if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
+                try:
+                    os.remove(old_pic)
+                except:
+                    pass
+            
+            
+            try:
+                shutil.copy2(profile_picture, new_path)
+                self.data["profile_picture"] = new_path
+            except Exception as e:
+                print(f"Profil resmi kopyalanırken hata: {e}")
+                self.data["profile_picture"] = ""
+        
         self.data["name"] = name
-        self.data["profile_picture"] = profile_picture
         self.data["download_path"] = download_path
         self.save_profile()
 
@@ -37,9 +62,10 @@ class UserProfile:
         self.save_profile()
 
     def remove_profile_picture(self):
-        if os.path.exists(self.data["profile_picture"]):
+        old_pic = self.data["profile_picture"]
+        if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
             try:
-                os.remove(self.data["profile_picture"])
+                os.remove(old_pic)
             except:
                 pass
         self.data["profile_picture"] = ""

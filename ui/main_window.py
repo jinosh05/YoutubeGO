@@ -316,7 +316,7 @@ class MainWindow(QMainWindow):
     def create_page_home(self):
         w = QWidget()
         layout = QVBoxLayout(w)
-        lbl = QLabel("Welcome to YoutubeGO 4.4\n\nUsage Instructions:\n- Home: Overview and instructions\n- MP4: Download videos in MP4 format\n- MP3: Download audio in MP3 format\n- History: View your download history\n- Settings: Configure resolution, proxy, download folder, etc.\n- Profile: Update your user details\n- Queue: Manage multiple downloads\n- Scheduler: Schedule planned downloads\n\nVisit youtubego.org for more details, check Github for source code and follow on Instagram for updates.")
+        lbl = QLabel("Welcome to YoutubeGO 4.4\n\nUsage Instructions:\n- Home: Overview and instructions\n- MP4: Download videos in MP4 format\n- MP3: Download audio in MP3 format\n- History: View your download history\n- Settings: Configure resolution, proxy, download folder, etc.\n- Profile: Update your user details\n- Queue: Manage multiple downloads\n- Scheduler: Schedule planned downloads\n\nVisit youtubego.org for more details, check GitHub for source code.")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setOpenExternalLinks(True)
@@ -511,30 +511,13 @@ class MainWindow(QMainWindow):
         def save_profile():
             name = self.profile_name_edit.text().strip()
             if not name:
-                QMessageBox.warning(self, "Error", "Name cannot be empty.")
+                QMessageBox.warning(self, "Error", "Please provide a name.")
                 return
-            pic_path = pic_btn.property("selected_path") if pic_btn.property("selected_path") else ""
-            if pic_path:
-                dest_pic = os.path.join(os.getcwd(), "profile_pic" + os.path.splitext(pic_path)[1])
-                try:
-                    with open(pic_path, "rb") as s, open(dest_pic, "wb") as d:
-                        d.write(s.read())
-                except Exception as e:
-                    QMessageBox.critical(self, "Error", str(e))
-                    return
-                self.user_profile.set_profile(name, dest_pic, self.user_profile.get_download_path())
-                pixmap = QPixmap(dest_pic).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                self.profile_pic_label.setPixmap(pixmap)
-            else:
-                self.user_profile.set_profile(name, self.user_profile.data["profile_picture"], self.user_profile.get_download_path())
-                if self.user_profile.data["profile_picture"]:
-                    pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                    self.profile_pic_label.setPixmap(pixmap)
-                else:
-                    self.profile_pic_label.setPixmap(QPixmap())
+            pic_path = pic_btn.property("selected_path") if pic_btn.property("selected_path") else self.user_profile.data["profile_picture"]
+            self.user_profile.set_profile(name, pic_path, self.user_profile.get_download_path())
             self.user_profile.set_social_media_links(self.insta_edit.text().strip(), self.tw_edit.text().strip(), self.yt_edit.text().strip())
-            self.profile_name_label.setText(name)
-            QMessageBox.information(self, "Saved", "Profile settings saved.")
+            self.update_profile_ui()
+            QMessageBox.information(self, "Success", "Profile settings saved successfully.")
         save_btn.clicked.connect(save_profile)
         layout.addWidget(save_btn)
         layout.addStretch()
@@ -648,16 +631,10 @@ class MainWindow(QMainWindow):
             if not nm:
                 QMessageBox.warning(dialog, "Error", "Please provide a name.")
                 return
-            dest_pic = ""
             if pp:
-                dest_pic = os.path.join(os.getcwd(), "profile_pic" + os.path.splitext(pp)[1])
-                try:
-                    with open(pp, "rb") as src, open(dest_pic, "wb") as dst:
-                        dst.write(src.read())
-                except Exception as e:
-                    QMessageBox.critical(dialog, "Error", str(e))
-                    return
-            self.user_profile.set_profile(nm, dest_pic, self.user_profile.get_download_path())
+                self.user_profile.set_profile(nm, pp, self.user_profile.get_download_path())
+            else:
+                self.user_profile.set_profile(nm, "", self.user_profile.get_download_path())
             dialog.accept()
             self.update_profile_ui()
         def on_cancel():

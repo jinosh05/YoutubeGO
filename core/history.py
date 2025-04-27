@@ -2,7 +2,10 @@ import os
 import json
 from PyQt5.QtWidgets import QTableWidgetItem
 
-HISTORY_FILE = "history.json"
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
+HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 
 def load_history_initial(table):
     if not os.path.exists(HISTORY_FILE):
