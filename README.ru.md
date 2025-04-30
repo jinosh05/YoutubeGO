@@ -16,7 +16,7 @@
 
 ### 🌐 Ссылки
 [![Сайт](https://img.shields.io/badge/Посетить-Сайт-blue)](https://youtubego.org)
-[![Discord](https://img.shields.io/badge/Присоединиться-Discord-7289DA)](https://discord.gg/youtubego)
+[![Discord](https://img.shields.io/badge/Присоединиться-Discord-7289DA)](https://discord.gg/XdK97UH3fE)
 
 ## 🌐 Языки
 
