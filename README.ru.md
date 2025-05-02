@@ -1,8 +1,13 @@
 # 🎶 YoutubeGO 4.4 🎥
 
 ### 🛠️ Технологии
+
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
-[![Languages](https://img.shields.io/github/languages/top/Efeckc17/YoutubeGO)](https://github.com/Efeckc17/YoutubeGO)
+[![PyQt5](https://img.shields.io/badge/UI-PyQt5-brightgreen)](https://pypi.org/project/PyQt5/)
+[![yt-dlp](https://img.shields.io/badge/Downloader-yt--dlp-yellow)](https://github.com/yt-dlp/yt-dlp)
+[![requests](https://img.shields.io/badge/HTTP-requests-orange)](https://pypi.org/project/requests/)
+[![FFmpeg](https://img.shields.io/badge/External-FFmpeg-red)](https://ffmpeg.org/)
+
 
 ### 📊 Статистика проекта
 [![Code size](https://img.shields.io/github/languages/code-size/Efeckc17/YoutubeGO)](https://github.com/Efeckc17/YoutubeGO)
