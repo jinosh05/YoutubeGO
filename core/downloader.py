@@ -2,6 +2,7 @@ import os
 import yt_dlp
 from PyQt5.QtCore import QRunnable
 from core.utils import format_speed, format_time, get_data_dir
+import json
 
 class DownloadTask:
     def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False):
@@ -185,3 +186,22 @@ class DownloadQueueWorker(QRunnable):
             eta = d.get("eta", 0) or 0
             self.progress_signal.emit(self.row, percent)
             self.log_signal.emit(f"Downloading... {int(percent)}% | Speed: {format_speed(speed)} | ETA: {format_time(eta)}")
+
+# NOTE: This function exports a template downloader_settings.json file for reference only.
+# It does not reflect the user's actual settings. All real user settings are stored in user_profile.json.
+def export_downloader_settings(file_path):
+    """Export downloader settings to a JSON file"""
+    try:
+        settings = {
+            "default_resolution": "720p",  # Default value, will be updated by main window
+            "default_output_format": "mp4",
+            "default_audio_only": False,
+            "default_playlist": False,
+            "default_subtitles": False,
+            "default_proxy": None
+        }
+        with open(file_path, "w") as f:
+            json.dump(settings, f, indent=4)
+        return True
+    except Exception as e:
+        return False

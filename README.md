@@ -51,6 +51,9 @@
 - **Profile Management**  
   Save your name, profile picture, download paths, and social media links. Profiles can be updated directly in the app.
 
+- **Profile Import/Export**  
+  Easily export your profile, settings, history, and profile picture as a single ZIP file, and import them back into the app on any device. Great for backup, migration, or restoring your preferences.
+
 - **Drag & Drop Interface**  
   Add download URLs by dragging them into the app.
 

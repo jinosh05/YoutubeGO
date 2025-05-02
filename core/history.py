@@ -73,3 +73,14 @@ def search_history(table, txt):
                 hide = False
                 break
         table.setRowHidden(r, hide)
+
+def export_history(file_path):
+    """Export history data to a JSON file"""
+    try:
+        with open(HISTORY_FILE, "r") as f:
+            history = json.load(f)
+        with open(file_path, "w") as f:
+            json.dump(history, f, indent=4)
+        return True
+    except Exception as e:
+        return False

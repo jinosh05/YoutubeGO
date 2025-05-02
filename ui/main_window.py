@@ -6,6 +6,7 @@ from core.profile import UserProfile
 from core.utils import apply_theme, set_circular_pixmap, format_speed, format_time
 from core.downloader import DownloadTask, DownloadQueueWorker
 from core.history import load_history_initial, save_history, add_history_entry, delete_selected_history, delete_all_history, search_history
+from core.utils import get_data_dir
 
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -135,9 +136,15 @@ class MainWindow(QMainWindow):
         reset_profile_action.triggered.connect(self.reset_profile)
         restart_action = QAction("Restart Application", self)
         restart_action.triggered.connect(self.restart_application)
+        export_profile_action = QAction("Export Profile", self)
+        export_profile_action.triggered.connect(self.export_profile)
+        import_profile_action = QAction("Import Profile", self)
+        import_profile_action.triggered.connect(self.import_profile)
         file_menu.addAction(exit_action)
         file_menu.addAction(reset_profile_action)
         file_menu.addAction(restart_action)
+        file_menu.addAction(export_profile_action)
+        file_menu.addAction(import_profile_action)
         help_menu = menu_bar.addMenu("Help")
         insta_action = QAction("Instagram: toxi.dev", self)
         insta_action.triggered.connect(lambda: QMessageBox.information(self, "Instagram", "Follow on Instagram: toxi.dev"))
@@ -1254,6 +1261,108 @@ class MainWindow(QMainWindow):
             "Scheduler": "⏰"
         }
         return icons.get(name, "")
+
+    def export_profile(self):
+        """Export user profile, history, and settings to a zip file"""
+        try:
+            
+            temp_dir = os.path.join(get_data_dir(), "temp_export")
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
+            os.makedirs(temp_dir)
+
+            
+            profile_file = os.path.join(temp_dir, "user_profile.json")
+            with open(profile_file, "w") as f:
+                json.dump(self.user_profile.data, f, indent=4)
+
+            
+            history_file = os.path.join(temp_dir, "history.json")
+            from core.history import export_history
+            export_history(history_file)
+
+            
+            settings_file = os.path.join(temp_dir, "downloader_settings.json")
+            from core.downloader import export_downloader_settings
+            export_downloader_settings(settings_file)
+
+            
+            if self.user_profile.data["profile_picture"] and os.path.exists(self.user_profile.data["profile_picture"]):
+                shutil.copy2(self.user_profile.data["profile_picture"], os.path.join(temp_dir, "profile_picture.png"))
+
+            # Create zip file
+            file_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "Export Profile",
+                os.path.join(os.path.expanduser("~"), "youtubego_profile.zip"),
+                "Zip Files (*.zip)"
+            )
+
+            if file_path:
+                shutil.make_archive(file_path.replace(".zip", ""), 'zip', temp_dir)
+                QMessageBox.information(self, "Success", "Profile exported successfully!")
+            else:
+                QMessageBox.warning(self, "Cancelled", "Profile export cancelled.")
+
+            
+            shutil.rmtree(temp_dir)
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to export profile: {str(e)}")
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
+
+    def import_profile(self):
+        """Import user profile, history, and settings from a zip file"""
+        import zipfile
+        try:
+            file_path, _ = QFileDialog.getOpenFileName(
+                self,
+                "Import Profile",
+                os.path.expanduser("~"),
+                "Zip Files (*.zip)"
+            )
+            if not file_path:
+                return
+            temp_dir = os.path.join(get_data_dir(), "temp_import")
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
+            os.makedirs(temp_dir)
+            with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                zip_ref.extractall(temp_dir)
+            
+            profile_file = os.path.join(temp_dir, "user_profile.json")
+            if os.path.exists(profile_file):
+                with open(profile_file, "r") as f:
+                    profile_data = json.load(f)
+                self.user_profile.data = profile_data
+                self.user_profile.save_profile()
+            
+            history_file = os.path.join(temp_dir, "history.json")
+            if os.path.exists(history_file):
+                data_dir = get_data_dir()
+                shutil.copy2(history_file, os.path.join(data_dir, "history.json"))
+            
+            settings_file = os.path.join(temp_dir, "downloader_settings.json")
+            if os.path.exists(settings_file):
+                shutil.copy2(settings_file, os.path.join(get_data_dir(), "downloader_settings.json"))
+            
+            pic_file = os.path.join(temp_dir, "profile_picture.png")
+            if os.path.exists(pic_file):
+                dest_pic = os.path.join(get_data_dir(), "profile_picture.png")
+                shutil.copy2(pic_file, dest_pic)
+                self.user_profile.data["profile_picture"] = dest_pic
+                self.user_profile.save_profile()
+            
+            shutil.rmtree(temp_dir)
+            
+            self.update_profile_ui()
+            self.load_history_initial()
+            QMessageBox.information(self, "Success", "Profile imported successfully! Please restart the app for all changes to take effect.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to import profile: {str(e)}")
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
