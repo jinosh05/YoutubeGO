@@ -49,7 +49,7 @@ class UserProfile:
                 shutil.copy2(profile_picture, new_path)
                 self.data["profile_picture"] = new_path
             except Exception as e:
-                print(f"Profil resmi kopyalanırken hata: {e}")
+                print(f"Error copying profile picture: {e}")
                 self.data["profile_picture"] = ""
         
         self.data["name"] = name
