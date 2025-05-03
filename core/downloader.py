@@ -2,7 +2,6 @@ import os
 import yt_dlp
 from PyQt5.QtCore import QRunnable
 from core.utils import format_speed, format_time, get_data_dir
-import json
 
 class DownloadTask:
     def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False):
@@ -38,7 +37,7 @@ class DownloadQueueWorker(QRunnable):
                 with open(self.cookie_file, "w") as cf:
                     cf.write("# Netscape HTTP Cookie File\nyoutube.com\tFALSE\t/\tFALSE\t0\tCONSENT\tYES+42\n")
             except Exception as e:
-                self.log_signal.emit(f"Cookie file oluşturulamadı: {str(e)}")
+                self.log_signal.emit(f"Failed to create cookie file: {str(e)}")
         
         ydl_opts_info = {
             "quiet": True,
@@ -55,8 +54,8 @@ class DownloadQueueWorker(QRunnable):
             with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
                 info = ydl.extract_info(self.task.url, download=False)
                 if info is None:
-                    self.status_signal.emit(self.row, "Video Unavailable")
-                    self.log_signal.emit(f"Failed to extract info from: {self.task.url}\nThe video may be private, deleted, or age-restricted.")
+                    self.status_signal.emit(self.row, "Content Unavailable")
+                    self.log_signal.emit(f"Failed to extract info from: {self.task.url}\nPossible reasons:\n- Content might be private or deleted\n- Age restrictions may apply\n- Service restrictions (e.g., DRM protection)\n- Invalid or expired link\n- Platform limitations or regional restrictions")
                     return
 
                 
@@ -186,22 +185,3 @@ class DownloadQueueWorker(QRunnable):
             eta = d.get("eta", 0) or 0
             self.progress_signal.emit(self.row, percent)
             self.log_signal.emit(f"Downloading... {int(percent)}% | Speed: {format_speed(speed)} | ETA: {format_time(eta)}")
-
-# NOTE: This function exports a template downloader_settings.json file for reference only.
-# It does not reflect the user's actual settings. All real user settings are stored in user_profile.json.
-def export_downloader_settings(file_path):
-    """Export downloader settings to a JSON file"""
-    try:
-        settings = {
-            "default_resolution": "720p",  # Default value, will be updated by main window
-            "default_output_format": "mp4",
-            "default_audio_only": False,
-            "default_playlist": False,
-            "default_subtitles": False,
-            "default_proxy": None
-        }
-        with open(file_path, "w") as f:
-            json.dump(settings, f, indent=4)
-        return True
-    except Exception as e:
-        return False

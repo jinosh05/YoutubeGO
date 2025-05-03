@@ -101,8 +101,8 @@ class MainWindow(QMainWindow):
         self.tray_icon = QSystemTrayIcon(icon, self)
         tray_menu = QMenu()
         restore_action = QAction("Restore", self)
-        quit_action = QAction("Quit", self)
         restore_action.triggered.connect(self.showNormal)
+        quit_action = QAction("Quit", self)
         quit_action.triggered.connect(self.quit_app)
         tray_menu.addAction(restore_action)
         tray_menu.addAction(quit_action)
@@ -112,10 +112,16 @@ class MainWindow(QMainWindow):
         if not self.ffmpeg_found:
             self.tray_icon.showMessage("FFmpeg missing", "Please download it from the official website.", QSystemTrayIcon.Critical, 3000)
     def closeEvent(self, event):
-        self.hide()
-        self.tray_icon.showMessage("YoutubeGO 4.4", "Application is running in the tray", QSystemTrayIcon.Information, 2000)
-        event.ignore()
+        """Handle application close event"""
+        if event.spontaneous():  
+            self.hide()
+            self.tray_icon.showMessage("YoutubeGO 4.4", "Application is running in the tray", QSystemTrayIcon.Information, 2000)
+            event.ignore()
+        else: 
+            self.quit_app()
+            event.accept()
     def quit_app(self):
+        """Completely quit the application"""
         self.tray_icon.hide()
         QApplication.quit()
     def check_ffmpeg(self):
@@ -134,24 +140,21 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.close)
         reset_profile_action = QAction("Reset Profile", self)
         reset_profile_action.triggered.connect(self.reset_profile)
-        restart_action = QAction("Restart Application", self)
-        restart_action.triggered.connect(self.restart_application)
         export_profile_action = QAction("Export Profile", self)
         export_profile_action.triggered.connect(self.export_profile)
         import_profile_action = QAction("Import Profile", self)
         import_profile_action.triggered.connect(self.import_profile)
         file_menu.addAction(exit_action)
         file_menu.addAction(reset_profile_action)
-        file_menu.addAction(restart_action)
         file_menu.addAction(export_profile_action)
         file_menu.addAction(import_profile_action)
         help_menu = menu_bar.addMenu("Help")
-        insta_action = QAction("Instagram: toxi.dev", self)
-        insta_action.triggered.connect(lambda: QMessageBox.information(self, "Instagram", "Follow on Instagram: toxi.dev"))
-        help_menu.addAction(insta_action)
-        mail_action = QAction("Github: https://github.com/Efeckc17", self)
-        mail_action.triggered.connect(lambda: QMessageBox.information(self, "GitHub", "https://github.com/Efeckc17"))
+        mail_action = QAction("Contact: toxi360@workmail.com", self)
+        mail_action.triggered.connect(lambda: QMessageBox.information(self, "Contact", "For support: toxi360@workmail.com"))
         help_menu.addAction(mail_action)
+        github_action = QAction("Github: https://github.com/Efeckc17", self)
+        github_action.triggered.connect(lambda: QMessageBox.information(self, "GitHub", "https://github.com/Efeckc17"))
+        help_menu.addAction(github_action)
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
         self.progress_bar = QProgressBar()
@@ -849,12 +852,6 @@ class MainWindow(QMainWindow):
             os.remove(self.user_profile.profile_path)
         QMessageBox.information(self, "Reset Profile", "Profile data removed. Please restart.")
         self.append_log("Profile has been reset.")
-    def restart_application(self):
-        self.append_log("Restarting application...")
-        QMessageBox.information(self, "Restart", "The application will now restart.")
-        self.close()
-        python_exe = sys.executable
-        os.execl(python_exe, python_exe, *sys.argv)
     def update_profile_ui(self):
         if self.user_profile.data["profile_picture"]:
             pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -1265,7 +1262,6 @@ class MainWindow(QMainWindow):
     def export_profile(self):
         """Export user profile, history, and settings to a zip file"""
         try:
-            
             temp_dir = os.path.join(get_data_dir(), "temp_export")
             if os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir)
@@ -1282,15 +1278,10 @@ class MainWindow(QMainWindow):
             export_history(history_file)
 
             
-            settings_file = os.path.join(temp_dir, "downloader_settings.json")
-            from core.downloader import export_downloader_settings
-            export_downloader_settings(settings_file)
-
-            
             if self.user_profile.data["profile_picture"] and os.path.exists(self.user_profile.data["profile_picture"]):
                 shutil.copy2(self.user_profile.data["profile_picture"], os.path.join(temp_dir, "profile_picture.png"))
 
-            # Create zip file
+            
             file_path, _ = QFileDialog.getSaveFileName(
                 self,
                 "Export Profile",
@@ -1304,7 +1295,6 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.warning(self, "Cancelled", "Profile export cancelled.")
 
-            
             shutil.rmtree(temp_dir)
 
         except Exception as e:
@@ -1331,21 +1321,24 @@ class MainWindow(QMainWindow):
             with zipfile.ZipFile(file_path, 'r') as zip_ref:
                 zip_ref.extractall(temp_dir)
             
+            
             profile_file = os.path.join(temp_dir, "user_profile.json")
             if os.path.exists(profile_file):
                 with open(profile_file, "r") as f:
                     profile_data = json.load(f)
                 self.user_profile.data = profile_data
                 self.user_profile.save_profile()
+                
+                
+                self.res_combo.setCurrentText(self.user_profile.get_default_resolution())
+                self.proxy_edit.setText(self.user_profile.get_proxy())
+            
             
             history_file = os.path.join(temp_dir, "history.json")
             if os.path.exists(history_file):
                 data_dir = get_data_dir()
                 shutil.copy2(history_file, os.path.join(data_dir, "history.json"))
             
-            settings_file = os.path.join(temp_dir, "downloader_settings.json")
-            if os.path.exists(settings_file):
-                shutil.copy2(settings_file, os.path.join(get_data_dir(), "downloader_settings.json"))
             
             pic_file = os.path.join(temp_dir, "profile_picture.png")
             if os.path.exists(pic_file):
@@ -1356,8 +1349,11 @@ class MainWindow(QMainWindow):
             
             shutil.rmtree(temp_dir)
             
+            
             self.update_profile_ui()
             self.load_history_initial()
+            self.apply_current_theme()
+            
             QMessageBox.information(self, "Success", "Profile imported successfully! Please restart the app for all changes to take effect.")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to import profile: {str(e)}")
