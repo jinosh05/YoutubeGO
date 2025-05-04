@@ -418,10 +418,35 @@ class MainWindow(QMainWindow):
     def create_page_settings(self):
         w = QWidget()
         layout = QVBoxLayout(w)
+        
+        header_container = QWidget()
+        header_layout = QHBoxLayout(header_container)
+        header_layout.setContentsMargins(0, 0, 0, 20)  # Add some bottom margin
+        
         lbl = QLabel("Settings")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
-        layout.addWidget(lbl)
+        
+        version_label = QLabel("v4.4.10")
+        version_label.setStyleSheet("""
+            QLabel {
+                color: #ff4444;
+                padding: 4px 12px;
+                border-radius: 10px;
+                background: rgba(255, 68, 68, 0.1);
+                font-size: 11pt;
+                font-weight: bold;
+            }
+        """)
+        
+        # Add a stretch before the title to push it to center
+        header_layout.addStretch()
+        header_layout.addWidget(lbl, alignment=Qt.AlignCenter)
+        header_layout.addStretch()
+        header_layout.addWidget(version_label, alignment=Qt.AlignVCenter)
+        
+        layout.addWidget(header_container)
+
         g_con = QGroupBox("Max Concurrent Downloads")
         g_layout = QHBoxLayout(g_con)
         self.concurrent_combo = QComboBox()
@@ -821,19 +846,67 @@ class MainWindow(QMainWindow):
         else:
             subprocess.run(["xdg-open", folder])
     def append_log(self, text):
-        c = "white"
-        if any(k in text.lower() for k in ["error","fail"]):
-            c = "red"
-        elif any(k in text.lower() for k in ["warning","warn"]):
-            c = "yellow"
-        elif any(k in text.lower() for k in ["completed","started","queued","fetching","downloading"]):
-            c = "green"
-        elif "cancel" in text.lower():
-            c = "orange"
-        self.log_text_edit.setTextColor(QColor(c))
+        def get_timestamp():
+            from datetime import datetime
+            return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        def format_error_text(msg):
+            timestamp = get_timestamp()
+            return f"[{timestamp}] ❌ {msg}"
+
+        color = "white"
+        
+        if text.startswith("[yt-dlp"):
+            if "[yt-dlp Debug]" in text:
+                color = "#4D96FF"
+            elif "[yt-dlp Info]" in text:
+                if any(s in text.lower() for s in ["download completed", "has already been downloaded", "finished downloading", "merged", "success"]):
+                    color = "#6BCB77"
+                else:
+                    color = "#4D96FF"
+            elif "[yt-dlp Warning]" in text:
+                color = "#FFD93D"
+                text = f"⚠️ {text}"
+            elif "[yt-dlp Error]" in text:
+                color = "#FF4444"
+                text = format_error_text(text)
+        else:
+            if any(k in text.lower() for k in ["error", "fail", "http status code"]):
+                color = "#FF4444"
+                text = format_error_text(text)
+            elif any(k in text.lower() for k in ["warning", "warn"]):
+                color = "#FFD93D"
+                text = f"⚠️ {text}"
+            elif any(k in text.lower() for k in ["completed", "success", "finished"]):
+                color = "#6BCB77"
+                text = f"✅ {text}"
+            elif any(k in text.lower() for k in ["started", "queued", "fetching", "downloading"]):
+                color = "#4D96FF"
+                text = f"ℹ️ {text}"
+            elif "cancel" in text.lower():
+                color = "#FF9F45"
+                text = f"🚫 {text}"
+
+        if "error details:" in text.lower():
+            lines = text.split("\n")
+            formatted_lines = []
+            for line in lines:
+                if ":" in line and not line.lower().startswith(("error type", "error details", "http status")):
+                    formatted_lines.append("    " + line)
+                else:
+                    formatted_lines.append(line)
+            text = "\n".join(formatted_lines)
+
+        self.log_text_edit.setTextColor(QColor(color))
         self.log_text_edit.append(text)
         self.log_text_edit.setTextColor(QColor("white"))
-        if "playlist indexing in progress" in text.lower():
+
+        scrollbar = self.log_text_edit.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+
+        if "[yt-dlp Error]" in text or ("error" in text.lower() and not text.startswith("[yt-dlp")):
+            self.tray_icon.showMessage("YoutubeGO 4.4 - Error", text.split("\n")[0], QSystemTrayIcon.Critical, 5000)
+        elif "playlist indexing in progress" in text.lower():
             self.tray_icon.showMessage("YoutubeGO 4.4", "Playlist indexing in progress. Please wait...", QSystemTrayIcon.Information, 5000)
     def toggle_history_logging(self, state):
         en = (state == Qt.Checked)
