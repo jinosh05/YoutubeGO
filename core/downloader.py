@@ -142,7 +142,7 @@ class DownloadQueueWorker(QRunnable):
             if self.task.audio_only:
                 download_options.update({
                     "final_ext": "mp3",
-                    "format": "ba[ext=m4a]/ba/b",
+                    "format": "ba[acodec^=mp3]/ba/b",
                     "postprocessors": [{
                         "key": "FFmpegExtractAudio",
                         "nopostoverwrites": False,
