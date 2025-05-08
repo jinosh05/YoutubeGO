@@ -1,0 +1,204 @@
+QWidget {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 10pt;
+    color: white;
+    background-color: #1e1e1e;
+}
+
+QPushButton {
+    background-color: #ff4444;
+    color: white;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 11pt;
+}
+
+QPushButton:hover {
+    background-color: #ff6666;
+}
+
+QPushButton:pressed {
+    background-color: #cc3333;
+}
+
+QLineEdit, QComboBox {
+    padding: 8px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    background-color: #333;
+    color: white;
+}
+
+QComboBox::drop-down {
+    border: none;
+    background-color: #333;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border: none;
+}
+
+QLabel {
+    color: white;
+    font-size: 11pt;
+}
+
+QGroupBox {
+    color: white;
+    border: 1px solid #666;
+    margin-top: 1.5em;
+    padding-top: 0.7em;
+    font-size: 11pt;
+}
+
+QGroupBox::title {
+    color: white;
+    background-color: #1e1e1e;
+    padding: 0 5px;
+}
+
+QTableWidget {
+    color: white;
+    gridline-color: #666;
+    background-color: #333;
+    border: 1px solid #666;
+}
+
+QTableWidget::item {
+    color: white;
+}
+
+QHeaderView::section {
+    background-color: #444;
+    color: white;
+    padding: 5px;
+    border: 1px solid #666;
+}
+
+QListWidget {
+    color: white;
+    background-color: #1e1e1e;
+    border: none;
+    border-radius: 15px 0 0 15px;
+    padding: 15px 10px;
+}
+
+QListWidget::item {
+    color: white;
+    background-color: transparent;
+    padding: 15px;
+    margin: 4px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QListWidget::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+    color: white;
+}
+
+QListWidget::item:hover:!selected {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+QTextEdit {
+    color: white;
+    background-color: #333;
+    border: 1px solid #666;
+}
+
+QCheckBox {
+    color: white;
+    font-size: 11pt;
+}
+
+QRadioButton {
+    color: white;
+    font-size: 11pt;
+}
+
+QMenuBar {
+    background-color: #333;
+    color: white;
+}
+
+QMenuBar::item {
+    background-color: #333;
+    color: white;
+}
+
+QMenuBar::item:selected {
+    background-color: #444;
+}
+
+QMenu {
+    background-color: #333;
+    color: white;
+}
+
+QMenu::item:selected {
+    background-color: #444;
+}
+
+QFormLayout > QLabel {
+    color: white;
+    font-size: 11pt;
+    font-weight: bold;
+    background: none;
+}
+
+QStatusBar {
+    color: white;
+    background-color: #333;
+}
+
+QProgressBar {
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    height: 20px;
+    margin: 0px 10px;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+    border-radius: 10px;
+}
+
+QStatusBar {
+    background-color: #1e1e1e;
+    color: white;
+    padding: 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+QStatusBar QLabel {
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+QStatusBar QPushButton {
+    padding: 5px 15px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+}
+
+QStatusBar QPushButton:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+QFrame#separator {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(255, 255, 255, 0.1),
+        stop:0.5 rgba(255, 255, 255, 0.2),
+        stop:1 rgba(255, 255, 255, 0.1));
+    width: 1px;
+} 
