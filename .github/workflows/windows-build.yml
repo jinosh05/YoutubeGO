@@ -25,10 +25,11 @@ jobs:
 
       - name: Build YoutubeGo EXE
         run: |
-          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo --icon=assets/app.ico ^
-            --add-data "assets;assets" ^
-            --add-data "ui/themes;ui/themes" ^
-            main.py
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo `
+            --icon=assets/app.ico `
+            --add-data "assets;assets" `
+            --add-data "ui/themes;ui/themes" `
+            --add-data "assets/app.png;assets" main.py
 
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
