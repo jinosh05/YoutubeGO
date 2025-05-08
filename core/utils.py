@@ -4,24 +4,30 @@ import os
 import sys
 from pathlib import Path
 
-def apply_theme(app, theme):
-
-    pass
 
 def set_circular_pixmap(label, image_path):
-    if image_path:
-        pixmap = QPixmap(image_path).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        mask = QPixmap(50, 50)
-        mask.fill(Qt.transparent)
-        painter = QPainter(mask)
-        painter.setRenderHint(QPainter.Antialiasing)
-        painter.setBrush(QBrush(Qt.white))
-        painter.drawEllipse(0, 0, 50, 50)
-        painter.end()
-        pixmap.setMask(mask.createMaskFromColor(Qt.transparent))
-        label.setPixmap(pixmap)
-    else:
+    if not image_path:
         label.setPixmap(QPixmap())
+        return
+
+    pixmap = QPixmap(image_path)
+    if pixmap.isNull():
+        label.setPixmap(QPixmap())
+        return
+
+    scaled_pixmap = pixmap.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    mask = QPixmap(scaled_pixmap.size())
+    mask.fill(Qt.transparent)
+    
+    painter = QPainter(mask)
+    painter.setRenderHint(QPainter.Antialiasing)
+    painter.setBrush(QBrush(Qt.white))
+    painter.setPen(Qt.NoPen)
+    painter.drawEllipse(0, 0, scaled_pixmap.width(), scaled_pixmap.height())
+    painter.end()
+    
+    scaled_pixmap.setMask(mask.createMaskFromColor(Qt.transparent))
+    label.setPixmap(scaled_pixmap)
 
 def format_speed(speed):
     if speed > 1000000:

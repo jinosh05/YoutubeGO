@@ -65,6 +65,7 @@ def delete_all_history(table, confirm, log_callback):
         save_history(table)
 
 def search_history(table, txt):
+    txt = txt.lower()
     for r in range(table.rowCount()):
         hide = True
         for c in range(table.columnCount()):

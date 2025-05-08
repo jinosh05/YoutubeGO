@@ -1,4 +1,5 @@
 __pycache__/
+.pytest_cache/
 data/
 *.pyc
 *.pyo
@@ -10,3 +11,4 @@ data/
 user_profile.json
 youtube_cookies.txt
 history.json
+.coverage

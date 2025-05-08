@@ -32,6 +32,9 @@ class UserProfile:
 
     def set_profile(self, name, profile_picture, download_path):
         if profile_picture:
+           
+            if not os.path.exists(self.images_dir):
+                os.makedirs(self.images_dir)
             
             filename = f"profile_{os.path.basename(profile_picture)}"  
             new_path = os.path.join(self.images_dir, filename)
