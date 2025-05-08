@@ -32,7 +32,11 @@ jobs:
 
       - name: Build AppImage
         run: |
-          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo main.py
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo \
+            --add-data "assets:assets" \
+            --add-data "ui/themes:ui/themes" \
+            main.py
+
           rm -rf AppDir
           mkdir -p AppDir/usr/bin
           cp dist/YoutubeGo AppDir/usr/bin/
@@ -40,6 +44,7 @@ jobs:
           echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nIcon=app\nType=Application\nCategories=AudioVideo;Video;Utility;" > AppDir/YoutubeGo.desktop
           ln -s usr/bin/YoutubeGo AppDir/AppRun
           chmod +x AppDir/AppRun
+
           ./appimagetool-x86_64.AppImage AppDir
 
       - name: Upload to GitHub Releases

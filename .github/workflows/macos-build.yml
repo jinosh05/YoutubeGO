@@ -25,7 +25,10 @@ jobs:
 
       - name: Build macOS App and ZIP
         run: |
-          pyinstaller --noconfirm --windowed --name YoutubeGo main.py
+          pyinstaller --noconfirm --windowed --name YoutubeGo \
+            --add-data "assets:assets" \
+            --add-data "ui/themes:ui/themes" \
+            main.py
           mkdir -p output
           cp -r dist/YoutubeGo.app output/
           cd output
