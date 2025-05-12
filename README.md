@@ -14,6 +14,8 @@
 [![Last commit](https://img.shields.io/github/last-commit/Efeckc17/YoutubeGO)](https://github.com/Efeckc17/YoutubeGO/commits)
 [![Stars](https://img.shields.io/github/stars/Efeckc17/YoutubeGO?style=social)](https://github.com/Efeckc17/YoutubeGO/stargazers)
 [![Forks](https://img.shields.io/github/forks/Efeckc17/YoutubeGO?style=social)](https://github.com/Efeckc17/YoutubeGO/network/members)
+[![GitHub release (latest by tag)](https://img.shields.io/github/v/tag/Efeckc17/YoutubeGO?label=latest)](https://github.com/Efeckc17/YoutubeGO/releases)
+
 
 ### 📜 Legal 
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
