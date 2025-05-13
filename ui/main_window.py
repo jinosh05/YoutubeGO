@@ -30,16 +30,15 @@ class MainWindow(QMainWindow):
     status_signal = pyqtSignal(int, str)
     log_signal = pyqtSignal(str)
     info_signal = pyqtSignal(int, str, str)
-    def __init__(self):
+    def __init__(self, ffmpeg_found=None, ffmpeg_path=None):
         super().__init__()
         self.setWindowTitle("YoutubeGO 4.4")
         self.setGeometry(100, 100, 1280, 800)
-        self.ffmpeg_found = False
-        self.ffmpeg_path = ""
+        self.ffmpeg_found = ffmpeg_found if ffmpeg_found is not None else False
+        self.ffmpeg_path = ffmpeg_path if ffmpeg_path is not None else ""
         self.ffmpeg_label = QLabel()
         self.log_dock_visible = True
         self.show_logs_btn = AnimatedButton("Logs")
-        self.check_ffmpeg()
         self.user_profile = UserProfile()
         self.thread_pool = QThreadPool()
         self.active_workers = []
@@ -97,14 +96,6 @@ class MainWindow(QMainWindow):
         
         self.tray_icon.hide()
         QApplication.quit()
-    def check_ffmpeg(self):
-        path = shutil.which("ffmpeg")
-        if path:
-            self.ffmpeg_found = True
-            self.ffmpeg_path = path
-        else:
-            self.ffmpeg_found = False
-            self.ffmpeg_path = ""
     def init_ui(self):
         
         menu_bar = self.menuBar()

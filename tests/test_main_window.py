@@ -5,8 +5,7 @@ from ui.main_window import MainWindow
 
 @pytest.fixture
 def main_window(qapp, temp_data_dir, mock_ffmpeg):
-   
-    window = MainWindow()
+    window = MainWindow(ffmpeg_found=True, ffmpeg_path="dummy")
     yield window
     window.close()
 
@@ -81,24 +80,6 @@ def test_search_functionality(main_window, qtbot):
     qtbot.wait(100)
     
     assert not main_window.search_result_list.isVisible()
-
-def test_ffmpeg_check(main_window, monkeypatch):
-   
-    def mock_which_none(*args, **kwargs):
-        return None
-    
-    
-    monkeypatch.setattr('shutil.which', mock_which_none)
-    main_window.check_ffmpeg()
-    assert main_window.ffmpeg_found == False
-    
-   
-    def mock_which_path(*args, **kwargs):
-        return "/usr/bin/ffmpeg"
-    
-    monkeypatch.setattr('shutil.which', mock_which_path)
-    main_window.check_ffmpeg()
-    assert main_window.ffmpeg_found == True
 
 def test_concurrent_downloads_setting(main_window):
     

@@ -12,7 +12,7 @@ class HomePage(QWidget):
         layout = QVBoxLayout(self)
         
         
-        welcome_text = """Welcome to YoutubeGO 4.4.12
+        welcome_text = """Welcome to YoutubeGO 4.4.13
 
 Usage Instructions:
 - Home: Overview and instructions
