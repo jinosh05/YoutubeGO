@@ -23,11 +23,18 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: Download FFmpeg
+        run: |
+          curl -L https://evermeet.cx/ffmpeg/ffmpeg-6.1.zip -o ffmpeg.zip
+          unzip ffmpeg.zip
+          chmod +x ffmpeg
+
       - name: Build macOS App and ZIP
         run: |
           pyinstaller --noconfirm --windowed --name YoutubeGo \
             --add-data "assets:assets" \
             --add-data "ui/themes:ui/themes" \
+            --add-data "ffmpeg:." \
             main.py
           mkdir -p output
           cp -r dist/YoutubeGo.app output/

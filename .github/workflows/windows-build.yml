@@ -23,13 +23,22 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: Download FFmpeg
+        run: |
+          $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+          $outputPath = "ffmpeg.zip"
+          Invoke-WebRequest -Uri $ffmpegUrl -OutFile $outputPath
+          Expand-Archive -Path $outputPath -DestinationPath "ffmpeg"
+          Move-Item -Path "ffmpeg/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe" -Destination "ffmpeg.exe"
+
       - name: Build YoutubeGo EXE
         run: |
           pyinstaller --noconfirm --onefile --windowed --name YoutubeGo `
             --icon=assets/app.ico `
             --add-data "assets;assets" `
             --add-data "ui/themes;ui/themes" `
-            --add-data "assets/app.png;assets" main.py
+            --add-data "assets/app.png;assets" `
+            --add-data "ffmpeg.exe;." main.py
 
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1

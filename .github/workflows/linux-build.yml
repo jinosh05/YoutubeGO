@@ -25,6 +25,13 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: Download FFmpeg
+        run: |
+          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
+          tar xf ffmpeg-master-latest-linux64-gpl.tar.xz
+          mv ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg
+          chmod +x ffmpeg
+
       - name: Download appimagetool
         run: |
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
@@ -35,6 +42,7 @@ jobs:
           pyinstaller --noconfirm --onefile --windowed --name YoutubeGo \
             --add-data "assets:assets" \
             --add-data "ui/themes:ui/themes" \
+            --add-data "ffmpeg:." \
             main.py
 
           rm -rf AppDir
@@ -42,14 +50,14 @@ jobs:
           cp dist/YoutubeGo AppDir/usr/bin/
           cp assets/app.png AppDir/
           echo -e "[Desktop Entry]\nName=YoutubeGo\nExec=YoutubeGo\nIcon=app\nType=Application\nCategories=AudioVideo;Video;Utility;" > AppDir/YoutubeGo.desktop
-          ln -s usr/bin/YoutubeGo AppDir/AppRun
+          ln -sf usr/bin/YoutubeGo AppDir/AppRun
           chmod +x AppDir/AppRun
 
-          ./appimagetool-x86_64.AppImage AppDir
+          ./appimagetool-x86_64.AppImage --appimage-extract-and-run AppDir
 
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: YoutubeGo*.AppImage
+          files: '*.AppImage'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
