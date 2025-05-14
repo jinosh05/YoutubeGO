@@ -50,7 +50,7 @@ class SchedulerPage(QWidget):
     def setup_timer(self):
         self.scheduler_timer = QTimer()
         self.scheduler_timer.timeout.connect(self.check_scheduled_downloads)
-        self.scheduler_timer.start(10000)  # Her 10 saniyede bir kontrol et
+        self.scheduler_timer.start(10000) 
 
     def add_scheduled_dialog(self):
         d = QDialog(self)
