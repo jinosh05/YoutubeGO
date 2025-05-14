@@ -52,12 +52,9 @@ def get_data_dir():
     Get the application data directory path.
     On Windows: %APPDATA%/YoutubeGO
     On Linux: ~/.local/share/youtubego
-    On macOS: ~/Library/Application Support/YoutubeGO
     """
     if sys.platform == 'win32':
         base_dir = os.getenv('APPDATA')
-    elif sys.platform == 'darwin':
-        base_dir = os.path.expanduser('~/Library/Application Support')
     else:  
         base_dir = os.path.expanduser('~/.local/share')
 

@@ -77,7 +77,7 @@
   Automatically detects FFmpeg installation and prompts for setup if missing.
 
 - **Cross-Platform Compatibility**  
-  Fully supported on **Linux**, **macOS**, and **Windows**.
+  Fully supported on **Linux** and **Windows**.
 
 ## 🚀 New in Version 4.4
 
@@ -140,14 +140,8 @@ pip install -r requirements.txt
 
 # Install FFmpeg for audio and video processing
 
-# macOS
-brew install ffmpeg
-
-# Linux (Debian/Ubuntu)
+# Linux
 sudo apt install ffmpeg
-
-# Linux (Arch-based)
-sudo pacman -S ffmpeg
 
 # Windows (via winget)
 winget install FFmpeg

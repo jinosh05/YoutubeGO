@@ -330,8 +330,6 @@ class MainWindow(QMainWindow):
         folder = self.user_profile.get_download_path()
         if platform.system() == "Windows":
             os.startfile(folder)
-        elif platform.system() == "Darwin":
-            subprocess.run(["open", folder])
         else:
             subprocess.run(["xdg-open", folder])
     def append_log(self, text):

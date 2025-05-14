@@ -20,7 +20,7 @@ def check_ffmpeg():
                 os.path.join(app_dir, "bin", "ffmpeg.exe"),
                 os.path.join(app_dir, "resources", "ffmpeg.exe"),
             ]
-        else:
+        elif platform.system() == "Linux":
             candidates += [
                 os.path.join(app_dir, "ffmpeg"),
                 os.path.join(app_dir, "bin", "ffmpeg"),
@@ -28,6 +28,8 @@ def check_ffmpeg():
                 os.path.join(app_dir, "usr", "share", "youtubego", "resources", "ffmpeg"),
                 os.path.join(os.path.dirname(app_dir), "Resources", "ffmpeg"),
             ]
+        else:
+            return False, ""
 
         for path in candidates:
             if os.path.exists(path) and os.access(path, os.X_OK):
