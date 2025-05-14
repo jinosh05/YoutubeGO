@@ -70,7 +70,10 @@ jobs:
           echo "Categories=AudioVideo;Video;" >> AppDir/YoutubeGo.desktop
           echo "Comment=YouTube video downloader" >> AppDir/YoutubeGo.desktop
 
-          
+          echo '#!/bin/sh' > AppDir/AppRun
+          echo 'exec usr/bin/YoutubeGo' >> AppDir/AppRun
+          chmod +x AppDir/AppRun
+
       - name: Create AppImage
         run: |
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o appimagetool
