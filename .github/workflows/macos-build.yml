@@ -28,12 +28,12 @@ jobs:
           curl -L https://evermeet.cx/ffmpeg/ffmpeg-6.1.zip -o ffmpeg.zip
           unzip ffmpeg.zip
           mkdir -p resources
-          mv ffmpeg resources/
+          mv ffmpeg* resources/ffmpeg
           chmod +x resources/ffmpeg
 
       - name: Build macOS App
         run: |
-          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo \
+          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo \
             --add-data "assets:assets" \
             --add-data "ui/themes:ui/themes" \
             --add-data "resources:resources" \
@@ -41,9 +41,9 @@ jobs:
 
           mkdir -p "YoutubeGo.app/Contents/MacOS"
           mkdir -p "YoutubeGo.app/Contents/Resources"
-          cp dist/YoutubeGo "YoutubeGo.app/Contents/MacOS/"
+          cp -r dist/YoutubeGo/* "YoutubeGo.app/Contents/MacOS/"
           cp -r resources "YoutubeGo.app/Contents/Resources/"
-          cp assets/app.png "YoutubeGo.app/Contents/Resources/"
+          cp assets/app.icns "YoutubeGo.app/Contents/Resources/"
           
           # Create Info.plist
           cat > "YoutubeGo.app/Contents/Info.plist" << EOL
@@ -54,7 +54,7 @@ jobs:
               <key>CFBundleExecutable</key>
               <string>YoutubeGo</string>
               <key>CFBundleIconFile</key>
-              <string>app</string>
+              <string>app.icns</string>
               <key>CFBundleIdentifier</key>
               <string>com.youtubego.app</string>
               <key>CFBundleName</key>
@@ -72,6 +72,7 @@ jobs:
           EOL
 
           # Create DMG
+          rm -f YoutubeGo.dmg
           hdiutil create -volname "YoutubeGo" -srcfolder "YoutubeGo.app" -ov -format UDZO "YoutubeGo.dmg"
 
       - name: Upload to GitHub Releases
