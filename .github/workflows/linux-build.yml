@@ -62,25 +62,15 @@ jobs:
           cp assets/app.png AppDir/usr/share/icons/hicolor/256x256/apps/YoutubeGo.png
           cp assets/app.png AppDir/YoutubeGo.png
 
-          cat << 'EOF' > AppDir/YoutubeGo.desktop
-          [Desktop Entry]
-          Name=YoutubeGo
-          Exec=YoutubeGo
-          Icon=YoutubeGo
-          Type=Application
-          Categories=AudioVideo;Video;
-          Comment=YouTube video downloader
-          EOF
+          echo "[Desktop Entry]" > AppDir/YoutubeGo.desktop
+          echo "Name=YoutubeGo" >> AppDir/YoutubeGo.desktop
+          echo "Exec=YoutubeGo" >> AppDir/YoutubeGo.desktop
+          echo "Icon=YoutubeGo" >> AppDir/YoutubeGo.desktop
+          echo "Type=Application" >> AppDir/YoutubeGo.desktop
+          echo "Categories=AudioVideo;Video;" >> AppDir/YoutubeGo.desktop
+          echo "Comment=YouTube video downloader" >> AppDir/YoutubeGo.desktop
 
-          cat << EOF > AppDir/AppRun
-          #!/bin/sh
-          HERE="$(dirname \"$(readlink -f \"$0\")")"
-          export PATH="$HERE/usr/bin:$PATH"
-          exec "$HERE/usr/bin/YoutubeGo" "$@"
-          EOF
-
-          chmod +x AppDir/AppRun
-
+          
       - name: Create AppImage
         run: |
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o appimagetool
