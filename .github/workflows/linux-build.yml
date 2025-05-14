@@ -48,7 +48,7 @@ jobs:
 
       - name: Build Linux App
         run: |
-          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo \
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo \
             --add-data "assets:assets" \
             --add-data "ui/themes:ui/themes" \
             --add-data "resources:resources" \
@@ -58,7 +58,7 @@ jobs:
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 
-          cp -r dist/YoutubeGo/* AppDir/usr/bin/
+          cp dist/YoutubeGo AppDir/usr/bin/YoutubeGo
           cp assets/app.png AppDir/usr/share/icons/hicolor/256x256/apps/YoutubeGo.png
           cp assets/app.png AppDir/YoutubeGo.png
 
@@ -71,7 +71,7 @@ jobs:
           echo "Comment=YouTube video downloader" >> AppDir/YoutubeGo.desktop
 
           echo '#!/bin/sh' > AppDir/AppRun
-          echo 'exec usr/bin/YoutubeGo' >> AppDir/AppRun
+          echo 'exec "$APPDIR/usr/bin/YoutubeGo" "$@"' >> AppDir/AppRun
           chmod +x AppDir/AppRun
 
       - name: Create AppImage
