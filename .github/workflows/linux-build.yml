@@ -43,7 +43,7 @@ jobs:
           curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o ffmpeg.tar.xz
           tar xf ffmpeg.tar.xz
           mkdir -p resources
-          mv ffmpeg-*-amd64-static/ffmpeg resources/
+          mv ffmpeg-*-amd64-static/ffmpeg resources/ffmpeg
           chmod +x resources/ffmpeg
 
       - name: Build Linux App
@@ -57,10 +57,11 @@ jobs:
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-          
+
           cp -r dist/YoutubeGo/* AppDir/usr/bin/
           cp assets/app.png AppDir/usr/share/icons/hicolor/256x256/apps/YoutubeGo.png
-          
+          cp assets/app.png AppDir/YoutubeGo.png
+
           cat > AppDir/YoutubeGo.desktop << EOL
           [Desktop Entry]
           Name=YoutubeGo
@@ -74,9 +75,9 @@ jobs:
           # Create AppRun
           cat > AppDir/AppRun << EOL
           #!/bin/sh
-          HERE="$(dirname "$(readlink -f "${0}")")"
-          export PATH="${HERE}/usr/bin:${PATH}"
-          exec "${HERE}/usr/bin/YoutubeGo" "$@"
+          HERE="$(dirname \"$(readlink -f \"$0\")")"
+          export PATH="$HERE/usr/bin:$PATH"
+          exec "$HERE/usr/bin/YoutubeGo" "$@"
           EOL
           chmod +x AppDir/AppRun
 
@@ -85,6 +86,7 @@ jobs:
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o appimagetool
           chmod +x appimagetool
           ./appimagetool AppDir
+          mkdir -p dist
           mv YoutubeGo-x86_64.AppImage dist/
 
       - name: Upload to GitHub Releases

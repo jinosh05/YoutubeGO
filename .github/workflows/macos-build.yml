@@ -28,7 +28,7 @@ jobs:
           curl -L https://evermeet.cx/ffmpeg/ffmpeg-6.1.zip -o ffmpeg.zip
           unzip ffmpeg.zip
           mkdir -p resources
-          mv ffmpeg* resources/ffmpeg
+          mv -f ffmpeg resources/ffmpeg
           chmod +x resources/ffmpeg
 
       - name: Build macOS App
@@ -44,7 +44,7 @@ jobs:
           cp -r dist/YoutubeGo/* "YoutubeGo.app/Contents/MacOS/"
           cp -r resources "YoutubeGo.app/Contents/Resources/"
           cp assets/app.icns "YoutubeGo.app/Contents/Resources/"
-          
+
           # Create Info.plist
           cat > "YoutubeGo.app/Contents/Info.plist" << EOL
           <?xml version="1.0" encoding="UTF-8"?>
@@ -78,6 +78,6 @@ jobs:
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: '*.dmg'
+          files: 'YoutubeGo.dmg'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
