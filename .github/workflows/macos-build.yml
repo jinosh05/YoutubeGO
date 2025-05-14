@@ -42,34 +42,38 @@ jobs:
           mkdir -p "YoutubeGo.app/Contents/MacOS"
           mkdir -p "YoutubeGo.app/Contents/Resources"
           cp -r dist/YoutubeGo/* "YoutubeGo.app/Contents/MacOS/"
-          cp -r resources "YoutubeGo.app/Contents/Resources/"
+          cp -r resources "YoutubeGo.app/Contents/MacOS/"
           cp assets/app.icns "YoutubeGo.app/Contents/Resources/"
+
+          # Ensure executable permissions
+          chmod +x "YoutubeGo.app/Contents/MacOS/YoutubeGo"
+          chmod +x "YoutubeGo.app/Contents/MacOS/resources/ffmpeg"
 
           # Create Info.plist
           cat > "YoutubeGo.app/Contents/Info.plist" << EOL
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>CFBundleExecutable</key>
-              <string>YoutubeGo</string>
-              <key>CFBundleIconFile</key>
-              <string>app.icns</string>
-              <key>CFBundleIdentifier</key>
-              <string>com.youtubego.app</string>
-              <key>CFBundleName</key>
-              <string>YoutubeGo</string>
-              <key>CFBundlePackageType</key>
-              <string>APPL</string>
-              <key>CFBundleShortVersionString</key>
-              <string>4.4</string>
-              <key>LSMinimumSystemVersion</key>
-              <string>10.13</string>
-              <key>NSHighResolutionCapable</key>
-              <true/>
-          </dict>
-          </plist>
-          EOL
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>YoutubeGo</string>
+    <key>CFBundleIconFile</key>
+    <string>app.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.youtubego.app</string>
+    <key>CFBundleName</key>
+    <string>YoutubeGo</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>4.4</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.13</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>
+EOL
 
           # Create DMG
           rm -f YoutubeGo.dmg
