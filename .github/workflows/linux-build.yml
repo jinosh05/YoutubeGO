@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -62,7 +62,7 @@ jobs:
           cp assets/app.png AppDir/usr/share/icons/hicolor/256x256/apps/YoutubeGo.png
           cp assets/app.png AppDir/YoutubeGo.png
 
-          cat > AppDir/YoutubeGo.desktop << EOL
+          cat << 'EOF' > AppDir/YoutubeGo.desktop
           [Desktop Entry]
           Name=YoutubeGo
           Exec=YoutubeGo
@@ -70,15 +70,15 @@ jobs:
           Type=Application
           Categories=AudioVideo;Video;
           Comment=YouTube video downloader
-          EOL
+          EOF
 
-          # Create AppRun
-          cat > AppDir/AppRun << EOL
+          cat << EOF > AppDir/AppRun
           #!/bin/sh
           HERE="$(dirname \"$(readlink -f \"$0\")")"
           export PATH="$HERE/usr/bin:$PATH"
           exec "$HERE/usr/bin/YoutubeGo" "$@"
-          EOL
+          EOF
+
           chmod +x AppDir/AppRun
 
       - name: Create AppImage
