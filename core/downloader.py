@@ -159,8 +159,10 @@ class DownloadQueueWorker(QRunnable):
                         "merge_output_format": self.task.output_format.lower(),
                         "postprocessors": [{
                             "key": "FFmpegVideoRemuxer",
-                            "preferedformat": self.task.output_format.lower()
-                        }]
+                            "preferedformat": self.task.output_format.lower(),
+                            "when": "post_process"
+                        }],
+                        "ffmpeg_location": self.task.ffmpeg_path if hasattr(self.task, 'ffmpeg_path') else None
                     })
                 except Exception as e:
                     self.log_signal.emit(f"Format configuration failed, falling back to basic format: {str(e)}")

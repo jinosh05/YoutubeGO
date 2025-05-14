@@ -1,4 +1,4 @@
-name: Build and Release for macOS
+name: Build and Release macOS App
 
 on:
   push:
@@ -27,23 +27,56 @@ jobs:
         run: |
           curl -L https://evermeet.cx/ffmpeg/ffmpeg-6.1.zip -o ffmpeg.zip
           unzip ffmpeg.zip
-          chmod +x ffmpeg
+          mkdir -p resources
+          mv ffmpeg resources/
+          chmod +x resources/ffmpeg
 
-      - name: Build macOS App and ZIP
+      - name: Build macOS App
         run: |
-          pyinstaller --noconfirm --windowed --name YoutubeGo \
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo \
             --add-data "assets:assets" \
             --add-data "ui/themes:ui/themes" \
-            --add-data "ffmpeg:." \
+            --add-data "resources:resources" \
             main.py
-          mkdir -p output
-          cp -r dist/YoutubeGo.app output/
-          cd output
-          zip -r YoutubeGo-macOS.zip YoutubeGo.app
+
+          mkdir -p "YoutubeGo.app/Contents/MacOS"
+          mkdir -p "YoutubeGo.app/Contents/Resources"
+          cp dist/YoutubeGo "YoutubeGo.app/Contents/MacOS/"
+          cp -r resources "YoutubeGo.app/Contents/Resources/"
+          cp assets/app.png "YoutubeGo.app/Contents/Resources/"
+          
+          # Create Info.plist
+          cat > "YoutubeGo.app/Contents/Info.plist" << EOL
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>YoutubeGo</string>
+              <key>CFBundleIconFile</key>
+              <string>app</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.youtubego.app</string>
+              <key>CFBundleName</key>
+              <string>YoutubeGo</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>CFBundleShortVersionString</key>
+              <string>4.4</string>
+              <key>LSMinimumSystemVersion</key>
+              <string>10.13</string>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+          </dict>
+          </plist>
+          EOL
+
+          # Create DMG
+          hdiutil create -volname "YoutubeGo" -srcfolder "YoutubeGo.app" -ov -format UDZO "YoutubeGo.dmg"
 
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: output/YoutubeGo-macOS.zip
+          files: '*.dmg'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

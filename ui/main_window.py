@@ -36,6 +36,8 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 1280, 800)
         self.ffmpeg_found = ffmpeg_found if ffmpeg_found is not None else False
         self.ffmpeg_path = ffmpeg_path if ffmpeg_path is not None else ""
+        if self.ffmpeg_found and self.ffmpeg_path:
+            print(f"FFmpeg path set to: {self.ffmpeg_path}")
         self.ffmpeg_label = QLabel()
         self.log_dock_visible = True
         self.show_logs_btn = AnimatedButton("Logs")
