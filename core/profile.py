@@ -32,29 +32,28 @@ class UserProfile:
 
     def set_profile(self, name, profile_picture, download_path):
         if profile_picture:
-           
             if not os.path.exists(self.images_dir):
                 os.makedirs(self.images_dir)
-            
             filename = f"profile_{os.path.basename(profile_picture)}"  
             new_path = os.path.join(self.images_dir, filename)
-            
-            
             old_pic = self.data["profile_picture"]
             if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
                 try:
                     os.remove(old_pic)
                 except:
                     pass
-            
-            
             try:
                 shutil.copy2(profile_picture, new_path)
                 self.data["profile_picture"] = new_path
             except Exception as e:
                 print(f"Error copying profile picture: {e}")
                 self.data["profile_picture"] = ""
-        
+        else:
+            # If no new picture is provided, keep the old one
+            if "profile_picture" in self.data:
+                pass  # Do not change the value
+            else:
+                self.data["profile_picture"] = ""
         self.data["name"] = name
         self.data["download_path"] = download_path
         self.save_profile()

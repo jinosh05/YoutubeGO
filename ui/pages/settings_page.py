@@ -23,7 +23,7 @@ class SettingsPage(QWidget):
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         
-        version_label = QLabel("v4.4.15")
+        version_label = QLabel("v5.0.1")
         version_label.setStyleSheet("""
             QLabel {
                 color: #ff4444;
@@ -104,12 +104,7 @@ class SettingsPage(QWidget):
 
     def change_theme_clicked(self):
         theme = self.theme_combo.currentText()
-        self.parent.user_profile.set_theme(theme)
-        if theme == "Dark":
-            self.parent.setStyleSheet(self.parent.get_dark_theme())
-        else:
-            self.parent.setStyleSheet(self.parent.get_light_theme())
-        self.parent.append_log(f"Theme changed to '{theme}'.")
+        self.parent.theme_manager.change_theme(theme)
 
     def apply_resolution(self):
         sr = self.res_combo.currentText()

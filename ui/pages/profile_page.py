@@ -86,20 +86,19 @@ class ProfilePage(QWidget):
         if not name:
             self.parent.show_warning("Error", "Please provide a name.")
             return
-            
-        pic_path = self.pic_label.property("selected_path") if self.pic_label.property("selected_path") else self.parent.user_profile.data["profile_picture"]
-        
+        # Only update picture if a new one is selected
+        pic_path = self.pic_label.property("selected_path")
+        if not pic_path:
+            pic_path = self.parent.user_profile.data["profile_picture"]
         self.parent.user_profile.set_profile(
             name, 
             pic_path, 
             self.parent.user_profile.get_download_path()
         )
-        
         self.parent.user_profile.set_social_media_links(
             self.insta_edit.text().strip(),
             self.tw_edit.text().strip(),
             self.yt_edit.text().strip()
         )
-        
-        self.parent.update_profile_ui()
+        self.parent.profile_manager.update_profile_ui()
         self.parent.show_info("Success", "Profile settings saved successfully.") 

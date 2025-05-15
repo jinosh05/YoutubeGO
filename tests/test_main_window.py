@@ -35,49 +35,47 @@ def test_profile_dialog(main_window, qtbot, monkeypatch):
     assert main_window.user_profile.data["name"] is not None
 
 def test_theme_switching(main_window, qtbot):
-    initial_theme = main_window.current_theme
-    
+    initial_theme = main_window.theme_manager.current_theme
     new_theme = "Light" if initial_theme == "Dark" else "Dark"
     main_window.page_settings.theme_combo.setCurrentText(new_theme)
-    main_window.page_settings.change_theme_clicked()
-    main_window.current_theme = new_theme  
+    main_window.theme_manager.change_theme(new_theme)
     qtbot.wait(100)
-    
-    assert main_window.current_theme != initial_theme
-    assert main_window.user_profile.get_theme() == main_window.current_theme
+    assert main_window.theme_manager.current_theme != initial_theme
+    assert main_window.user_profile.get_theme() == main_window.theme_manager.current_theme
 
 def test_tray_icon(main_window):
-    assert main_window.tray_icon is not None
-    assert main_window.tray_icon.isVisible()
+    assert main_window.tray_manager.tray_icon is not None
+    assert main_window.tray_manager.tray_icon.isVisible()
     
-    tray_menu = main_window.tray_icon.contextMenu()
+    tray_menu = main_window.tray_manager.tray_icon.contextMenu()
     actions = [act.text() for act in tray_menu.actions()]
     assert "Restore" in actions
     assert "Quit" in actions
 
 def test_search_functionality(main_window, qtbot):
     main_window.show()
-    
     main_window.top_search_edit.setText("settings")
     qtbot.mouseClick(main_window.search_btn, Qt.LeftButton)
     qtbot.wait(100)
-    
-    assert main_window.search_result_list.isVisible()
-    assert main_window.search_result_list.count() > 0
-    
+    assert main_window.search_system.popup.isVisible()
+    assert main_window.search_system.popup.list_widget.count() > 0
     main_window.top_search_edit.clear()
     qtbot.mouseClick(main_window.search_btn, Qt.LeftButton)
     qtbot.wait(100)
-    
-    assert not main_window.search_result_list.isVisible()
+    assert not main_window.search_system.popup.isVisible()
 
 def test_concurrent_downloads_setting(main_window):
     initial_value = main_window.max_concurrent_downloads
-    
     main_window.page_settings.concurrent_combo.setCurrentText("5")
-    main_window.page_settings.set_max_concurrent_downloads(0)  
+    main_window.profile_manager.set_max_concurrent_downloads(0)
     assert main_window.max_concurrent_downloads == 5
-    
     main_window.page_settings.concurrent_combo.setCurrentText("3")
-    main_window.page_settings.set_max_concurrent_downloads(0)
-    assert main_window.max_concurrent_downloads == 3 
+    main_window.profile_manager.set_max_concurrent_downloads(0)
+    assert main_window.max_concurrent_downloads == 3
+
+def test_theme_change(main_window):
+    initial_theme = main_window.theme_manager.current_theme
+    main_window.theme_manager.change_theme("Dark")
+    assert main_window.theme_manager.current_theme != initial_theme
+    assert main_window.user_profile.get_theme() == main_window.theme_manager.current_theme
+    main_window.theme_manager.change_theme(initial_theme) 

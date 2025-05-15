@@ -1,54 +1,42 @@
-from PySide6.QtWidgets import QStatusBar, QLabel, QProgressBar
+from PySide6.QtWidgets import QStatusBar, QHBoxLayout, QLabel, QProgressBar, QWidget
 from PySide6.QtCore import Qt
 from ui.components.animated_button import AnimatedButton
 
 class StatusBarLayout:
     def __init__(self, parent):
         self.parent = parent
-        self.status_bar = QStatusBar(parent)
+        self.container = QStatusBar()
+        self.progress_bar = None
+        self.status_label = None
+        self.ffmpeg_label = None
+        self.show_logs_btn = None
         self.init_ui()
 
     def init_ui(self):
-        
-        self.progress_bar = QProgressBar()
-        self.progress_bar.setValue(0)
-        self.progress_bar.setMaximumWidth(400)
-        self.progress_bar.setTextVisible(True)
-        self.progress_bar.setFormat("0%")
-        self.progress_bar.setStyleSheet("font-weight: bold;")
-        
-        
-        self.status_label = QLabel("Ready")
-        
-        
-        if self.parent.ffmpeg_found:
-            self.ffmpeg_label = QLabel("✓ FFmpeg Ready")
-            self.ffmpeg_label.setStyleSheet("""
-                color: #4CAF50;
-                font-weight: bold;
-                padding: 5px 10px;
-                border-radius: 10px;
-                background: rgba(76, 175, 80, 0.1);
-            """)
-        else:
-            self.ffmpeg_label = QLabel("⚠️ FFmpeg Required")
-            self.ffmpeg_label.setStyleSheet("""
-                color: #FFC107;
-                font-weight: bold;
-                padding: 5px 10px;
-                border-radius: 10px;
-                background: rgba(255, 193, 7, 0.1);
-            """)
-        self.ffmpeg_label.setToolTip(self.parent.ffmpeg_path if self.parent.ffmpeg_found else "Please download FFmpeg from the official website")
-        
-        
+        layout_widget = QWidget()
+        layout = QHBoxLayout(layout_widget)
+        layout.setContentsMargins(5, 2, 5, 2)
+        layout.setSpacing(10)
+
         self.show_logs_btn = AnimatedButton("Logs")
-        self.show_logs_btn.clicked.connect(self.parent.toggle_logs)
-        
-        
-        self.status_bar.addWidget(self.show_logs_btn)
-        self.status_bar.addWidget(self.status_label)
-        self.status_bar.addPermanentWidget(self.ffmpeg_label)
-        self.status_bar.addPermanentWidget(self.progress_bar)
-        
-        self.parent.setStatusBar(self.status_bar) 
+        self.show_logs_btn.setFixedWidth(60)
+        self.show_logs_btn.clicked.connect(self.parent.log_manager.toggle_visibility)
+        layout.addWidget(self.show_logs_btn)
+
+        self.status_label = QLabel("Ready")
+        layout.addWidget(self.status_label, stretch=1)
+
+        self.ffmpeg_label = QLabel()
+        self.ffmpeg_label.setMinimumWidth(120)
+        self.ffmpeg_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        layout.addWidget(self.ffmpeg_label)
+
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setMinimumWidth(200)
+        self.progress_bar.setMaximumWidth(300)
+        self.progress_bar.setFormat("%p%")
+        self.progress_bar.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.progress_bar)
+
+        self.container.addPermanentWidget(layout_widget, 1)
+        self.parent.setStatusBar(self.container) 

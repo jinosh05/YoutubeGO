@@ -47,26 +47,48 @@ class TopBarLayout:
         layout.addWidget(self.logo_label, alignment=Qt.AlignVCenter | Qt.AlignLeft)
         
         
-        search_container = QWidget()
-        sc_layout = QHBoxLayout(search_container)
-        sc_layout.setSpacing(10)
-        sc_layout.setContentsMargins(0, 0, 0, 0)
-        
+        # Search bar and results container
+        search_area_container = QWidget()
+        search_area_layout = QVBoxLayout(search_area_container)
+        search_area_layout.setContentsMargins(0, 0, 0, 0)
+        search_area_layout.setSpacing(0)
+
+        # Search bar row
+        search_bar_row = QWidget()
+        search_bar_row_layout = QHBoxLayout(search_bar_row)
+        search_bar_row_layout.setContentsMargins(0, 0, 0, 0)
+        search_bar_row_layout.setSpacing(10)
         self.search_edit = QLineEdit()
         self.search_edit.setPlaceholderText("Search in app...")
         self.search_edit.setFixedHeight(40)
-        
         self.search_btn = AnimatedButton("Search")
         self.search_btn.setFixedHeight(40)
-        self.search_btn.clicked.connect(self.parent.top_search_clicked)
-        
-        sc_layout.addWidget(self.search_edit)
-        sc_layout.addWidget(self.search_btn)
-        
-        layout.addWidget(search_container, stretch=1, alignment=Qt.AlignVCenter)
-        
+        search_bar_row_layout.addWidget(self.search_edit)
+        search_bar_row_layout.addWidget(self.search_btn)
+        search_area_layout.addWidget(search_bar_row)
+
         # Search Results List
         self.search_result_list = QListWidget()
         self.search_result_list.setVisible(False)
-        self.search_result_list.setFixedHeight(250)
-        self.search_result_list.itemClicked.connect(self.parent.search_item_clicked) 
+        self.search_result_list.setMinimumHeight(250)
+        self.search_result_list.setMaximumHeight(400)
+        self.search_result_list.setMinimumWidth(400)
+        self.search_result_list.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.search_result_list.setStyleSheet('''
+            QFrame, QListWidget {
+                background: #222;
+                border: 2px solid #ff4444;
+                border-radius: 12px;
+                padding: 8px;
+                color: #fff;
+                font-size: 14px;
+            }
+            QListWidget::item:selected {
+                background: #ff4444;
+                color: #fff;
+            }
+        ''')
+        search_area_layout.addWidget(self.search_result_list)
+
+        layout.addWidget(search_area_container, stretch=1, alignment=Qt.AlignVCenter)
+        
