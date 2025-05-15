@@ -1,6 +1,6 @@
 import pytest
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox, QDialog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox, QDialog
 from ui.main_window import MainWindow
 
 @pytest.fixture
@@ -10,15 +10,13 @@ def main_window(qapp, temp_data_dir, mock_ffmpeg):
     window.close()
 
 def test_main_window_init(main_window):
-   
     assert main_window.windowTitle() == "YoutubeGO 4.4"
     assert main_window.isVisible() == False
     assert main_window.main_stack.count() == 8  
+
 def test_side_menu_navigation(main_window, qtbot):
-   
     main_window.show()
     initial_index = main_window.main_stack.currentIndex()
-    
     
     main_window.side_menu.setCurrentRow(2)
     qtbot.wait(100)
@@ -29,7 +27,6 @@ def test_side_menu_navigation(main_window, qtbot):
     assert main_window.main_stack.currentIndex() == 4
 
 def test_profile_dialog(main_window, qtbot, monkeypatch):
-   
     def mock_exec(self):
         return QDialog.Accepted
     
@@ -38,10 +35,8 @@ def test_profile_dialog(main_window, qtbot, monkeypatch):
     assert main_window.user_profile.data["name"] is not None
 
 def test_theme_switching(main_window, qtbot):
-   
     initial_theme = main_window.current_theme
     
-  
     new_theme = "Light" if initial_theme == "Dark" else "Dark"
     main_window.page_settings.theme_combo.setCurrentText(new_theme)
     main_window.page_settings.change_theme_clicked()
@@ -52,10 +47,8 @@ def test_theme_switching(main_window, qtbot):
     assert main_window.user_profile.get_theme() == main_window.current_theme
 
 def test_tray_icon(main_window):
-   
     assert main_window.tray_icon is not None
     assert main_window.tray_icon.isVisible()
-    
     
     tray_menu = main_window.tray_icon.contextMenu()
     actions = [act.text() for act in tray_menu.actions()]
@@ -63,9 +56,7 @@ def test_tray_icon(main_window):
     assert "Quit" in actions
 
 def test_search_functionality(main_window, qtbot):
-   
     main_window.show()
-    
     
     main_window.top_search_edit.setText("settings")
     qtbot.mouseClick(main_window.search_btn, Qt.LeftButton)
@@ -74,7 +65,6 @@ def test_search_functionality(main_window, qtbot):
     assert main_window.search_result_list.isVisible()
     assert main_window.search_result_list.count() > 0
     
-   
     main_window.top_search_edit.clear()
     qtbot.mouseClick(main_window.search_btn, Qt.LeftButton)
     qtbot.wait(100)
@@ -82,15 +72,12 @@ def test_search_functionality(main_window, qtbot):
     assert not main_window.search_result_list.isVisible()
 
 def test_concurrent_downloads_setting(main_window):
-    
     initial_value = main_window.max_concurrent_downloads
     
-   
     main_window.page_settings.concurrent_combo.setCurrentText("5")
     main_window.page_settings.set_max_concurrent_downloads(0)  
     assert main_window.max_concurrent_downloads == 5
     
-   
     main_window.page_settings.concurrent_combo.setCurrentText("3")
     main_window.page_settings.set_max_concurrent_downloads(0)
     assert main_window.max_concurrent_downloads == 3 

@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QLineEdit,
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QLineEdit,
                             QDialogButtonBox, QMessageBox, QFileDialog, QLabel)
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import Qt
 from ui.components.animated_button import AnimatedButton
 import os
 

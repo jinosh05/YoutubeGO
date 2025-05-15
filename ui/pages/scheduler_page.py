@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QTableWidget, QTableWidgetItem, QHeaderView,
                             QDialog, QFormLayout, QCheckBox, QDateTimeEdit)
-from PyQt5.QtCore import Qt, QDateTime, QTimer
-from PyQt5.QtGui import QFont
+from PySide6.QtCore import Qt, QDateTime, QTimer
+from PySide6.QtGui import QFont
 from ui.components.animated_button import AnimatedButton
 from ui.components.drag_drop_line_edit import DragDropLineEdit
 from core.downloader import DownloadTask
@@ -105,7 +105,7 @@ class SchedulerPage(QWidget):
             
         b_ok.clicked.connect(on_ok)
         b_cancel.clicked.connect(on_cancel)
-        d.exec_()
+        d.exec()
 
     def remove_scheduled_item(self):
         selected_rows = set()

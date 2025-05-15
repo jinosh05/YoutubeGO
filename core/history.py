@@ -1,6 +1,6 @@
 import os
 import json
-from PyQt5.QtWidgets import QTableWidgetItem
+from PySide6.QtWidgets import QTableWidgetItem
 from core.utils import get_data_dir
 
 DATA_DIR = get_data_dir()

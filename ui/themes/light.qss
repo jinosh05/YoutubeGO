@@ -1,23 +1,32 @@
-/* Light theme for YoutubeGO */
-
-QWidget {
+* {
     font-family: 'Segoe UI', sans-serif;
     font-size: 10pt;
-    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+QWidget {
     background-color: #f5f5f5;
+    color: #333333;
+}
+
+QWidget:focus {
+    outline: none;
+    border: none;
 }
 
 QPushButton {
-    background-color: #ff4444;
-    color: white;
-    border-radius: 6px;
-    padding: 8px 16px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff4444, stop:1 #ff6666);
+    color: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 28px;
+    font-size: 12pt;
     font-weight: bold;
-    font-size: 11pt;
 }
 
 QPushButton:hover {
-    background-color: #ff6666;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff6666, stop:1 #ff4444);
 }
 
 QPushButton:pressed {
@@ -25,184 +34,249 @@ QPushButton:pressed {
 }
 
 QLineEdit, QComboBox {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-    color: #333;
+    background-color: #ffffff;
+    color: #333333;
+    border: 2px solid #cccccc;
+    border-radius: 16px;
+    padding: 12px;
 }
 
-QComboBox::drop-down {
-    border: none;
-    background-color: white;
+QLineEdit:focus, QComboBox:focus {
+    background-color: #ffffff;
+    border: 2px solid #ff4444;
 }
 
+QComboBox::drop-down,
 QComboBox::down-arrow {
-    image: none;
     border: none;
+    image: none;
 }
 
 QLabel {
-    color: #333;
-    font-size: 11pt;
+    color: #333333;
+    background: transparent;
+    font-size: 12pt;
+}
+
+QFrame {
+    background: transparent;
+    border: none;
 }
 
 QGroupBox {
-    color: #333;
-    border: 1px solid #ccc;
+    background-color: #ffffff;
+    border: 2px solid #cccccc;
+    border-radius: 20px;
     margin-top: 1.5em;
-    padding-top: 0.7em;
-    font-size: 11pt;
+    padding: 18px;
+    color: #333333;
+    font-size: 12pt;
 }
 
 QGroupBox::title {
-    color: #333;
-    background-color: #f5f5f5;
-    padding: 0 5px;
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 16px;
+    color: #ff4444;
+    font-size: 13pt;
+    font-weight: bold;
+    background: transparent;
 }
 
-QTableWidget {
-    color: #333;
-    gridline-color: #ccc;
-    background-color: white;
-    border: 1px solid #ccc;
+QTableWidget, QTableView {
+    background-color: #ffffff;
+    color: #333333;
+    gridline-color: #cccccc;
+    border: 2px solid #cccccc;
+    border-radius: 0;
 }
 
 QTableWidget::item {
-    color: #333;
+    background: transparent;
+    color: #333333;
+    padding: 10px;
+    border-bottom: 1px solid #cccccc;
+    border-radius: 0;
+}
+
+QTableWidget::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+    color: #ffffff;
 }
 
 QHeaderView::section {
-    background-color: #f0f0f0;
-    color: #333;
-    padding: 5px;
-    border: 1px solid #ccc;
+    background-color: #eeeeee;
+    color: #333333;
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 0;
 }
 
 QListWidget {
-    color: #333;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
+    color: #333333;
     border: none;
-    border-radius: 15px 0 0 15px;
-    padding: 15px 10px;
+    border-radius: 20px 0 0 20px;
+    padding: 12px;
 }
 
 QListWidget::item {
-    color: #333;
-    background-color: transparent;
-    padding: 15px;
+    background: transparent;
+    color: #333333;
+    padding: 14px;
     margin: 4px;
-    border-radius: 12px;
-    font-size: 13px;
+    border-radius: 16px;
+    font-size: 14px;
     font-weight: bold;
+    border: none;
 }
 
-/* Selected list item with gradient */
-QListWidget::item:selected {
-    color: white;
-    background-color: #ff4444;
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
-}
-
-/* Hover effect for list items */
 QListWidget::item:hover:!selected {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(255,68,68,0.13);
+    border: 2px solid rgba(255,68,68,0.10);
+    border-radius: 16px;
+}
+
+QListWidget::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 16px;
 }
 
 QTextEdit {
-    color: #333;
-    background-color: white;
-    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #333333;
+    border: 2px solid #cccccc;
+    border-radius: 16px;
+    padding: 12px;
 }
 
-QCheckBox {
-    color: #333;
-    font-size: 11pt;
+QCheckBox, QRadioButton {
+    spacing: 10px;
+    font-size: 12pt;
+    color: #333333;
 }
 
-QRadioButton {
-    color: #333;
-    font-size: 11pt;
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #cccccc;
+    border-radius: 8px;
+}
+
+QCheckBox::indicator:checked,
+QRadioButton::indicator:checked {
+    background-color: #ff4444;
+    border-color: #ff4444;
 }
 
 QMenuBar {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #ffffff;
+    color: #333333;
+    border-bottom: 2px solid #cccccc;
+    border-radius: 0 0 16px 16px;
 }
 
 QMenuBar::item {
-    background-color: #f0f0f0;
-    color: #333;
+    padding: 10px 16px;
+    background: transparent;
+    color: #333333;
+    border-radius: 12px;
 }
 
 QMenuBar::item:selected {
-    background-color: #e0e0e0;
+    background-color: #ff4444;
+    color: #ffffff;
 }
 
 QMenu {
-    background-color: white;
-    color: #333;
+    background-color: #ffffff;
+    color: #333333;
+    border: 2px solid #cccccc;
+    border-radius: 16px;
+    padding: 8px;
+}
+
+QMenu::item {
+    padding: 10px 28px 10px 24px;
+    border-radius: 10px;
 }
 
 QMenu::item:selected {
-    background-color: #e0e0e0;
-}
-
-QFormLayout > QLabel {
-    color: #333;
-    font-size: 11pt;
-    font-weight: bold;
-    background: none;
-}
-
-QStatusBar {
-    background-color: #f5f5f5;
-    color: #333;
-    padding: 5px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #ff4444;
+    color: #ffffff;
 }
 
 QProgressBar {
-    border: none;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.05);
-    color: #333;
+    height: 24px;
+    border-radius: 16px;
+    background: rgba(0,0,0,0.07);
     text-align: center;
     font-weight: bold;
-    height: 20px;
-    margin: 0px 10px;
+    color: #333333;
+    margin: 0 14px;
 }
 
-/* Progress bar fill with gradient */
 QProgressBar::chunk {
-    border-radius: 10px;
-    background-color: #ff4444;
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+    border-radius: 16px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ff4444, stop:1 #ff6666);
+}
+
+QScrollBar:vertical,
+QScrollBar:horizontal {
+    background: #ffffff;
+    border-radius: 8px;
+    width: 10px;
+    height: 10px;
+}
+
+QScrollBar::handle:vertical,
+QScrollBar::handle:horizontal {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 5px;
+    background: #dddddd;
+}
+
+QScrollBar::handle:hover {
+    background-color: #cccccc;
+}
+
+QScrollBar::add-line,
+QScrollBar::sub-line {
+    width: 0;
+    height: 0;
+}
+
+QStatusBar {
+    background-color: #ffffff;
+    color: #333333;
+    border-top: 2px solid #dddddd;
 }
 
 QStatusBar QLabel {
     padding: 5px 10px;
     border-radius: 10px;
+    background: transparent;
 }
 
 QStatusBar QPushButton {
     padding: 5px 15px;
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.05);
-    color: #333;
+    background: rgba(0,0,0,0.05);
+    color: #333333;
     border: none;
 }
 
 QStatusBar QPushButton:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0,0,0,0.1);
 }
 
-/* Separator with gradient */
 QFrame#separator {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(0,0,0,0.05),
+        stop:0.5 rgba(0,0,0,0.1),
+        stop:1 rgba(0,0,0,0.05));
     width: 1px;
-    background-color: rgba(0, 0, 0, 0.1);
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, 
-        stop:0 rgba(0, 0, 0, 0.1),
-        stop:0.5 rgba(0, 0, 0, 0.2),
-        stop:1 rgba(0, 0, 0, 0.1));
-} 
+}

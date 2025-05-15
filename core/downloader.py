@@ -1,6 +1,6 @@
 import os
 import yt_dlp
-from PyQt5.QtCore import QRunnable
+from PySide6.QtCore import QRunnable
 from core.utils import format_speed, format_time, get_data_dir
 
 class YTLogger:

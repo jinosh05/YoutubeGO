@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QGroupBox, QFormLayout, QLineEdit, QComboBox, 
                             QFileDialog, QMessageBox)
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
 from ui.components.animated_button import AnimatedButton
 
 class SettingsPage(QWidget):
@@ -23,7 +23,7 @@ class SettingsPage(QWidget):
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         
-        version_label = QLabel("v4.4.14")
+        version_label = QLabel("v4.4.15")
         version_label.setStyleSheet("""
             QLabel {
                 color: #ff4444;

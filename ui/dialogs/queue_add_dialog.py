@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QCheckBox,
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QCheckBox,
                             QComboBox, QDialogButtonBox, QMessageBox, QTableWidgetItem)
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import Qt
 from ui.components.drag_drop_line_edit import DragDropLineEdit
 from core.downloader import DownloadTask
 

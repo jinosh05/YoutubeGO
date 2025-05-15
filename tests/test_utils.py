@@ -1,14 +1,17 @@
 import pytest
 import os
+import tempfile
+from PIL import Image
+import numpy as np
 from core.utils import (
     get_data_dir,
     set_circular_pixmap,
     format_speed,
     format_time
 )
-from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QLabel
+from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt
 
 @pytest.fixture
 def test_widget(qapp):

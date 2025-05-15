@@ -1,5 +1,5 @@
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 import pytest
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from core.history import (
     load_history_initial,
     save_history,

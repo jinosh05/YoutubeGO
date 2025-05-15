@@ -1,7 +1,9 @@
+from PySide6.QtCore import QThreadPool, Signal, QObject
 import pytest
-from PyQt5.QtCore import QThreadPool, pyqtSignal, QObject
 from core.downloader import DownloadTask, DownloadQueueWorker
 import os
+import tempfile
+from core.utils import get_data_dir
 
 @pytest.fixture
 def download_task(temp_data_dir):
@@ -44,10 +46,10 @@ def test_download_task_audio_only(temp_data_dir):
     assert task.output_format == "mp3"
 
 class SignalCatcher(QObject):
-    progress_signal = pyqtSignal(int, float)
-    status_signal = pyqtSignal(int, str)
-    log_signal = pyqtSignal(str)
-    info_signal = pyqtSignal(int, str, str)
+    progress_signal = Signal(int, float)
+    status_signal = Signal(int, str)
+    log_signal = Signal(str)
+    info_signal = Signal(int, str, str)
 
     def __init__(self):
         super().__init__()

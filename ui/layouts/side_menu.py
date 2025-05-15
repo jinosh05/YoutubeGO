@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QListWidget, QListWidgetItem,
+from PySide6.QtWidgets import (QWidget, QHBoxLayout, QListWidget, QListWidgetItem,
                             QFrame, QAbstractItemView, QGraphicsDropShadowEffect)
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 
 class SideMenuLayout:
     def __init__(self, parent):

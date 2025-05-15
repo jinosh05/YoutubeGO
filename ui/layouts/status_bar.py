@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QStatusBar, QLabel, QProgressBar
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QStatusBar, QLabel, QProgressBar
+from PySide6.QtCore import Qt
 from ui.components.animated_button import AnimatedButton
 
 class StatusBarLayout:

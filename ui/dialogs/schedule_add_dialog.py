@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QCheckBox,
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QCheckBox,
                             QDialogButtonBox, QMessageBox, QDateTimeEdit, QTableWidgetItem)
-from PyQt5.QtCore import Qt, QDateTime
+from PySide6.QtCore import Qt, QDateTime
 from ui.components.drag_drop_line_edit import DragDropLineEdit
 
 class ScheduleAddDialog(QDialog):

@@ -1,7 +1,9 @@
 import pytest
 import os
+import json
+from PySide6.QtWidgets import QApplication
 from core.profile import UserProfile
-from PyQt5.QtWidgets import QApplication
+from core.utils import get_data_dir
 
 @pytest.fixture
 def profile(temp_data_dir):

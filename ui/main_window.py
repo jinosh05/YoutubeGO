@@ -1,7 +1,7 @@
 import os, sys, platform, subprocess, shutil, json
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QProgressBar, QStatusBar, QDockWidget, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QLineEdit, QPushButton, QListWidgetItem, QFileDialog, QMenuBar, QAction, QMessageBox, QSystemTrayIcon, QMenu, QDialog, QFormLayout, QDialogButtonBox, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QGroupBox, QDateTimeEdit, QStackedWidget, QAbstractItemView, QGraphicsDropShadowEffect, QFrame
-from PyQt5.QtCore import Qt, pyqtSignal, QThreadPool, QTimer, QDateTime
-from PyQt5.QtGui import QFont, QIcon, QPixmap, QPainter, QColor
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QProgressBar, QStatusBar, QDockWidget, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QLineEdit, QPushButton, QListWidgetItem, QFileDialog, QMenuBar, QMessageBox, QSystemTrayIcon, QMenu, QDialog, QFormLayout, QDialogButtonBox, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QGroupBox, QDateTimeEdit, QStackedWidget, QAbstractItemView, QGraphicsDropShadowEffect, QFrame
+from PySide6.QtCore import Qt, Signal, QThreadPool, QTimer, QDateTime
+from PySide6.QtGui import QAction, QIcon, QFont, QPixmap, QPainter, QColor
 from core.profile import UserProfile
 from core.utils import set_circular_pixmap, format_speed, format_time
 from core.downloader import DownloadTask, DownloadQueueWorker
@@ -26,10 +26,10 @@ QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
 class MainWindow(QMainWindow):
-    progress_signal = pyqtSignal(int, float)
-    status_signal = pyqtSignal(int, str)
-    log_signal = pyqtSignal(str)
-    info_signal = pyqtSignal(int, str, str)
+    progress_signal = Signal(int, float)
+    status_signal = Signal(int, str)
+    log_signal = Signal(str)
+    info_signal = Signal(int, str, str)
     def __init__(self, ffmpeg_found=None, ffmpeg_path=None):
         super().__init__()
         self.setWindowTitle("YoutubeGO 4.4")

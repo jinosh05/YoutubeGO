@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QPushButton, QGraphicsDropShadowEffect
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 
 class AnimatedButton(QPushButton):
     def __init__(self, text=""):
