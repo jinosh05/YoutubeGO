@@ -3,7 +3,7 @@
 ## 🛠️ Tech Stack
 
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
-[![PyQt5](https://img.shields.io/badge/UI-PyQt5-brightgreen)](https://pypi.org/project/PyQt5/)
+[![PySide6](https://img.shields.io/badge/UI-PySide6-brightgreen)](https://pypi.org/project/PySide6/)
 [![yt-dlp](https://img.shields.io/badge/Downloader-yt--dlp-yellow)](https://github.com/yt-dlp/yt-dlp)
 [![requests](https://img.shields.io/badge/HTTP-requests-orange)](https://pypi.org/project/requests/)
 [![FFmpeg](https://img.shields.io/badge/External-FFmpeg-red)](https://ffmpeg.org/)

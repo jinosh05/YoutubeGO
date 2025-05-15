@@ -23,13 +23,10 @@ class HistoryPage(QWidget):
         
         
         self.history_table = QTableWidget()
-        self.history_table.setColumnCount(4)
-        self.history_table.setHorizontalHeaderLabels(["Title","Channel","URL","Status"])
+        self.history_table.setColumnCount(1)
+        self.history_table.setHorizontalHeaderLabels(["URL"])
         hh = self.history_table.horizontalHeader()
         hh.setSectionResizeMode(0, QHeaderView.Stretch)
-        hh.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        hh.setSectionResizeMode(2, QHeaderView.Stretch)
-        hh.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         layout.addWidget(self.history_table)
         
         
@@ -38,12 +35,8 @@ class HistoryPage(QWidget):
         del_sel_btn.clicked.connect(lambda: delete_selected_history(self.history_table, self.parent.append_log))
         del_all_btn = AnimatedButton("Delete All")
         del_all_btn.clicked.connect(lambda: delete_all_history(self.history_table, self.confirm_delete_all, self.parent.append_log))
-        hist_ck = QCheckBox("Enable History Logging")
-        hist_ck.setChecked(self.parent.user_profile.is_history_enabled())
-        hist_ck.stateChanged.connect(self.toggle_history_logging)
         hl.addWidget(del_sel_btn)
         hl.addWidget(del_all_btn)
-        hl.addWidget(hist_ck)
         layout.addLayout(hl)
         
         
@@ -57,11 +50,6 @@ class HistoryPage(QWidget):
         layout.addLayout(s_hl)
         
         layout.addStretch()
-
-    def toggle_history_logging(self, state):
-        enabled = (state == Qt.Checked)
-        self.parent.user_profile.set_history_enabled(enabled)
-        self.parent.append_log(f"History logging {'enabled' if enabled else 'disabled'}.")
 
     def search_history_in_table(self):
         txt = self.search_hist_edit.text().lower().strip()

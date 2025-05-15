@@ -19,33 +19,24 @@ def load_history_initial(table):
                 for entry in history:
                     row = table.rowCount()
                     table.insertRow(row)
-                    table.setItem(row, 0, QTableWidgetItem(entry.get("title", "")))
-                    table.setItem(row, 1, QTableWidgetItem(entry.get("channel", "")))
-                    table.setItem(row, 2, QTableWidgetItem(entry.get("url", "")))
-                    table.setItem(row, 3, QTableWidgetItem(entry.get("status", "")))
+                    table.setItem(row, 0, QTableWidgetItem(entry.get("url", "")))
         except:
             pass
 
 def save_history(table):
     history = []
     for r in range(table.rowCount()):
-        title = table.item(r,0).text() if table.item(r,0) else ""
-        channel = table.item(r,1).text() if table.item(r,1) else ""
-        url = table.item(r,2).text() if table.item(r,2) else ""
-        status = table.item(r,3).text() if table.item(r,3) else ""
-        history.append({"title": title, "channel": channel, "url": url, "status": status})
+        url = table.item(r,0).text() if table.item(r,0) else ""
+        history.append({"url": url})
     with open(HISTORY_FILE, "w") as f:
         json.dump(history, f, indent=4)
 
-def add_history_entry(table, title, channel, url, status, enabled=True):
+def add_history_entry(table, url, enabled=True):
     if not enabled:
         return
     row = table.rowCount()
     table.insertRow(row)
-    table.setItem(row, 0, QTableWidgetItem(title))
-    table.setItem(row, 1, QTableWidgetItem(channel))
-    table.setItem(row, 2, QTableWidgetItem(url))
-    table.setItem(row, 3, QTableWidgetItem(status))
+    table.setItem(row, 0, QTableWidgetItem(url))
     save_history(table)
 
 def delete_selected_history(table, log_callback):

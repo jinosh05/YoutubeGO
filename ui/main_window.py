@@ -22,8 +22,6 @@ from ui.dialogs import ProfileDialog, QueueAddDialog, ScheduleAddDialog
 from ui.layouts import StatusBarLayout, SideMenuLayout, TopBarLayout
 
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
 class MainWindow(QMainWindow):
     progress_signal = Signal(int, float)
@@ -325,7 +323,7 @@ class MainWindow(QMainWindow):
                 self.page_queue.queue_table.setItem(row, 0, QTableWidgetItem(title))
                 self.page_queue.queue_table.setItem(row, 1, QTableWidgetItem(channel))
                 url = self.page_queue.queue_table.item(row, 2).text()
-                self.add_history_entry(title, channel, url, "Downloading")
+                self.add_history_entry(url)
     def open_download_folder(self):
         folder = self.user_profile.get_download_path()
         if platform.system() == "Windows":
@@ -575,9 +573,10 @@ class MainWindow(QMainWindow):
     def show_question(self, title, message):
         return QMessageBox.question(self, title, message) == QMessageBox.Yes
 
-    def add_history_entry(self, title, channel, url, status):
+    def add_history_entry(self, url):
         if hasattr(self, 'page_history') and hasattr(self.page_history, 'history_table'):
-            add_history_entry(self.page_history.history_table, title, channel, url, status, self.user_profile.is_history_enabled())
+            from core.history import add_history_entry
+            add_history_entry(self.page_history.history_table, url, True)
 
     def initialize_history(self):
        

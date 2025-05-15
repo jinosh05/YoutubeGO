@@ -72,7 +72,7 @@ class QueueAddDialog(QDialog):
             self.parent.page_queue.queue_table.setItem(row, 4, QTableWidgetItem("0%"))
             
             # Update history entry
-            self.parent.add_history_entry("Fetching...", "Fetching...", url, "Queued")
+            self.parent.add_history_entry(url)
             self.parent.run_task(task, row)
             self.accept()
         else:

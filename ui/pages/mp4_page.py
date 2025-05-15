@@ -57,5 +57,5 @@ class MP4Page(QWidget):
         )
         
         
-        self.parent.add_history_entry("Fetching...", "Fetching...", link, "Queued")
+        self.parent.add_history_entry(link)
         self.parent.run_task(task, None) 

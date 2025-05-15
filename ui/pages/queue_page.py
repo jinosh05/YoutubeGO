@@ -112,7 +112,7 @@ class QueuePage(QWidget):
             self.queue_table.setItem(row, 3, QTableWidgetItem(download_type))
             self.queue_table.setItem(row, 4, QTableWidgetItem("0%"))
             
-            self.parent.add_history_entry("Fetching...", "Fetching...", url, "Queued")
+            self.parent.add_history_entry(url)
             self.parent.run_task(task, row)
             d.accept()
             
