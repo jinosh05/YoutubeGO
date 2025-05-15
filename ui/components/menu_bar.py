@@ -32,7 +32,7 @@ class MenuBarManager:
         file_menu.addAction(export_profile_action)
         file_menu.addAction(import_profile_action)
         
-        # Help Menu
+        
         help_menu = self.menu_bar.addMenu("Help")
         
         mail_action = QAction("Contact: toxi360@workmail.com", self.main_window)

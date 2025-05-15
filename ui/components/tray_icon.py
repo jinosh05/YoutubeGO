@@ -41,14 +41,12 @@ class TrayIconManager:
         self.tray_icon.show()
 
     def quit_application(self):
-        # Bu metod sadece tray menüsünden "Quit" seçeneğine tıklandığında çağrılır
-        # ve uygulamayı tamamen kapatır
+        
         self.hide()
         QApplication.quit()
 
     def handle_window_close(self):
-        # Bu metod pencere kapatıldığında çağrılır
-        # Pencereyi gizler ve tray'de çalışmaya devam eder
+       
         self.main_window.hide()
         self.show_running_message()
 

@@ -67,7 +67,7 @@ class TopBarLayout:
         search_bar_row_layout.addWidget(self.search_btn)
         search_area_layout.addWidget(search_bar_row)
 
-        # Search Results List
+        
         self.search_result_list = QListWidget()
         self.search_result_list.setVisible(False)
         self.search_result_list.setMinimumHeight(250)

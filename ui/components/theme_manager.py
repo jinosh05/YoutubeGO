@@ -1,4 +1,13 @@
+import sys
 import os
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(os.path.dirname(__file__))
+        base_path = os.path.abspath(os.path.join(base_path, "..", ".."))
+    return os.path.join(base_path, relative_path)
 
 class ThemeManager:
     def __init__(self, main_window):
@@ -7,13 +16,13 @@ class ThemeManager:
         self.current_theme = self.user_profile.get_theme()
 
     def get_dark_theme(self):
-        css_path = os.path.join(os.path.dirname(__file__), "..", "themes", "dark.qss")
-        with open(css_path, "r") as f:
+        css_path = resource_path("ui/themes/dark.qss")
+        with open(css_path, "r", encoding="utf-8") as f:
             return f.read()
 
     def get_light_theme(self):
-        css_path = os.path.join(os.path.dirname(__file__), "..", "themes", "light.qss")
-        with open(css_path, "r") as f:
+        css_path = resource_path("ui/themes/light.qss")
+        with open(css_path, "r", encoding="utf-8") as f:
             return f.read()
 
     def get_current_theme_stylesheet(self):

@@ -86,7 +86,7 @@ class ProfilePage(QWidget):
         if not name:
             self.parent.show_warning("Error", "Please provide a name.")
             return
-        # Only update picture if a new one is selected
+        
         pic_path = self.pic_label.property("selected_path")
         if not pic_path:
             pic_path = self.parent.user_profile.data["profile_picture"]

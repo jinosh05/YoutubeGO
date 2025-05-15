@@ -84,7 +84,7 @@ class LogDockManager:
         scrollbar = self.log_text_edit.verticalScrollBar()
         scrollbar.setValue(scrollbar.maximum())
 
-        # Tray bildirimleri için main_window'a sinyal gönder
+        
         if "[yt-dlp Error]" in text or ("error" in text.lower() and not text.startswith("[yt-dlp")):
             self.main_window.tray_manager.show_error_message(text)
         elif "playlist indexing in progress" in text.lower():
