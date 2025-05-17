@@ -21,6 +21,10 @@
 ### 📜 Юридическая
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
 
+### 📜 Лицензия Qt/PySide6
+
+Подробную информацию о соответствии LGPL-3.0 для PySide6 (Qt) смотрите в файле [QtLicense.md](QtLicense.md).
+
 ### 🌐 Ссылки
 [![Сайт](https://img.shields.io/badge/Посетить-Сайт-blue)](https://youtubego.org)
 [![Discord](https://img.shields.io/badge/Присоединиться-Discord-7289DA)](https://discord.gg/XdK97UH3fE)

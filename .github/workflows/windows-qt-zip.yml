@@ -1,0 +1,56 @@
+name: Create Windows Qt ZIP (Onedir Build)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-qt-zip:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Download FFmpeg
+        run: |
+          $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+          $outputPath = "ffmpeg.zip"
+          Invoke-WebRequest -Uri $ffmpegUrl -OutFile $outputPath
+          Expand-Archive -Path $outputPath -DestinationPath "ffmpeg"
+          Move-Item -Path "ffmpeg/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe" -Destination "ffmpeg.exe"
+
+      - name: Build EXE with PyInstaller (Onedir + Embedded Data)
+        run: |
+          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo ^
+            --icon=assets/app.ico ^
+            --add-data "assets;assets" ^
+            --add-data "ui/themes;ui/themes" ^
+            --add-data "assets/app.png;assets" ^
+            --add-data "ffmpeg.exe;." main.py
+
+      - name: Create YoutubeGo-Win directory and prepare final ZIP
+        run: |
+          mkdir YoutubeGo-Win
+          xcopy dist\YoutubeGo\* YoutubeGo-Win\ /E /I /Y
+          copy QtLicense.md YoutubeGo-Win\
+          copy LICENSE YoutubeGo-Win\
+          Compress-Archive -Path YoutubeGo-Win\* -DestinationPath "YoutubeGo-Win.zip" -Force
+
+      - name: Upload ZIP to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: YoutubeGo-Win.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

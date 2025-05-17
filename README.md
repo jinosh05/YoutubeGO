@@ -20,6 +20,10 @@
 ### 📜 Legal 
 [![License](https://img.shields.io/badge/License-Apache_2.0-green)](LICENSE)
 
+### 📜 Qt/PySide6 License
+
+Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information regarding PySide6 (Qt).
+
 ### 🌐 Links
 [![Website](https://img.shields.io/badge/Visit-Website-blue)](https://youtubego.org)
 [![Discord](https://img.shields.io/badge/Join-Discord-7289DA)](https://discord.gg/XdK97UH3fE)
@@ -182,13 +186,6 @@ https://github.com/yt-dlp/yt-dlp
 🚀
 ```
 
-```bash
-# License
-# This project is licensed under the Apache License 2.0.
-```
-
 ## ⚠️ Legal Notice
 
 YoutubeGO is an independent open-source project. It operates independently from YouTube and Google, performing downloads and other operations without using their APIs. This project is not bound by YouTube's terms of service or rules.
-
-

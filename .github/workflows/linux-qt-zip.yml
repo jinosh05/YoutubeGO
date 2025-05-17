@@ -1,0 +1,47 @@
+name: Create Linux Qt ZIP
+
+on:
+  workflow_run:
+    workflows: ["Build and Release Linux App"]
+    types:
+      - completed
+
+jobs:
+  create-qt-zip:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download AppImage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: YoutubeGo-x86_64.AppImage
+          path: dist
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Create final zip
+        run: |
+          mkdir -p YoutubeGo-Linux
+          cp dist/YoutubeGo-x86_64.AppImage YoutubeGo-Linux/
+          cp QtLicense.md YoutubeGo-Linux/
+          cp LICENSE YoutubeGo-Linux/
+          cd YoutubeGo-Linux
+          zip -r ../YoutubeGo-Linux.zip *
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: YoutubeGo-Linux.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
