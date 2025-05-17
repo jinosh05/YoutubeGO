@@ -36,12 +36,10 @@ jobs:
             --add-data "ui/themes:ui/themes" \
             --add-data "assets/app.png:assets" main.py
 
-          
           mkdir -p appdir/usr/bin
           cp dist/YoutubeGo/YoutubeGo appdir/usr/bin/
           chmod +x appdir/usr/bin/YoutubeGo
 
-          
           mkdir -p appdir/usr/share/applications
           echo "[Desktop Entry]" > appdir/usr/share/applications/YoutubeGo.desktop
           echo "Name=YoutubeGO" >> appdir/usr/share/applications/YoutubeGo.desktop
@@ -50,7 +48,6 @@ jobs:
           echo "Type=Application" >> appdir/usr/share/applications/YoutubeGo.desktop
           echo "Categories=Utility;" >> appdir/usr/share/applications/YoutubeGo.desktop
 
-          
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
           chmod +x appimagetool
           ./appimagetool appdir dist/YoutubeGo-x86_64.AppImage
