@@ -31,11 +31,10 @@ jobs:
       - name: Build AppImage
         run: |
           pyinstaller --noconfirm --onedir --windowed --name YoutubeGo \
-          --icon=assets/app.ico \
-          --add-data "assets:assets" \
-          --add-data "ui/themes:ui/themes" \
-          --add-data "assets/app.png:assets" main.py
-
+            --icon=assets/app.ico \
+            --add-data "assets:assets" \
+            --add-data "ui/themes:ui/themes" \
+            --add-data "assets/app.png:assets" main.py
 
           
           mkdir -p appdir/usr/bin
@@ -43,10 +42,17 @@ jobs:
           chmod +x appdir/usr/bin/YoutubeGo
 
           
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
-          chmod +x appimagetool
+          mkdir -p appdir/usr/share/applications
+          echo "[Desktop Entry]" > appdir/usr/share/applications/YoutubeGo.desktop
+          echo "Name=YoutubeGO" >> appdir/usr/share/applications/YoutubeGo.desktop
+          echo "Exec=YoutubeGo" >> appdir/usr/share/applications/YoutubeGo.desktop
+          echo "Icon=app" >> appdir/usr/share/applications/YoutubeGo.desktop
+          echo "Type=Application" >> appdir/usr/share/applications/YoutubeGo.desktop
+          echo "Categories=Utility;" >> appdir/usr/share/applications/YoutubeGo.desktop
 
           
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+          chmod +x appimagetool
           ./appimagetool appdir dist/YoutubeGo-x86_64.AppImage
 
       - name: Create zip

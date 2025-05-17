@@ -26,16 +26,22 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-          - name: Download FFmpeg
-          run: |
-            $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2025-05-17-13-59/ffmpeg-N-119575-gb5f26c4dd8-win64-gpl.zip"
-            $outputPath = "ffmpeg.zip"
-            Invoke-WebRequest -Uri $ffmpegUrl -OutFile $outputPath
-            Expand-Archive -Path $outputPath -DestinationPath "ffmpeg"
-            Move-Item -Path "ffmpeg/ffmpeg-N-119575-gb5f26c4dd8-win64-gpl/bin/ffmpeg.exe" -Destination "ffmpeg.exe"
-        
+      - name: Download FFmpeg
+        run: |
+          $ffmpegUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2025-05-17-13-59/ffmpeg-N-119575-gb5f26c4dd8-win64-gpl.zip"
+          $outputPath = "ffmpeg.zip"
+          Invoke-WebRequest -Uri $ffmpegUrl -OutFile $outputPath
+          Expand-Archive -Path $outputPath -DestinationPath "ffmpeg"
+          Move-Item -Path "ffmpeg/ffmpeg-N-119575-gb5f26c4dd8-win64-gpl/bin/ffmpeg.exe" -Destination "ffmpeg.exe"
+
       - name: Build EXE with PyInstaller (Onedir + Embedded Data)
-        run: pyinstaller --noconfirm --onedir --windowed --name YoutubeGo --icon=assets/app.ico --add-data "assets;assets" --add-data "ui/themes;ui/themes" --add-data "assets/app.png;assets" --add-data "ffmpeg.exe;." main.py
+        run: |
+          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo `
+            --icon=assets/app.ico `
+            --add-data "assets;assets" `
+            --add-data "ui/themes;ui/themes" `
+            --add-data "assets/app.png;assets" `
+            --add-data "ffmpeg.exe;." main.py
 
       - name: Create YoutubeGo-Win directory and prepare final ZIP
         run: |
