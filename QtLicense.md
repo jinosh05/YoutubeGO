@@ -66,8 +66,15 @@ No additional documentation is required.
 
 This project ensures compliance by making both source code and dynamic linking structure available through `onedir` and `AppImage` formats.
 
+
+
+
 ---
 
 > **Trademarks Notice:**
 > "Qt", "Qt for Python", and the Qt logo are trademarks of **The Qt Company Ltd.**, registered in Finland and/or other countries.
 > This project is **not affiliated with, endorsed by, or sponsored by The Qt Company**.
+
+
+Disclaimer: This license notice is provided in good faith to meet the obligations of LGPL-3.0 and ensure transparency. However, it does not constitute legal advice. For full legal interpretation, refer to the official license text or consult a legal professional.
+
