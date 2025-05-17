@@ -24,33 +24,53 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libfuse2
+          sudo apt-get install -y \
+            libfuse2 \
+            libxcb-shape0 \
+            libxcb-image0 \
+            libxcb-icccm4 \
+            libxcb-cursor0 \
+            libxcb-render-util0 \
+            libxcb-keysyms1 \
+            libxcb-xkb1 \
+            libxkbcommon-x11-0 \
+            appstream
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build AppImage
+      - name: Build Linux App
         run: |
-          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo \
-            --icon=assets/app.ico \
+          pyinstaller --noconfirm --onefile --windowed --name YoutubeGo \
             --add-data "assets:assets" \
-            --add-data "ui/themes:ui/themes" \
-            --add-data "assets/app.png:assets" main.py
+            --add-data "ui/themes:ui/themes" main.py
 
-          mkdir -p appdir/usr/bin
-          cp dist/YoutubeGo/YoutubeGo appdir/usr/bin/
-          chmod +x appdir/usr/bin/YoutubeGo
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 
-          mkdir -p appdir/usr/share/applications
-          echo "[Desktop Entry]" > appdir/usr/share/applications/YoutubeGo.desktop
-          echo "Name=YoutubeGO" >> appdir/usr/share/applications/YoutubeGo.desktop
-          echo "Exec=YoutubeGo" >> appdir/usr/share/applications/YoutubeGo.desktop
-          echo "Icon=app" >> appdir/usr/share/applications/YoutubeGo.desktop
-          echo "Type=Application" >> appdir/usr/share/applications/YoutubeGo.desktop
-          echo "Categories=Utility;" >> appdir/usr/share/applications/YoutubeGo.desktop
+          cp dist/YoutubeGo AppDir/usr/bin/YoutubeGo
+          cp assets/app.png AppDir/usr/share/icons/hicolor/256x256/apps/YoutubeGo.png
+          cp assets/app.png AppDir/YoutubeGo.png
 
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+          echo "[Desktop Entry]" > AppDir/YoutubeGo.desktop
+          echo "Name=YoutubeGo" >> AppDir/YoutubeGo.desktop
+          echo "Exec=YoutubeGo" >> AppDir/YoutubeGo.desktop
+          echo "Icon=YoutubeGo" >> AppDir/YoutubeGo.desktop
+          echo "Type=Application" >> AppDir/YoutubeGo.desktop
+          echo "Categories=AudioVideo;Video;" >> AppDir/YoutubeGo.desktop
+          echo "Comment=YouTube video downloader" >> AppDir/YoutubeGo.desktop
+
+          echo '#!/bin/sh' > AppDir/AppRun
+          echo 'exec "$APPDIR/usr/bin/YoutubeGo" "$@"' >> AppDir/AppRun
+          chmod +x AppDir/AppRun
+
+      - name: Create AppImage
+        run: |
+          curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o appimagetool
           chmod +x appimagetool
-          ./appimagetool appdir dist/YoutubeGo-x86_64.AppImage
+          ./appimagetool AppDir
+          mkdir -p dist
+          mv YoutubeGo-x86_64.AppImage dist/
 
       - name: Create zip
         run: |
