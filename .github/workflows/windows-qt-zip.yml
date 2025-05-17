@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:  
+  contents: write
+
 jobs:
   create-qt-zip:
     runs-on: windows-latest

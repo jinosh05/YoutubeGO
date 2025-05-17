@@ -6,6 +6,9 @@ on:
     types:
       - completed
 
+permissions: 
+  contents: write
+
 jobs:
   create-qt-zip:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -13,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Download AppImage artifact
         uses: actions/download-artifact@v2  
