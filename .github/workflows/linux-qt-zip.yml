@@ -31,11 +31,11 @@ jobs:
       - name: Build AppImage
         run: |
           pyinstaller --noconfirm --onedir --windowed --name YoutubeGo \
-            --icon=assets/app.ico \
-            --add-data "assets:assets" \
-            --add-data "ui/themes:ui/themes" \
-            --add-data "assets/app.png:assets" \
-            --add-data "ffmpeg:." main.py
+          --icon=assets/app.ico \
+          --add-data "assets:assets" \
+          --add-data "ui/themes:ui/themes" \
+          --add-data "assets/app.png:assets" main.py
+
 
           
           mkdir -p appdir/usr/bin
