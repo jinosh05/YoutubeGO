@@ -22,12 +22,32 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+          pip install -r requirements.txt
+          pip install pyinstaller
 
       - name: Build AppImage
         run: |
-          pyinstaller ...  # AppImage build komutun burada olacak
-          mv dist/YoutubeGo dist/YoutubeGo-x86_64.AppImage
+          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo \
+            --icon=assets/app.ico \
+            --add-data "assets:assets" \
+            --add-data "ui/themes:ui/themes" \
+            --add-data "assets/app.png:assets" \
+            --add-data "ffmpeg:." main.py
+
+          
+          mkdir -p appdir/usr/bin
+          cp dist/YoutubeGo/YoutubeGo appdir/usr/bin/
+          chmod +x appdir/usr/bin/YoutubeGo
+
+          
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+          chmod +x appimagetool
+
+          
+          ./appimagetool appdir dist/YoutubeGo-x86_64.AppImage
 
       - name: Create zip
         run: |
