@@ -5,7 +5,7 @@ from core.downloader import DownloadTask
 from ui.components.animated_button import AnimatedButton
 from ui.components.drag_drop_line_edit import DragDropLineEdit
 
-class MP4Page(QWidget):
+class VideoPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
@@ -15,7 +15,7 @@ class MP4Page(QWidget):
         layout = QVBoxLayout(self)
         
         
-        lbl = QLabel("Download MP4")
+        lbl = QLabel("Download Video")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)

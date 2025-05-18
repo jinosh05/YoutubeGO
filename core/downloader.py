@@ -2,6 +2,7 @@ import os
 import yt_dlp
 from PySide6.QtCore import QRunnable
 from core.utils import format_speed, format_time, get_data_dir
+import time
 
 class YTLogger:
     def __init__(self, log_signal):
@@ -136,7 +137,16 @@ class DownloadQueueWorker(QRunnable):
                 "retries": 10,
                 "fragment_retries": 10,
                 "proxy": self.task.proxy if self.task.proxy else None,
-                "verbose": True
+                "verbose": True,
+                "file_access_retries": 5,
+                "retry_sleep": 2,
+                "ffmpeg_location": "ffmpeg",
+                "prefer_ffmpeg": True,
+                "postprocessor_args": [
+                    "-ar", "44100",
+                    "-ac", "2",
+                    "-b:a", "192k"
+                ]
             })
 
             if self.task.audio_only:
@@ -176,7 +186,24 @@ class DownloadQueueWorker(QRunnable):
 
             try:
                 with yt_dlp.YoutubeDL(download_options) as ydl:
-                    ydl.download([self.task.url])
+                    try:
+                        ydl.download([self.task.url])
+                    except Exception as e:
+                        if "Unable to rename file" in str(e):
+                            time.sleep(2)
+                            ydl.download([self.task.url])
+                        elif "unable to obtain file audio codec" in str(e):
+                            ydl_opts = download_options.copy()
+                            ydl_opts['postprocessor_args'] = [
+                                '-ar', '44100',
+                                '-ac', '2',
+                                '-b:a', '192k',
+                                '-vn'
+                            ]
+                            with yt_dlp.YoutubeDL(ydl_opts) as ydl2:
+                                ydl2.download([self.task.url])
+                        else:
+                            raise
                 self.status_signal.emit(self.row, "Download Completed")
             except yt_dlp.utils.DownloadError as e:
                 if self.cancel:

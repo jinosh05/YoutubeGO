@@ -42,7 +42,7 @@ class TopBarLayout:
         layout.addWidget(profile_widget, alignment=Qt.AlignLeft)
         
         
-        self.logo_label = QLabel("YoutubeGO 4.4")
+        self.logo_label = QLabel("YoutubeGO 5.0")
         self.logo_label.setFont(QFont("Arial", 22, QFont.Bold))
         layout.addWidget(self.logo_label, alignment=Qt.AlignVCenter | Qt.AlignLeft)
         

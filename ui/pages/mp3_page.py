@@ -5,7 +5,7 @@ from core.downloader import DownloadTask
 from ui.components.animated_button import AnimatedButton
 from ui.components.drag_drop_line_edit import DragDropLineEdit
 
-class MP3Page(QWidget):
+class AudioPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
@@ -15,7 +15,7 @@ class MP3Page(QWidget):
         layout = QVBoxLayout(self)
         
         
-        lbl = QLabel("Download MP3")
+        lbl = QLabel("Download Audio")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)

@@ -26,7 +26,7 @@ class SideMenuLayout:
         self.side_menu.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         
-        menu_items = ["Home", "MP4", "MP3", "History", "Settings", "Profile", "Queue", "Scheduler"]
+        menu_items = ["Home", "Video", "Audio", "History", "Settings", "Profile", "Queue", "Scheduler"]
         for item_name in menu_items:
             item = QListWidgetItem(f"{self.get_menu_icon(item_name)}  {item_name}")
             item.setTextAlignment(Qt.AlignLeft)
@@ -64,8 +64,8 @@ class SideMenuLayout:
     def get_menu_icon(self, name):
         icons = {
             "Home": "🏠",
-            "MP4": "🎥",
-            "MP3": "🎵",
+            "Video": "🎥",
+            "Audio": "🎵",
             "History": "📜",
             "Settings": "⚙️",
             "Profile": "👤",

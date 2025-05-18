@@ -122,7 +122,11 @@ class SchedulerPage(QWidget):
             scheduled_dt = QDateTime.fromString(dt_str, "yyyy-MM-dd HH:mm:ss")
             status_item = self.scheduler_table.item(row, 4)
             
-            if status_item and scheduled_dt <= now and status_item.text() == "Scheduled":
+            # Convert both times to seconds since epoch for accurate comparison
+            now_secs = now.toSecsSinceEpoch()
+            scheduled_secs = scheduled_dt.toSecsSinceEpoch()
+            
+            if status_item and scheduled_secs <= now_secs and status_item.text() == "Scheduled":
                 url = self.scheduler_table.item(row, 1).text()
                 type_text = self.scheduler_table.item(row, 2).text().lower()
                 subtitles = (self.scheduler_table.item(row, 3).text() == "Yes")

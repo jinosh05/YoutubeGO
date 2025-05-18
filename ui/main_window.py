@@ -9,8 +9,8 @@ from core.history import load_history_initial, save_history, add_history_entry, 
 from core.utils import get_data_dir
 
 from ui.pages.home_page import HomePage
-from ui.pages.mp3_page import MP3Page
-from ui.pages.mp4_page import MP4Page
+from ui.pages.mp3_page import AudioPage
+from ui.pages.mp4_page import VideoPage
 from ui.pages.settings_page import SettingsPage
 from ui.pages.profile_page import ProfilePage
 from ui.pages.history_page import HistoryPage
@@ -36,8 +36,14 @@ class MainWindow(QMainWindow):
     info_signal = Signal(int, str, str)
     def __init__(self, ffmpeg_found=None, ffmpeg_path=None):
         super().__init__()
-        self.setWindowTitle("YoutubeGO 4.4")
-        self.setGeometry(100, 100, 1280, 800)
+        self.setWindowTitle("YoutubeGO v5.0.2")
+        screen = QApplication.primaryScreen().geometry()
+        width = min(1280, screen.width() - 100)
+        height = min(1150, screen.height() - 100)
+        x = (screen.width() - width) // 2
+        y = (screen.height() - height) // 2
+        self.setGeometry(x, y, width, height)
+        self.setMinimumSize(788, 600)
         self.ffmpeg_found = ffmpeg_found if ffmpeg_found is not None else False
         self.ffmpeg_path = ffmpeg_path if ffmpeg_path is not None else ""
         if self.ffmpeg_found and self.ffmpeg_path:
@@ -142,9 +148,9 @@ class MainWindow(QMainWindow):
     def create_page_home(self):
         return HomePage(self)
     def create_page_mp4(self):
-        return MP4Page(self)
+        return VideoPage(self)
     def create_page_mp3(self):
-        return MP3Page(self)
+        return AudioPage(self)
     def create_page_history(self):
         self.page_history = HistoryPage(self)
         return self.page_history

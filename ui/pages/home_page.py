@@ -12,12 +12,12 @@ class HomePage(QWidget):
         layout = QVBoxLayout(self)
         
         
-        welcome_text = """Welcome to YoutubeGO 5.0.1
+        welcome_text = """Welcome to YoutubeGO v5.0.2
 
 Usage Instructions:
 - Home: Overview and instructions
-- MP4: Download videos in MP4 format
-- MP3: Download audio in MP3 format
+- Video: Download videos in MP4 format
+- Audio: Download audio in MP3 format
 - History: View your download history
 - Settings: Configure resolution, proxy, download folder, etc.
 - Profile: Update your user details
@@ -31,5 +31,8 @@ Visit youtubego.org for more details, check GitHub for source code."""
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setOpenExternalLinks(True)
         layout.addWidget(lbl)
+        
+    
+       
         
         layout.addStretch() 

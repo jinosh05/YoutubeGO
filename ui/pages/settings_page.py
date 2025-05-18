@@ -23,7 +23,7 @@ class SettingsPage(QWidget):
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         
-        version_label = QLabel("v5.0.1")
+        version_label = QLabel("v5.0.2")
         version_label.setStyleSheet("""
             QLabel {
                 color: #ff4444;
