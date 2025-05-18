@@ -1,7 +1,7 @@
 # 🎶 YoutubeGO 5.0 🎥
 
 <div align="center">
-  <img src="assets/banner.gif" alt="Логотип YoutubeGO" width="200"/>
+  <img src="assets/banner.png" alt="YoutubeGO Logo" width="650"/>
   
   ### Современный YouTube-загрузчик с расширенными возможностями
   
