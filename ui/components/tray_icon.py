@@ -37,7 +37,7 @@ class TrayIconManager:
         tray_menu.addAction(quit_action)
         
         self.tray_icon.setContextMenu(tray_menu)
-        self.tray_icon.setToolTip("YoutubeGO 4.4")
+        self.tray_icon.setToolTip("YoutubeGO 5.0")
         self.tray_icon.show()
 
     def quit_application(self):
@@ -61,7 +61,7 @@ class TrayIconManager:
 
     def show_running_message(self):
         self.tray_icon.showMessage(
-            "YoutubeGO 4.4",
+            "YoutubeGO 5.0",
             "Application is running in the tray",
             QSystemTrayIcon.Information,
             2000
@@ -69,7 +69,7 @@ class TrayIconManager:
 
     def show_download_completed_message(self):
         self.tray_icon.showMessage(
-            "YoutubeGO 4.4",
+            "YoutubeGO 5.0",
             "Download Completed",
             QSystemTrayIcon.Information,
             3000
@@ -77,7 +77,7 @@ class TrayIconManager:
 
     def show_download_error_message(self):
         self.tray_icon.showMessage(
-            "YoutubeGO 4.4",
+            "YoutubeGO 5.0",
             "Download Error Occurred",
             QSystemTrayIcon.Critical,
             3000
@@ -85,7 +85,7 @@ class TrayIconManager:
 
     def show_download_cancelled_message(self):
         self.tray_icon.showMessage(
-            "YoutubeGO 4.4",
+            "YoutubeGO 5.0",
             "Download Cancelled",
             QSystemTrayIcon.Warning,
             3000
@@ -93,7 +93,7 @@ class TrayIconManager:
 
     def show_playlist_indexing_message(self):
         self.tray_icon.showMessage(
-            "YoutubeGO 4.4",
+            "YoutubeGO 5.0",
             "Playlist indexing, please wait...",
             QSystemTrayIcon.Information,
             5000
@@ -101,7 +101,7 @@ class TrayIconManager:
 
     def show_error_message(self, text):
         self.tray_icon.showMessage(
-            "YoutubeGO 4.4 - Error",
+            "YoutubeGO 5.0 - Error",
             text.split("\n")[0],
             QSystemTrayIcon.Critical,
             5000

@@ -1,4 +1,4 @@
-# 🎶 YoutubeGO 4.4 🎥
+# 🎶 YoutubeGO 5.0 🎥
 
 ## 🛠️ Tech Stack
 
@@ -83,9 +83,9 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 - **Cross-Platform Compatibility**  
   Fully supported on **Linux** and **Windows**.
 
-## 🚀 New in Version 4.4
+## 🚀 New in Version 5.0
 
-### 🔥 Modular Codebase
+### �� Modular Codebase
 - **Code has been fully refactored** into `core/`, `ui/`, and `tests/` directories.
 - Easier to maintain, extend and contribute.
 
@@ -179,10 +179,10 @@ https://github.com/yt-dlp/yt-dlp
 ## 🙏 Contributions
 
 ```bash
-# We welcome contributions to improve YoutubeGO 4.4.
+# We welcome contributions to improve YoutubeGO 5.0.
 # Please submit issues or pull requests via GitHub.
 
-# Enjoy using YoutubeGO 4.4!
+# Enjoy using YoutubeGO 5.0!
 🚀
 ```
 

@@ -6,7 +6,7 @@ from ui.main_window import MainWindow
 from core.ffmpeg_checker import check_ffmpeg
 
 def main():
-    shared_mem = QSharedMemory("YoutubeGO4.4")
+    shared_mem = QSharedMemory("YoutubeGO 5.0")
     
     if not shared_mem.create(1):
         app = QApplication.instance()

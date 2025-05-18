@@ -1,6 +1,6 @@
 # 🤝 Contributing to YouTubeGO
 
-Thanks for your interest in contributing to **YouTubeGO 4.4**! We welcome bug reports, feature requests, and code improvements.
+Thanks for your interest in contributing to **YouTubeGO 5.0**! We welcome bug reports, feature requests, and code improvements.
 
 ## 📋 How to Contribute
 

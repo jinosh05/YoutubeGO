@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QGroupBox, QFormLayout, QLineEdit, QComboBox, 
-                            QFileDialog, QMessageBox)
+                            QFileDialog, QMessageBox, QScrollArea)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.components.animated_button import AnimatedButton
@@ -12,7 +12,22 @@ class SettingsPage(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        layout = QVBoxLayout(self)
+        
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(10, 10, 10, 10)
+        main_layout.setSpacing(10)
+        
+        
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        main_layout.addWidget(scroll)
+        
+    
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(10)
         
         
         header_container = QWidget()
@@ -42,9 +57,11 @@ class SettingsPage(QWidget):
         
         layout.addWidget(header_container)
 
-        
+        # Concurrent Downloads Group
         g_con = QGroupBox("Max Concurrent Downloads")
+        g_con.setMinimumWidth(300)
         g_layout = QHBoxLayout(g_con)
+        g_layout.setContentsMargins(10, 10, 10, 10)
         self.concurrent_combo = QComboBox()
         self.concurrent_combo.addItems(["1","2","3","4","5","10"])
         self.concurrent_combo.setCurrentText(str(self.parent.max_concurrent_downloads))
@@ -53,9 +70,12 @@ class SettingsPage(QWidget):
         g_layout.addWidget(self.concurrent_combo)
         layout.addWidget(g_con)
 
-        
+        # Technical Group
         g_tech = QGroupBox("Technical / Appearance")
+        g_tech.setMinimumWidth(300)
         fl = QFormLayout(g_tech)
+        fl.setContentsMargins(10, 10, 10, 10)
+        fl.setSpacing(10)
         self.proxy_edit = QLineEdit()
         self.proxy_edit.setText(self.parent.user_profile.get_proxy())
         self.proxy_edit.setPlaceholderText("Proxy or bandwidth limit...")
@@ -69,9 +89,11 @@ class SettingsPage(QWidget):
         fl.addWidget(theme_btn)
         layout.addWidget(g_tech)
 
-        
+        # Resolution Group
         g_res = QGroupBox("Default Resolution")
+        g_res.setMinimumWidth(300)
         r_hl = QHBoxLayout(g_res)
+        r_hl.setContentsMargins(10, 10, 10, 10)
         self.res_combo = QComboBox()
         self.res_combo.addItems(["144p","240p","360p","480p","720p","1080p","1440p","2160p","4320p"])
         self.res_combo.setCurrentText(self.parent.user_profile.get_default_resolution())
@@ -82,9 +104,11 @@ class SettingsPage(QWidget):
         r_hl.addWidget(a_btn)
         layout.addWidget(g_res)
 
-        
+        # Download Path Group
         g_path = QGroupBox("Download Path")
+        g_path.setMinimumWidth(300)
         p_hl = QHBoxLayout(g_path)
+        p_hl.setContentsMargins(10, 10, 10, 10)
         self.download_path_edit = QLineEdit()
         self.download_path_edit.setReadOnly(True)
         self.download_path_edit.setText(self.parent.user_profile.get_download_path())
@@ -96,6 +120,9 @@ class SettingsPage(QWidget):
         layout.addWidget(g_path)
         
         layout.addStretch()
+        
+        # Scroll area'ya container'ı ekle
+        scroll.setWidget(container)
 
     def set_max_concurrent_downloads(self, idx):
         val = self.concurrent_combo.currentText()

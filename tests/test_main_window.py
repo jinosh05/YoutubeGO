@@ -10,7 +10,7 @@ def main_window(qapp, temp_data_dir, mock_ffmpeg):
     window.close()
 
 def test_main_window_init(main_window):
-    assert main_window.windowTitle() == "YoutubeGO 4.4"
+    assert main_window.windowTitle() == "YoutubeGO 5.0"
     assert main_window.isVisible() == False
     assert main_window.main_stack.count() == 8  
 
