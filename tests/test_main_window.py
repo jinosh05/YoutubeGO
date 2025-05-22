@@ -2,6 +2,7 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox, QDialog
 from ui.main_window import MainWindow
+from core.version import get_version
 
 @pytest.fixture
 def main_window(qapp, temp_data_dir, mock_ffmpeg):
@@ -10,7 +11,7 @@ def main_window(qapp, temp_data_dir, mock_ffmpeg):
     window.close()
 
 def test_main_window_init(main_window):
-    assert main_window.windowTitle() == "YoutubeGO 5.0"
+    assert main_window.windowTitle() == f"YoutubeGO {get_version()}"
     assert main_window.isVisible() == False
     assert main_window.main_stack.count() == 8  
 

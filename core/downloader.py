@@ -25,7 +25,7 @@ class YTLogger:
         self._log("Error", msg)
 
 class DownloadTask:
-    def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False):
+    def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False, audio_format=None):
         self.url = url
         self.resolution = resolution
         self.folder = folder
@@ -35,6 +35,7 @@ class DownloadTask:
         self.subtitles = subtitles
         self.output_format = output_format
         self.from_queue = from_queue
+        self.audio_format = audio_format
 
 class DownloadQueueWorker(QRunnable):
     def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None):
@@ -140,7 +141,6 @@ class DownloadQueueWorker(QRunnable):
                 "verbose": True,
                 "file_access_retries": 5,
                 "retry_sleep": 2,
-                "ffmpeg_location": "ffmpeg",
                 "prefer_ffmpeg": True,
                 "postprocessor_args": [
                     "-ar", "44100",
@@ -149,17 +149,24 @@ class DownloadQueueWorker(QRunnable):
                 ]
             })
 
+            
+            if hasattr(self.task, 'ffmpeg_path') and self.task.ffmpeg_path:
+                download_options["ffmpeg_location"] = self.task.ffmpeg_path
+                self.log_signal.emit(f"Using FFmpeg from: {self.task.ffmpeg_path}")
+
             if self.task.audio_only:
+                audio_format = self.task.audio_format if hasattr(self.task, 'audio_format') and self.task.audio_format else "mp3"
                 download_options.update({
-                    "final_ext": "mp3",
-                    "format": "ba[acodec^=mp3]/ba/b",
+                    "final_ext": audio_format,
+                    "format": f"ba[acodec^={audio_format}]/ba/b",
                     "postprocessors": [{
                         "key": "FFmpegExtractAudio",
                         "nopostoverwrites": False,
-                        "preferredcodec": "mp3",
+                        "preferredcodec": audio_format,
                         "preferredquality": "0"
                     }]
                 })
+                self.log_signal.emit(f"Audio format set to: {audio_format}")
             else:
                 try:
                     download_options.update({
@@ -171,8 +178,7 @@ class DownloadQueueWorker(QRunnable):
                             "key": "FFmpegVideoRemuxer",
                             "preferedformat": self.task.output_format.lower(),
                             "when": "post_process"
-                        }],
-                        "ffmpeg_location": self.task.ffmpeg_path if hasattr(self.task, 'ffmpeg_path') else None
+                        }]
                     })
                 except Exception as e:
                     self.log_signal.emit(f"Format configuration failed, falling back to basic format: {str(e)}")

@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
+from core.version import get_version
 
 class HomePage(QWidget):
     def __init__(self, parent=None):
@@ -12,7 +13,7 @@ class HomePage(QWidget):
         layout = QVBoxLayout(self)
         
         
-        welcome_text = """Welcome to YoutubeGO v5.0.2
+        welcome_text = f"""Welcome to YoutubeGO {get_version()}
 
 Usage Instructions:
 - Home: Overview and instructions

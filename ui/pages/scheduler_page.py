@@ -139,7 +139,9 @@ class SchedulerPage(QWidget):
                     audio_only=("audio" in type_text),
                     playlist=False,
                     subtitles=subtitles,
-                    from_queue=True
+                    from_queue=True,
+                    output_format="mp4",
+                    audio_format=self.parent.user_profile.get_audio_format() if "audio" in type_text else None
                 )
                 
                 self.parent.run_task(task, row)

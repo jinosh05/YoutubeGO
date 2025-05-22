@@ -4,9 +4,10 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QSharedMemory, QSystemSemaphore, Qt
 from ui.main_window import MainWindow
 from core.ffmpeg_checker import check_ffmpeg
+from core.version import get_version
 
 def main():
-    shared_mem = QSharedMemory("YoutubeGO 5.0")
+    shared_mem = QSharedMemory(f"YoutubeGO {get_version(short=True)}")
     
     if not shared_mem.create(1):
         app = QApplication.instance()

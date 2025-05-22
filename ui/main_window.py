@@ -7,6 +7,7 @@ from core.utils import set_circular_pixmap, format_speed, format_time
 from core.downloader import DownloadTask, DownloadQueueWorker
 from core.history import load_history_initial, save_history, add_history_entry, delete_selected_history, delete_all_history, search_history
 from core.utils import get_data_dir
+from core.version import get_version
 
 from ui.pages.home_page import HomePage
 from ui.pages.mp3_page import AudioPage
@@ -36,7 +37,7 @@ class MainWindow(QMainWindow):
     info_signal = Signal(int, str, str)
     def __init__(self, ffmpeg_found=None, ffmpeg_path=None):
         super().__init__()
-        self.setWindowTitle("YoutubeGO v5.0.2")
+        self.setWindowTitle(f"YoutubeGO {get_version()}")
         screen = QApplication.primaryScreen().geometry()
         width = min(1280, screen.width() - 100)
         height = min(1150, screen.height() - 100)

@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.components.animated_button import AnimatedButton
+from core.version import get_version
 
 class SettingsPage(QWidget):
     def __init__(self, parent=None):
@@ -38,7 +39,7 @@ class SettingsPage(QWidget):
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         
-        version_label = QLabel("v5.0.2")
+        version_label = QLabel(get_version())
         version_label.setStyleSheet("""
             QLabel {
                 color: #ff4444;
@@ -104,6 +105,21 @@ class SettingsPage(QWidget):
         r_hl.addWidget(a_btn)
         layout.addWidget(g_res)
 
+        # Audio Format Group
+        g_audio = QGroupBox("Audio Format")
+        g_audio.setMinimumWidth(300)
+        a_hl = QHBoxLayout(g_audio)
+        a_hl.setContentsMargins(10, 10, 10, 10)
+        self.audio_format_combo = QComboBox()
+        self.audio_format_combo.addItems(self.parent.user_profile.get_available_audio_formats())
+        self.audio_format_combo.setCurrentText(self.parent.user_profile.get_audio_format())
+        a_hl.addWidget(QLabel("Format:"))
+        a_hl.addWidget(self.audio_format_combo)
+        audio_btn = AnimatedButton("Apply")
+        audio_btn.clicked.connect(self.apply_audio_format)
+        a_hl.addWidget(audio_btn)
+        layout.addWidget(g_audio)
+
         # Download Path Group
         g_path = QGroupBox("Download Path")
         g_path.setMinimumWidth(300)
@@ -140,6 +156,12 @@ class SettingsPage(QWidget):
         self.parent.user_profile.set_proxy(prx)
         self.parent.append_log(f"Resolution set: {sr}, Proxy: {prx}")
         QMessageBox.information(self, "Settings", f"Resolution: {sr}\nProxy: {prx}")
+
+    def apply_audio_format(self):
+        audio_format = self.audio_format_combo.currentText()
+        self.parent.user_profile.set_audio_format(audio_format)
+        self.parent.append_log(f"Audio format set to: {audio_format}")
+        QMessageBox.information(self, "Settings", f"Audio format set to: {audio_format}")
 
     def select_download_path(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Download Folder")

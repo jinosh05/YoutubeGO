@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+                            QComboBox, QFormLayout)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from core.downloader import DownloadTask
@@ -14,21 +15,18 @@ class AudioPage(QWidget):
     def init_ui(self):
         layout = QVBoxLayout(self)
         
-        
         lbl = QLabel("Download Audio")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         
-        
         self.mp3_url = DragDropLineEdit("Paste or drag a link here...")
         layout.addWidget(self.mp3_url)
         
-        
         hl = QHBoxLayout()
-        single_btn = AnimatedButton("Download Single MP3")
+        single_btn = AnimatedButton("Download Single Audio")
         single_btn.clicked.connect(lambda: self.start_download(playlist=False))
-        playlist_btn = AnimatedButton("Download Playlist MP3")
+        playlist_btn = AnimatedButton("Download Playlist Audio")
         playlist_btn.clicked.connect(lambda: self.start_download(playlist=True))
         cancel_btn = AnimatedButton("Cancel All")
         cancel_btn.clicked.connect(self.parent.cancel_active)
@@ -53,9 +51,9 @@ class AudioPage(QWidget):
             self.parent.user_profile.get_proxy(),
             audio_only=True,
             playlist=playlist,
-            from_queue=False
+            from_queue=False,
+            audio_format=self.parent.user_profile.get_audio_format() 
         )
-        
         
         self.parent.add_history_entry(link)
         self.parent.run_task(task, None) 

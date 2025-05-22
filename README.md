@@ -31,7 +31,7 @@
 [![GitHub release (latest by tag)](https://img.shields.io/github/v/tag/Efeckc17/YoutubeGO?style=for-the-badge&color=green&label=latest)](https://github.com/Efeckc17/YoutubeGO/releases)
 
 ### 📜 Legal 
-[![License](https://img.shields.io/badge/License-Apache_2.0-green?style=for-the-badge&logo=apache&logoColor=white)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge&logo=gnu&logoColor=white)](LICENSE)
 
 ### 📜 Qt/PySide6 License
 
@@ -55,7 +55,7 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
   Save entire playlists with sequential processing in just a few clicks.
 
 - **Multiple Formats**  
-  Download in **MP4** (video) and **MP3** (audio) formats with automatic conversion and merging.
+  Download in **MP4** (video) and multiple audio formats (**MP3**, **M4A**, **WAV**, **AAC**, **FLAC**, **OPUS**, **VORBIS**).
 
 - **High-Resolution Support**  
   Supports downloads up to **8K, 4K, 2K, 1080p, 720p, 360p**. Select your preferred resolution in Settings.
@@ -68,7 +68,7 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
   Queue multiple downloads and manage them simultaneously. Pause, resume, or cancel downloads easily.
 
 - **Audio Extraction**  
-  Extract audio tracks in **MP3** format, ideal for music or podcasts. (Requires **FFmpeg**.)
+  Extract audio tracks in multiple formats including **MP3**, **M4A**, **WAV**, **AAC**, **FLAC**, **OPUS**, and **VORBIS**.
 
 - **Profile Management**  
   Save your name, profile picture, download paths, and social media links. Profiles can be updated directly in the app.
@@ -280,7 +280,7 @@ YoutubeGO/
 ├── .gitignore                  # Git ignore rules
 ├── CODE_OF_CONDUCT.md          # Code of conduct
 ├── CONTRIBUTING.md             # Contribution guidelines
-├── LICENSE                     # Apache 2.0 license
+├── LICENSE                     # GNU GPL v3 license
 ├── QtLicense.md               # Qt/PySide6 license
 ├── README.md                  # English documentation
 ├── README.ru.md               # Russian documentation

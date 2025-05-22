@@ -1,9 +1,10 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                             QLineEdit, QListWidget)
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 from ui.components.animated_button import AnimatedButton
 from core.utils import set_circular_pixmap
+from core.version import get_version
 
 class TopBarLayout:
     def __init__(self, parent):
@@ -42,7 +43,7 @@ class TopBarLayout:
         layout.addWidget(profile_widget, alignment=Qt.AlignLeft)
         
         
-        self.logo_label = QLabel("YoutubeGO 5.0")
+        self.logo_label = QLabel(f"YoutubeGO {get_version(short=True)}")
         self.logo_label.setFont(QFont("Arial", 22, QFont.Bold))
         layout.addWidget(self.logo_label, alignment=Qt.AlignVCenter | Qt.AlignLeft)
         

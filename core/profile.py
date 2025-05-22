@@ -10,7 +10,17 @@ class UserProfile:
         if not os.path.exists(self.images_dir):
             os.makedirs(self.images_dir)
         self.profile_path = os.path.join(self.data_dir, profile_path)
-        self.data = {"name": "", "profile_picture": "", "default_resolution": "720p", "download_path": os.getcwd(), "history_enabled": True, "theme": "Dark", "proxy": "", "social_media_links": {"instagram": "", "twitter": "", "youtube": ""}}
+        self.data = {
+            "name": "", 
+            "profile_picture": "", 
+            "default_resolution": "720p", 
+            "download_path": os.getcwd(), 
+            "history_enabled": True, 
+            "theme": "Dark", 
+            "proxy": "", 
+            "social_media_links": {"instagram": "", "twitter": "", "youtube": ""},
+            "audio_format": "mp3"  # Default audio format
+        }
         self.load_profile()
 
     def load_profile(self):
@@ -20,6 +30,9 @@ class UserProfile:
                     self.data = json.load(f)
                     if "social_media_links" not in self.data:
                         self.data["social_media_links"] = {"instagram":"","twitter":"","youtube":""}
+                        self.save_profile()
+                    if "audio_format" not in self.data:  
+                        self.data["audio_format"] = "mp3"
                         self.save_profile()
                 except:
                     self.save_profile()
@@ -107,3 +120,16 @@ class UserProfile:
 
     def is_profile_complete(self):
         return bool(self.data["name"])
+
+    def get_audio_format(self):
+        """Get the preferred audio format (mp3, m4a, wav, etc.)"""
+        return self.data.get("audio_format", "mp3")
+
+    def set_audio_format(self, format):
+        """Set the preferred audio format"""
+        self.data["audio_format"] = format
+        self.save_profile()
+
+    def get_available_audio_formats(self):
+        """Get list of supported audio formats"""
+        return ["mp3", "m4a", "wav", "aac", "flac", "opus", "vorbis"]

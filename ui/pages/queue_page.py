@@ -62,11 +62,22 @@ class QueuePage(QWidget):
         c_subs = QCheckBox("Download Subtitles")
         fmt_combo = QComboBox()
         fmt_combo.addItems(["mp4","mkv","webm","flv","avi"])
+        audio_fmt_combo = QComboBox()
+        audio_fmt_combo.addItems(["mp3","m4a","wav","aac","flac","opus","vorbis"])
+        audio_fmt_combo.setCurrentText(self.parent.user_profile.get_audio_format())
+        audio_fmt_combo.setVisible(False)
+        
+        def on_audio_checked(state):
+            fmt_combo.setVisible(not state)
+            audio_fmt_combo.setVisible(state)
+        
+        c_audio.stateChanged.connect(on_audio_checked)
         
         frm.addRow("URL:", url_edit)
         frm.addRow(c_audio)
         frm.addRow(c_pl)
-        frm.addRow("Format:", fmt_combo)
+        frm.addRow("Video Format:", fmt_combo)
+        frm.addRow("Audio Format:", audio_fmt_combo)
         frm.addRow(c_subs)
         ly.addLayout(frm)
         
@@ -86,7 +97,7 @@ class QueuePage(QWidget):
             audio_only = c_audio.isChecked()
             playlist = c_pl.isChecked()
             subtitles = c_subs.isChecked()
-            output_format = fmt_combo.currentText()
+            output_format = audio_fmt_combo.currentText() if audio_only else fmt_combo.currentText()
             
             task = DownloadTask(
                 url, 
@@ -141,7 +152,7 @@ class QueuePage(QWidget):
                         self.parent.user_profile.get_proxy(),
                         audio_only=audio_only,
                         playlist=playlist,
-                        output_format="mp4",
+                        output_format=self.parent.user_profile.get_audio_format() if audio_only else "mp4",
                         from_queue=True
                     )
                     
