@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QTableWidget, QTableWidgetItem, QHeaderView,
-                            QDialog, QFormLayout, QCheckBox, QDateTimeEdit)
+                            QDialog, QFormLayout, QCheckBox, QDateTimeEdit,
+                            QComboBox)
 from PySide6.QtCore import Qt, QDateTime, QTimer
 from PySide6.QtGui import QFont
 from ui.components.animated_button import AnimatedButton
@@ -17,24 +18,22 @@ class SchedulerPage(QWidget):
     def init_ui(self):
         layout = QVBoxLayout(self)
         
-        
         lbl = QLabel("Scheduler (Planned Downloads)")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         
-        
         self.scheduler_table = QTableWidget()
-        self.scheduler_table.setColumnCount(5)
-        self.scheduler_table.setHorizontalHeaderLabels(["Datetime","URL","Type","Subtitles","Status"])
+        self.scheduler_table.setColumnCount(6)
+        self.scheduler_table.setHorizontalHeaderLabels(["Datetime","URL","Type","Resolution","Subtitles","Status"])
         hh = self.scheduler_table.horizontalHeader()
         hh.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         hh.setSectionResizeMode(1, QHeaderView.Stretch)
         hh.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         hh.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         hh.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        hh.setSectionResizeMode(5, QHeaderView.ResizeToContents)
         layout.addWidget(self.scheduler_table)
-        
         
         hl = QHBoxLayout()
         b_add = AnimatedButton("Add Scheduled Download")
@@ -66,8 +65,13 @@ class SchedulerPage(QWidget):
         c_audio = QCheckBox("Audio Only")
         c_subs = QCheckBox("Download Subtitles?")
         
+        res_combo = QComboBox()
+        res_combo.addItems(["144p","240p","360p","480p","720p","1080p","1440p","2160p","4320p"])
+        res_combo.setCurrentText(self.parent.user_profile.get_default_resolution())
+        
         frm.addRow("Datetime:", dt_edit)
         frm.addRow("URL:", url_edit)
+        frm.addRow("Resolution:", res_combo)
         frm.addRow(c_audio)
         frm.addRow(c_subs)
         ly.addLayout(frm)
@@ -93,10 +97,11 @@ class SchedulerPage(QWidget):
             
             download_type = "Audio" if c_audio.isChecked() else "Video"
             self.scheduler_table.setItem(row, 2, QTableWidgetItem(download_type))
+            self.scheduler_table.setItem(row, 3, QTableWidgetItem(res_combo.currentText()))
             
             subs_text = "Yes" if c_subs.isChecked() else "No"
-            self.scheduler_table.setItem(row, 3, QTableWidgetItem(subs_text))
-            self.scheduler_table.setItem(row, 4, QTableWidgetItem("Scheduled"))
+            self.scheduler_table.setItem(row, 4, QTableWidgetItem(subs_text))
+            self.scheduler_table.setItem(row, 5, QTableWidgetItem("Scheduled"))
             
             d.accept()
             
@@ -120,20 +125,22 @@ class SchedulerPage(QWidget):
         for row in range(self.scheduler_table.rowCount()):
             dt_str = self.scheduler_table.item(row, 0).text()
             scheduled_dt = QDateTime.fromString(dt_str, "yyyy-MM-dd HH:mm:ss")
-            status_item = self.scheduler_table.item(row, 4)
+            status_item = self.scheduler_table.item(row, 5)
             
-            # Convert both times to seconds since epoch for accurate comparison
             now_secs = now.toSecsSinceEpoch()
             scheduled_secs = scheduled_dt.toSecsSinceEpoch()
             
             if status_item and scheduled_secs <= now_secs and status_item.text() == "Scheduled":
                 url = self.scheduler_table.item(row, 1).text()
                 type_text = self.scheduler_table.item(row, 2).text().lower()
-                subtitles = (self.scheduler_table.item(row, 3).text() == "Yes")
+                resolution = self.scheduler_table.item(row, 3).text()
+                subtitles = (self.scheduler_table.item(row, 4).text() == "Yes")
+                
+                self.parent.add_history_entry(url)
                 
                 task = DownloadTask(
                     url,
-                    self.parent.user_profile.get_default_resolution(),
+                    resolution,
                     self.parent.user_profile.get_download_path(),
                     self.parent.user_profile.get_proxy(),
                     audio_only=("audio" in type_text),
@@ -145,4 +152,4 @@ class SchedulerPage(QWidget):
                 )
                 
                 self.parent.run_task(task, row)
-                self.scheduler_table.setItem(row, 4, QTableWidgetItem("Started")) 
+                self.scheduler_table.setItem(row, 5, QTableWidgetItem("Started")) 
