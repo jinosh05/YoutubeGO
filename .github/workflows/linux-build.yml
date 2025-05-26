@@ -78,4 +78,4 @@ jobs:
         with:
           files: 'dist/YoutubeGo-x86_64.AppImage'
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

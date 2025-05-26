@@ -45,4 +45,4 @@ jobs:
         with:
           files: dist/YoutubeGo.exe
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
