@@ -243,3 +243,23 @@ QScrollBar::sub-line {
     width: 0;
     height: 0;
 }
+QComboBox QAbstractItemView {
+    background-color: #1e1e1e;
+    border: 2px solid #444;
+    padding: 8px;
+    outline: none;
+    selection-background-color: #ff4444;
+    selection-color: #fff;
+}
+
+QComboBox QAbstractItemView::item {
+    padding: 6px 12px;
+    color: #fff;
+    background-color: transparent;
+}
+
+QComboBox QAbstractItemView::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff4444, stop:1 #ff6666);
+    color: #fff;
+    border-radius: 8px;
+}

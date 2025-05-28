@@ -17,6 +17,7 @@
 - [Installation](#-installation)
 - [Usage](#-usage)
 - [Screenshots](#-screenshots)
+- [Showcase](showcase/showcase.md)
 - [Contributing](#-contributions)
 - [License](#-legal)
 - [Project Structure](#-project-structure)

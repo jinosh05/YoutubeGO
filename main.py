@@ -2,6 +2,7 @@ import sys
 import os
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QSharedMemory, QSystemSemaphore, Qt
+from PySide6.QtGui import QIcon
 from ui.main_window import MainWindow
 from core.ffmpeg_checker import check_ffmpeg
 from core.version import get_version
@@ -34,6 +35,10 @@ def main():
         print(f"FFmpeg found at: {ffmpeg_path}")
     
     win = MainWindow(ffmpeg_found=ffmpeg_found, ffmpeg_path=ffmpeg_path)
+    if sys.platform.startswith("win"):
+        win.setWindowIcon(QIcon("assets/app.ico"))
+    else:
+        win.setWindowIcon(QIcon("assets/app.png"))
     win.show()
     
     app.aboutToQuit.connect(lambda: shared_mem.detach())

@@ -107,7 +107,6 @@ class MainWindow(QMainWindow):
         self.top_bar_layout = TopBarLayout(self)
         self.profile_pic_label = self.top_bar_layout.profile_pic_label
         self.profile_name_label = self.top_bar_layout.profile_name_label
-        self.logo_label = self.top_bar_layout.logo_label
         self.top_search_edit = self.top_bar_layout.search_edit
         self.search_btn = self.top_bar_layout.search_btn
         self.search_result_list = self.top_bar_layout.search_result_list

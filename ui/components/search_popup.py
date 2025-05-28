@@ -6,24 +6,6 @@ class SearchPopup(QFrame):
         super().__init__(parent, Qt.Popup | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
-        self.setStyleSheet('''
-            QFrame {
-                background: #222;
-                border: 2px solid #ff4444;
-                border-radius: 12px;
-                padding: 8px;
-            }
-            QListWidget {
-                background: transparent;
-                border: none;
-                color: #fff;
-                font-size: 14px;
-            }
-            QListWidget::item:selected {
-                background: #ff4444;
-                color: #fff;
-            }
-        ''')
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.list_widget = QListWidget()

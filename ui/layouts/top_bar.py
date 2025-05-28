@@ -43,18 +43,12 @@ class TopBarLayout:
         layout.addWidget(profile_widget, alignment=Qt.AlignLeft)
         
         
-        self.logo_label = QLabel(f"YoutubeGO {get_version(short=True)}")
-        self.logo_label.setFont(QFont("Arial", 22, QFont.Bold))
-        layout.addWidget(self.logo_label, alignment=Qt.AlignVCenter | Qt.AlignLeft)
-        
-        
-        # Search bar and results container
         search_area_container = QWidget()
         search_area_layout = QVBoxLayout(search_area_container)
         search_area_layout.setContentsMargins(0, 0, 0, 0)
         search_area_layout.setSpacing(0)
 
-        # Search bar row
+        
         search_bar_row = QWidget()
         search_bar_row_layout = QHBoxLayout(search_bar_row)
         search_bar_row_layout.setContentsMargins(0, 0, 0, 0)
@@ -75,20 +69,6 @@ class TopBarLayout:
         self.search_result_list.setMaximumHeight(400)
         self.search_result_list.setMinimumWidth(400)
         self.search_result_list.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.search_result_list.setStyleSheet('''
-            QFrame, QListWidget {
-                background: #222;
-                border: 2px solid #ff4444;
-                border-radius: 12px;
-                padding: 8px;
-                color: #fff;
-                font-size: 14px;
-            }
-            QListWidget::item:selected {
-                background: #ff4444;
-                color: #fff;
-            }
-        ''')
         search_area_layout.addWidget(self.search_result_list)
 
         layout.addWidget(search_area_container, stretch=1, alignment=Qt.AlignVCenter)
