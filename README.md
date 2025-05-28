@@ -16,8 +16,7 @@
 - [Features](#-key-features)
 - [Installation](#-installation)
 - [Usage](#-usage)
-- [Screenshots](#-screenshots)
-- [Showcase](showcase/showcase.md)
+- [ScreenShots](showcase/showcase.md)
 - [Contributing](#-contributions)
 - [License](#-legal)
 - [Project Structure](#-project-structure)
@@ -40,7 +39,7 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 ### 🌐 Links
 [![Website](https://img.shields.io/badge/Visit-Website-1DA1F2?style=for-the-badge&logo=web&logoColor=white)](https://youtubego.org)
-[![Discord](https://img.shields.io/badge/Join-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/XdK97UH3fE)
+[![Discord](https://img.shields.io/badge/Join-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/SyMTVFYcbb)
 
 ## 🌐 Languages
 
@@ -102,10 +101,6 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 - **Download History**  
   View, search, and manage previous downloads directly in the app.
 
-<div align="center">
-  <img src="assets/history.png" alt="History" width="300"/>
-</div>
-
 - **Improved Notification System**  
   Download Complete notifications, Download Failed alerts, and Download Canceled warnings.
 
@@ -118,20 +113,6 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 - **Cross-Platform Compatibility**  
   Fully supported on **Linux** and **Windows**.
-
-### 🏠 Homepage
-The main interface where you can start your downloads and access all features.
-
-<div align="center">
-  <img src="assets/homepage.png" alt="Homepage" width="300"/>
-</div>
-
-### ⚙️ Settings
-Configure your preferences, download paths, and profile settings.
-
-<div align="center">
-  <img src="assets/settings.png" alt="Settings" width="300"/>
-</div>
 
 ## ⚙️ Installation
 
