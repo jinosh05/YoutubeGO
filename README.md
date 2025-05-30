@@ -119,8 +119,14 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 ## ⚙️ Installation
 
+### Quick Download
+You can download the latest release from. [Releases](https://github.com/Efeckc17/YoutubeGO/releases) page:
+
+- **Windows**: Download the `.exe` file - includes all necessary dependencies
+- **Linux**: Download the `.AppImage` file - requires FFmpeg to be installed separately
+
 ### Prerequisites
-- Python 3.7 or higher
+- Python 3.7 or higher (only if running from source)
 - FFmpeg (for audio/video processing)
 - Git (for cloning the repository)
 
