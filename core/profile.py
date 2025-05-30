@@ -44,29 +44,37 @@ class UserProfile:
             json.dump(self.data, f, indent=4)
 
     def set_profile(self, name, profile_picture, download_path):
-        if profile_picture:
+        if profile_picture and profile_picture != self.data.get("profile_picture", ""):
             if not os.path.exists(self.images_dir):
                 os.makedirs(self.images_dir)
-            filename = f"profile_{os.path.basename(profile_picture)}"  
-            new_path = os.path.join(self.images_dir, filename)
-            old_pic = self.data["profile_picture"]
-            if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
-                try:
-                    os.remove(old_pic)
-                except:
-                    pass
+            
             try:
-                shutil.copy2(profile_picture, new_path)
-                self.data["profile_picture"] = new_path
+                if os.path.exists(profile_picture):
+                    filename = f"profile_{os.path.basename(profile_picture)}"
+                    new_path = os.path.join(self.images_dir, filename)
+                    
+                    old_pic = self.data.get("profile_picture", "")
+                    if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
+                        try:
+                            os.remove(old_pic)
+                        except:
+                            pass
+                    
+                    shutil.copy2(profile_picture, new_path)
+                    self.data["profile_picture"] = new_path
+                else:
+                    print(f"Profile picture source not found: {profile_picture}")
+                    if self.data.get("profile_picture") and os.path.exists(self.data["profile_picture"]):
+                        pass
+                    else:
+                        self.data["profile_picture"] = ""
             except Exception as e:
-                print(f"Error copying profile picture: {e}")
-                self.data["profile_picture"] = ""
-        else:
-            # If no new picture is provided, keep the old one
-            if "profile_picture" in self.data:
-                pass  # Do not change the value
-            else:
-                self.data["profile_picture"] = ""
+                print(f"Error handling profile picture: {e}")
+                if self.data.get("profile_picture") and os.path.exists(self.data["profile_picture"]):
+                    pass
+                else:
+                    self.data["profile_picture"] = ""
+
         self.data["name"] = name
         self.data["download_path"] = download_path
         self.save_profile()
@@ -78,7 +86,7 @@ class UserProfile:
         self.save_profile()
 
     def remove_profile_picture(self):
-        old_pic = self.data["profile_picture"]
+        old_pic = self.data.get("profile_picture", "")
         if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
             try:
                 os.remove(old_pic)

@@ -88,6 +88,9 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 - **Queue System Optimization**  
   Concurrency management with pause & resume all functionality and bandwidth limiting support via proxy settings.
 
+- **Auto-Updater**  
+  Automatically checks for updates and installs them.
+
 ### 🎨 User Experience
 - **Dark & Light Mode**  
   Switch between Dark and Light themes for better usability.

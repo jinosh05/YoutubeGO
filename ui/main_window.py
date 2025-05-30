@@ -8,6 +8,7 @@ from core.downloader import DownloadTask, DownloadQueueWorker
 from core.history import load_history_initial, save_history, add_history_entry, delete_selected_history, delete_all_history, search_history
 from core.utils import get_data_dir
 from core.version import get_version
+from core.updater import UpdateManager
 
 from ui.pages.home_page import HomePage
 from ui.pages.mp3_page import AudioPage
@@ -60,18 +61,24 @@ class MainWindow(QMainWindow):
         self.info_signal.connect(self.update_queue_info)
         self.theme_manager = ThemeManager(self)
         
-        # Initialize managers first
+       
+        self.update_manager = UpdateManager(self)
+        
+        
         self.profile_manager = ProfileManager(self)
         self.tray_manager = TrayIconManager(self)
         self.tray_manager.show_ffmpeg_warning()
         self.menu_bar_manager = MenuBarManager(self)
         self.log_manager = LogDockManager(self)
         
-        # Then initialize UI
+       
         self.init_ui()
         self.theme_manager.apply_current_theme()
         if not self.user_profile.is_profile_complete():
             self.prompt_user_profile()
+            
+      
+        QTimer.singleShot(2000, self.check_for_updates)
     def init_ui(self):
         self.status_bar_layout = StatusBarLayout(self)
         self.progress_bar = self.status_bar_layout.progress_bar
@@ -342,6 +349,9 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'page_history') and hasattr(self.page_history, 'history_table'):
             from core.history import add_history_entry
             add_history_entry(self.page_history.history_table, url, True)
+
+    def check_for_updates(self):
+        self.update_manager.check_for_updates()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

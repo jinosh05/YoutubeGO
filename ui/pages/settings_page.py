@@ -39,17 +39,27 @@ class SettingsPage(QWidget):
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         
-        version_label = QLabel(get_version())
+        version_label = QLabel(f"Version {get_version()}")
+        version_label.setObjectName("version_label")
         version_label.setStyleSheet("""
             QLabel {
-                color: #ff4444;
-                padding: 4px 12px;
-                border-radius: 10px;
-                background: rgba(255, 68, 68, 0.1);
-                font-size: 11pt;
+                color: #4CAF50;
+                padding: 6px 16px;
+                border-radius: 15px;
+                background: rgba(76, 175, 80, 0.1);
+                font-size: 12pt;
                 font-weight: bold;
+                border: 1px solid rgba(76, 175, 80, 0.2);
+                margin: 5px;
+            }
+            QLabel:hover {
+                background: rgba(76, 175, 80, 0.15);
+                border: 1px solid rgba(76, 175, 80, 0.3);
             }
         """)
+        version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        version_label.setCursor(Qt.CursorShape.PointingHandCursor)
+        version_label.mousePressEvent = lambda e: self.parent.check_for_updates()
         
         header_layout.addStretch()
         header_layout.addWidget(lbl, alignment=Qt.AlignCenter)
@@ -137,7 +147,7 @@ class SettingsPage(QWidget):
         
         layout.addStretch()
         
-        # Scroll area'ya container'ı ekle
+        
         scroll.setWidget(container)
 
     def set_max_concurrent_downloads(self, idx):
