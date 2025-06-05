@@ -29,6 +29,7 @@
 [![Stars](https://img.shields.io/github/stars/Efeckc17/YoutubeGO?style=for-the-badge&color=yellow)](https://github.com/Efeckc17/YoutubeGO/stargazers)
 [![Forks](https://img.shields.io/github/forks/Efeckc17/YoutubeGO?style=for-the-badge&color=orange)](https://github.com/Efeckc17/YoutubeGO/network/members)
 [![GitHub release (latest by tag)](https://img.shields.io/github/v/tag/Efeckc17/YoutubeGO?style=for-the-badge&color=green&label=latest)](https://github.com/Efeckc17/YoutubeGO/releases)
+[![Downloads](https://img.shields.io/github/downloads/Efeckc17/YoutubeGO/total?style=for-the-badge&color=brightgreen&label=downloads)](https://github.com/Efeckc17/YoutubeGO/releases)
 
 ### 📜 Legal 
 [![License](https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge&logo=gnu&logoColor=white)](LICENSE)
