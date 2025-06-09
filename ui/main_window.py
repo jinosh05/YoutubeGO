@@ -85,7 +85,8 @@ class MainWindow(QMainWindow):
         self.status_label = self.status_bar_layout.status_label
         self.ffmpeg_label = self.status_bar_layout.ffmpeg_label
         self.show_logs_btn = self.status_bar_layout.show_logs_btn
-        
+        self.show_logs_btn.setText("Logs")
+        self.show_logs_btn.setVisible(True)
         
         if self.ffmpeg_found:
             self.ffmpeg_label.setText("✓ FFmpeg Ready")

@@ -5,24 +5,9 @@ from PySide6.QtGui import QColor
 class AnimatedButton(QPushButton):
     def __init__(self, text=""):
         super().__init__(text)
-        self.setStyleSheet("""
-            QPushButton {
-                background-color: #ff4444;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 8px 16px;
-                font-weight: bold;
-                font-size: 11pt;
-            }
-            QPushButton:hover {
-                background-color: #ff6666;
-            }
-            QPushButton:pressed {
-                background-color: #cc3333;
-            }
-        """)
         self.setCursor(Qt.PointingHandCursor)
+        self.setMinimumWidth(80)
+        self.setMinimumHeight(32)
 
     def enterEvent(self, event):
         shadow = QGraphicsDropShadowEffect()

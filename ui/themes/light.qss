@@ -26,9 +26,9 @@ QFrame {
     border: none;
 }
 
-QPushButton {
+QPushButton, AnimatedButton {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff4444, stop:1 #ff6666);
-    color: #ffffff;
+    color: #fff;
     border: none;
     border-radius: 16px;
     padding: 12px 28px;
@@ -36,18 +36,18 @@ QPushButton {
     font-weight: bold;
 }
 
-QPushButton:hover {
+QPushButton:hover, AnimatedButton:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff6666, stop:1 #ff4444);
 }
 
-QPushButton:pressed {
+QPushButton:pressed, AnimatedButton:pressed {
     background-color: #cc3333;
 }
 
 QLineEdit, QComboBox {
     background-color: #ffffff;
     color: #333333;
-    border: 2px solid #cccccc;
+    border: 2px solid #dddddd;
     border-radius: 16px;
     padding: 12px;
 }

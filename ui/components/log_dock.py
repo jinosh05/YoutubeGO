@@ -8,7 +8,7 @@ class LogDockManager:
         self.main_window = main_window
         self.log_dock = None
         self.log_text_edit = None
-        self.log_dock_visible = True
+        self.log_dock_visible = False
         self.init_log_dock()
 
     def init_log_dock(self):
@@ -17,6 +17,7 @@ class LogDockManager:
         self.log_text_edit.setReadOnly(True)
         self.log_dock.setWidget(self.log_text_edit)
         self.main_window.addDockWidget(Qt.BottomDockWidgetArea, self.log_dock)
+        self.log_dock.hide()
 
     def toggle_visibility(self):
         if self.log_dock_visible:
@@ -84,7 +85,6 @@ class LogDockManager:
         scrollbar = self.log_text_edit.verticalScrollBar()
         scrollbar.setValue(scrollbar.maximum())
 
-        
         if "[yt-dlp Error]" in text or ("error" in text.lower() and not text.startswith("[yt-dlp")):
             self.main_window.tray_manager.show_error_message(text)
         elif "playlist indexing in progress" in text.lower():
