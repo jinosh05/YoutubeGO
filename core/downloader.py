@@ -192,11 +192,6 @@ class DownloadQueueWorker(QRunnable):
                     "file_access_retries": 5,
                     "retry_sleep": 2,
                     "prefer_ffmpeg": True,
-                    "postprocessor_args": [
-                        "-ar", "44100",
-                        "-ac", "2",
-                        "-b:a", "192k"
-                    ]
                 })
 
                 if hasattr(self.task, 'ffmpeg_path') and self.task.ffmpeg_path:
