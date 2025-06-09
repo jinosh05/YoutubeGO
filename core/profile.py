@@ -18,8 +18,7 @@ class UserProfile:
             "history_enabled": True, 
             "theme": "Dark", 
             "proxy": "", 
-            "social_media_links": {"instagram": "", "twitter": "", "youtube": ""},
-            "audio_format": "mp3"  # Default audio format
+            "audio_format": "mp3"
         }
         self.load_profile()
 
@@ -28,9 +27,6 @@ class UserProfile:
             with open(self.profile_path, "r") as f:
                 try:
                     self.data = json.load(f)
-                    if "social_media_links" not in self.data:
-                        self.data["social_media_links"] = {"instagram":"","twitter":"","youtube":""}
-                        self.save_profile()
                     if "audio_format" not in self.data:  
                         self.data["audio_format"] = "mp3"
                         self.save_profile()
@@ -79,12 +75,6 @@ class UserProfile:
         self.data["download_path"] = download_path
         self.save_profile()
 
-    def set_social_media_links(self, insta, tw, yt):
-        self.data["social_media_links"]["instagram"] = insta
-        self.data["social_media_links"]["twitter"] = tw
-        self.data["social_media_links"]["youtube"] = yt
-        self.save_profile()
-
     def remove_profile_picture(self):
         old_pic = self.data.get("profile_picture", "")
         if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
@@ -130,14 +120,11 @@ class UserProfile:
         return bool(self.data["name"])
 
     def get_audio_format(self):
-        """Get the preferred audio format (mp3, m4a, wav, etc.)"""
         return self.data.get("audio_format", "mp3")
 
     def set_audio_format(self, format):
-        """Set the preferred audio format"""
         self.data["audio_format"] = format
         self.save_profile()
 
     def get_available_audio_formats(self):
-        """Get list of supported audio formats"""
         return ["mp3", "m4a", "wav", "aac", "flac", "opus", "vorbis"]
