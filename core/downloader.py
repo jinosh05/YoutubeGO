@@ -5,6 +5,7 @@ import tempfile
 from PySide6.QtCore import QRunnable, QObject, Signal
 from core.utils import format_speed, format_time, get_data_dir
 import time
+import shutil
 
 class YTLogger:
     def __init__(self, log_signal):
@@ -308,7 +309,7 @@ class DownloadQueueWorker(QRunnable):
             
             if os.path.exists(dst_path):
                 os.remove(dst_path)
-            os.rename(src_path, dst_path)
+            shutil.move(src_path, dst_path)
 
     def progress_hook(self, d):
         if self.cancel:
