@@ -45,14 +45,8 @@ jobs:
           Set-Content -Path $manifestPath -Value $manifestContent
 
       - name: Build EXE with PyInstaller (Onedir + Embedded Data)
-        run: |
-          pyinstaller --noconfirm --onedir --windowed --name YoutubeGo `
-            --icon=assets/app.ico `
-            --add-data "assets;assets" `
-            --add-data "ui/themes;ui/themes" `
-            --add-data "assets/app.png;assets" `
-            --add-data "ffmpeg.exe;." main.py
-            --add-data "assets/app.ico;assets"
+        run: pyinstaller --noconfirm --onedir --windowed --name YoutubeGo --icon=assets/app.ico --add-data "assets;assets" --add-data "ui/themes;ui/themes" --add-data "assets/app.png;assets" --add-data "ffmpeg.exe;." --add-data "assets/app.ico;assets" main.py
+
       - name: Create YoutubeGo-Win directory and prepare final ZIP
         run: |
           mkdir YoutubeGo-Win
