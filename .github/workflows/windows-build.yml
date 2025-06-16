@@ -34,6 +34,16 @@ jobs:
           Expand-Archive -Path $outputPath -DestinationPath "ffmpeg"
           Move-Item -Path "ffmpeg/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe" -Destination "ffmpeg.exe"
 
+      - name: Update Manifest Version
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag -replace 'v', ''
+          $manifestPath = "build_meta/YoutubeGo.manifest"
+          $manifestContent = Get-Content $manifestPath -Raw
+          $manifestContent = $manifestContent -replace 'version="[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"', "version=`"$version.0`""
+          $manifestContent = $manifestContent -replace 'Version [0-9]+\.[0-9]+\.[0-9]+', "Version $version"
+          Set-Content -Path $manifestPath -Value $manifestContent
+
       - name: Build YoutubeGo EXE
         run: |
           pyinstaller --noconfirm --onefile --windowed --name YoutubeGo `
@@ -41,8 +51,11 @@ jobs:
             --add-data "assets;assets" `
             --add-data "ui/themes;ui/themes" `
             --add-data "assets/app.png;assets" `
-            --add-data "ffmpeg.exe;." main.py
             --add-data "assets/app.ico;assets" `
+            --add-data "ffmpeg.exe;." `
+            --manifest "build_meta/YoutubeGo.manifest" `
+            main.py
+
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
