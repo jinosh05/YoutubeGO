@@ -7,7 +7,7 @@
     processorArchitecture="amd64"
     publicKeyToken="0000000000000000"
   />
-  <description>YouTube Video and Audio Downloader</description>
+  <description>Video and Audio Downloader</description>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
@@ -15,21 +15,4 @@
       </requestedPrivileges>
     </security>
   </trustInfo>
-  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
-    <application>
-      <!-- Windows 10 and Windows 11 -->
-      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
-    </application>
-  </compatibility>
-  <dependency>
-    <dependentAssembly>
-      <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"/>
-    </dependentAssembly>
-  </dependency>
-  <file name="YoutubeGo.exe">
-    <summary>YouTube Video and Audio Downloader v5.0.10</summary>
-    <description>A desktop application for downloading videos and audio from YouTube with a modern UI (Version 5.0.10)</description>
-    <copyright>© 2024-2025 YoutubeGo. Licensed under GNU GPL v3.</copyright>
-    <website>https://youtubego.org/</website>
-  </file>
 </assembly>
