@@ -9,11 +9,27 @@ from ui.main_window import MainWindow
 from core.ffmpeg_checker import check_ffmpeg
 from core.version import get_version
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 def set_windows_app_id():
     if sys.platform.startswith("win"):
         try:
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("YoutubeGO")
-        except Exception:
+            app_id = f"YoutubeGO.App.{get_version(short=True)}"
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+            
+            # Set process DPI awareness
+            ctypes.windll.shcore.SetProcessDpiAwareness(2)  # PROCESS_PER_MONITOR_DPI_AWARE
+            
+            # Set up Windows taskbar icon
+            myappid = f'YoutubeGO.{get_version()}'  # arbitrary string
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except Exception as e:
+            print(f"Failed to set Windows app ID: {e}")
             pass
 
 def cleanup_shared_memory(shared_mem):
@@ -48,6 +64,12 @@ def main():
     
     app = QApplication(sys.argv)
     
+    # Set application icon
+    icon_path = resource_path(os.path.join("assets", "app.ico"))
+    if os.path.exists(icon_path):
+        app_icon = QIcon(icon_path)
+        app.setWindowIcon(app_icon)
+    
     ffmpeg_found, ffmpeg_path = check_ffmpeg()
     if not ffmpeg_found:
         print("FFmpeg not found. Please ensure it is installed and in PATH.")
@@ -56,21 +78,18 @@ def main():
     
     win = MainWindow(ffmpeg_found=ffmpeg_found, ffmpeg_path=ffmpeg_path)
     
-    icon_path = os.path.abspath("assets/app.ico" if sys.platform.startswith("win") else "assets/app.png")
+    # Set window icon explicitly
     if os.path.exists(icon_path):
-        app_icon = QIcon(icon_path)
-        app.setWindowIcon(app_icon)
         win.setWindowIcon(app_icon)
-    
-    win.show()
     
     def cleanup():
         cleanup_shared_memory(shared_mem)
         if semaphore.acquire():
             semaphore.release()
-    
-    app.aboutToQuit.connect(cleanup)
-    sys.exit(app.exec())
+
+    atexit.register(cleanup)
+    win.show()
+    sys.exit(app.exec_())
 
 if __name__ == "__main__":
     main()

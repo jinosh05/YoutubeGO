@@ -42,7 +42,7 @@ jobs:
             --add-data "ui/themes;ui/themes" `
             --add-data "assets/app.png;assets" `
             --add-data "ffmpeg.exe;." main.py
-
+            --add-data "assets/app.ico;assets" `
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
