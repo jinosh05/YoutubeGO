@@ -1,7 +1,6 @@
 import os
 import yt_dlp
 import gc
-import tempfile
 from PySide6.QtCore import QRunnable, QObject, Signal
 from core.utils import format_speed, format_time, get_data_dir
 from core.history import add_history_entry
@@ -51,24 +50,6 @@ class DownloadTask:
         self.output_format = output_format
         self.from_queue = from_queue
         self.audio_format = audio_format
-        self._temp_dir = None
-
-    def create_temp_dir(self):
-        if not self._temp_dir:
-            self._temp_dir = tempfile.mkdtemp()
-        return self._temp_dir
-
-    def cleanup(self):
-        if self._temp_dir and os.path.exists(self._temp_dir):
-            try:
-                for file in os.listdir(self._temp_dir):
-                    file_path = os.path.join(self._temp_dir, file)
-                    if os.path.isfile(file_path):
-                        os.remove(file_path)
-                os.rmdir(self._temp_dir)
-            except Exception:
-                pass
-            self._temp_dir = None
 
 class DownloadQueueWorker(QRunnable):
     def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None):
@@ -99,8 +80,6 @@ class DownloadQueueWorker(QRunnable):
             self._ydl = None
         if self.logger:
             self.logger.cleanup()
-        if self.task:
-            self.task.cleanup()
         gc.collect()
 
     def _get_base_options(self):
@@ -130,6 +109,14 @@ class DownloadQueueWorker(QRunnable):
 
     def run(self):
         try:
+            
+            self.log_signal.emit(f"Starting download to: {self.task.folder}")
+            
+            
+            if not os.path.exists(self.task.folder):
+                os.makedirs(self.task.folder, exist_ok=True)
+                self.log_signal.emit(f"Created download directory: {self.task.folder}")
+            
             if not os.path.exists(self.cookie_file):
                 try:
                     with open(self.cookie_file, "w") as cf:
@@ -185,9 +172,9 @@ class DownloadQueueWorker(QRunnable):
                     self.write_to_history(title, channel, self.task.url)
 
                 download_options = self._get_base_options()
-                temp_dir = self.task.create_temp_dir()
+                
                 download_options.update({
-                    "outtmpl": os.path.join(temp_dir, "%(title)s.%(ext)s"),
+                    "outtmpl": os.path.join(self.task.folder, "%(title)s.%(ext)s"),
                     "progress_hooks": [self.progress_hook],
                     "noplaylist": not self.task.playlist,
                     "retries": 10,
@@ -244,12 +231,10 @@ class DownloadQueueWorker(QRunnable):
                         self._ydl = ydl
                         try:
                             ydl.download([self.task.url])
-                            self._move_files_to_final_location(temp_dir)
                         except Exception as e:
                             if "Unable to rename file" in str(e):
                                 time.sleep(2)
                                 ydl.download([self.task.url])
-                                self._move_files_to_final_location(temp_dir)
                             elif "unable to obtain file audio codec" in str(e):
                                 ydl_opts = download_options.copy()
                                 ydl_opts['postprocessor_args'] = [
@@ -261,7 +246,6 @@ class DownloadQueueWorker(QRunnable):
                                 with yt_dlp.YoutubeDL(ydl_opts) as ydl2:
                                     self._ydl = ydl2
                                     ydl2.download([self.task.url])
-                                    self._move_files_to_final_location(temp_dir)
                             else:
                                 raise
                     self.status_signal.emit(self.row, "Download Completed")
@@ -282,7 +266,6 @@ class DownloadQueueWorker(QRunnable):
                             with yt_dlp.YoutubeDL(download_options) as ydl:
                                 self._ydl = ydl
                                 ydl.download([self.task.url])
-                                self._move_files_to_final_location(temp_dir)
                             self.status_signal.emit(self.row, "Download Completed (Basic Format)")
                         except Exception as e2:
                             self.status_signal.emit(self.row, "Download Error")
@@ -302,18 +285,6 @@ class DownloadQueueWorker(QRunnable):
                 self.log_signal.emit(error_msg)
         finally:
             self.cleanup()
-
-    def _move_files_to_final_location(self, temp_dir):
-        if not os.path.exists(temp_dir):
-            return
-            
-        for file in os.listdir(temp_dir):
-            src_path = os.path.join(temp_dir, file)
-            dst_path = os.path.join(self.task.folder, file)
-            
-            if os.path.exists(dst_path):
-                os.remove(dst_path)
-            shutil.move(src_path, dst_path)
 
     def progress_hook(self, d):
         if self.cancel:
