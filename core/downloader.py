@@ -4,8 +4,10 @@ import gc
 import tempfile
 from PySide6.QtCore import QRunnable, QObject, Signal
 from core.utils import format_speed, format_time, get_data_dir
+from core.history import add_history_entry
 import time
 import shutil
+import json
 
 class YTLogger:
     def __init__(self, log_signal):
@@ -179,6 +181,8 @@ class DownloadQueueWorker(QRunnable):
                     channel = info.get("uploader", "Unknown Channel")
                     if self.info_signal is not None and self.row is not None:
                         self.info_signal.emit(self.row, title, channel)
+                    
+                    self.write_to_history(title, channel, self.task.url)
 
                 download_options = self._get_base_options()
                 temp_dir = self.task.create_temp_dir()
@@ -322,3 +326,31 @@ class DownloadQueueWorker(QRunnable):
             eta = d.get("eta", 0) or 0
             self.progress_signal.emit(self.row, percent)
             self.log_signal.emit(f"Downloading... {int(percent)}% | Speed: {format_speed(speed)} | ETA: {format_time(eta)}")
+
+    def write_to_history(self, title, channel, url):
+       
+        try:
+            history_file = os.path.join(get_data_dir(), "history.json")
+            
+            # Load 
+            if os.path.exists(history_file):
+                with open(history_file, "r", encoding="utf-8") as f:
+                    history = json.load(f)
+            else:
+                history = []
+            
+            # Add
+            history.append({
+                "title": title,
+                "channel": channel,
+                "url": url
+            })
+            
+            # Save 
+            with open(history_file, "w", encoding="utf-8") as f:
+                json.dump(history, f, indent=2, ensure_ascii=False)
+                
+            self.log_signal.emit(f"Added to history: {title} - {channel}")
+             
+        except Exception as e:
+            self.log_signal.emit(f"Error writing to history: {str(e)}")

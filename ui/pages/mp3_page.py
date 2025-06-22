@@ -55,5 +55,5 @@ class AudioPage(QWidget):
             audio_format=self.parent.user_profile.get_audio_format() 
         )
         
-        self.parent.add_history_entry(link)
+     
         self.parent.run_task(task, None) 

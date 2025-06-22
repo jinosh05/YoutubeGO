@@ -56,6 +56,5 @@ class VideoPage(QWidget):
             from_queue=False
         )
         
-        
-        self.parent.add_history_entry(link)
+  
         self.parent.run_task(task, None) 

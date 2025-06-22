@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.components.animated_button import AnimatedButton
-from core.history import delete_selected_history, delete_all_history, search_history
+from core.history import delete_selected_history, delete_all_history, search_history, load_history_initial
 
 class HistoryPage(QWidget):
     def __init__(self, parent=None):
@@ -15,21 +15,23 @@ class HistoryPage(QWidget):
     def init_ui(self):
         layout = QVBoxLayout(self)
         
-       
+        # Title
         lbl = QLabel("Download History")
         lbl.setFont(QFont("Arial", 16, QFont.Bold))
         lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(lbl)
         
-        
+        # History table
         self.history_table = QTableWidget()
-        self.history_table.setColumnCount(1)
-        self.history_table.setHorizontalHeaderLabels(["URL"])
+        self.history_table.setColumnCount(3)
+        self.history_table.setHorizontalHeaderLabels(["Title", "Channel", "URL"])
         hh = self.history_table.horizontalHeader()
-        hh.setSectionResizeMode(0, QHeaderView.Stretch)
+        hh.setSectionResizeMode(0, QHeaderView.Stretch)  # Title column stretches
+        hh.setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Channel column fits content
+        hh.setSectionResizeMode(2, QHeaderView.Stretch)  # URL column stretches
         layout.addWidget(self.history_table)
         
-        
+        # Buttons
         hl = QHBoxLayout()
         del_sel_btn = AnimatedButton("Delete Selected")
         del_sel_btn.clicked.connect(lambda: delete_selected_history(self.history_table, self.parent.append_log))
@@ -39,10 +41,10 @@ class HistoryPage(QWidget):
         hl.addWidget(del_all_btn)
         layout.addLayout(hl)
         
-        
+        # Search
         s_hl = QHBoxLayout()
         self.search_hist_edit = QLineEdit()
-        self.search_hist_edit.setPlaceholderText("Search in history...")
+        self.search_hist_edit.setPlaceholderText("Search in history (title, channel, or URL)...")
         s_btn = AnimatedButton("Search")
         s_btn.clicked.connect(self.search_history_in_table)
         s_hl.addWidget(self.search_hist_edit)
@@ -50,6 +52,17 @@ class HistoryPage(QWidget):
         layout.addLayout(s_hl)
         
         layout.addStretch()
+        
+        # Load history
+        load_history_initial(self.history_table)
+
+    def showEvent(self, event):
+        
+        super().showEvent(event)
+        self.history_table.setRowCount(0)  
+        load_history_initial(self.history_table)  
+        if self.parent:
+            self.parent.append_log("History refreshed")
 
     def search_history_in_table(self):
         txt = self.search_hist_edit.text().lower().strip()

@@ -136,7 +136,7 @@ class SchedulerPage(QWidget):
                 resolution = self.scheduler_table.item(row, 3).text()
                 subtitles = (self.scheduler_table.item(row, 4).text() == "Yes")
                 
-                self.parent.add_history_entry(url)
+          
                 
                 task = DownloadTask(
                     url,

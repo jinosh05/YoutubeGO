@@ -225,7 +225,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Error", "No URL given.")
             return
         task = DownloadTask(link, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, from_queue=False)
-        add_history_entry(self.history_table, "Fetching...", "Fetching...", link, "Queued", self.user_profile.is_history_enabled())
+        # History will be written directly by the downloader
         self.run_task(task, None)
     def run_task(self, task, row):
         if task.playlist:
@@ -247,6 +247,7 @@ class MainWindow(QMainWindow):
         self.status_label.setText(st)
         if "Download Completed" in st:
             self.tray_manager.show_download_completed_message()
+            # History page refreshes automatically via showEvent when visible
             user_choice = QMessageBox.question(self, "Download Completed", "Open Download Folder?", QMessageBox.Yes | QMessageBox.No)
             if user_choice == QMessageBox.Yes:
                 self.open_download_folder()
@@ -261,7 +262,7 @@ class MainWindow(QMainWindow):
                 self.page_queue.queue_table.setItem(row, 0, QTableWidgetItem(title))
                 self.page_queue.queue_table.setItem(row, 1, QTableWidgetItem(channel))
                 url = self.page_queue.queue_table.item(row, 2).text()
-                self.add_history_entry(url)
+                # History will be written directly by the downloader
     def open_download_folder(self):
         folder = self.user_profile.get_download_path()
         if platform.system() == "Windows":
@@ -346,10 +347,10 @@ class MainWindow(QMainWindow):
         from PySide6.QtWidgets import QMessageBox
         return QMessageBox.question(self, title, message) == QMessageBox.Yes
 
-    def add_history_entry(self, url):
+    def add_history_entry(self, url, title="", channel=""):
         if hasattr(self, 'page_history') and hasattr(self.page_history, 'history_table'):
             from core.history import add_history_entry
-            add_history_entry(self.page_history.history_table, url, True)
+            add_history_entry(self.page_history.history_table, title, channel, url, True)
 
     def check_for_updates(self):
         self.update_manager.check_for_updates()

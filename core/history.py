@@ -10,33 +10,71 @@ HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 
 def load_history_initial(table):
     if not os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, "w") as f:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
             json.dump([], f, indent=4)
     else:
         try:
-            with open(HISTORY_FILE, "r") as f:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
                 history = json.load(f)
                 for entry in history:
                     row = table.rowCount()
                     table.insertRow(row)
-                    table.setItem(row, 0, QTableWidgetItem(entry.get("url", "")))
-        except:
+                    # Check if entry has new format with title and channel
+                    if "title" in entry and "channel" in entry:
+                        title = entry.get("title", "Unknown Title")
+                        channel = entry.get("channel", "Unknown Channel")
+                        url = entry.get("url", "")
+                        table.setItem(row, 0, QTableWidgetItem(title))
+                        table.setItem(row, 1, QTableWidgetItem(channel))
+                        table.setItem(row, 2, QTableWidgetItem(url))
+                    else:
+                        # Legacy format - just URL
+                        url = entry.get("url", "")
+                        table.setItem(row, 0, QTableWidgetItem("Unknown Title"))
+                        table.setItem(row, 1, QTableWidgetItem("Unknown Channel"))
+                        table.setItem(row, 2, QTableWidgetItem(url))
+        except Exception as e:
+            print(f"Error loading history: {e}")
             pass
 
 def save_history(table):
     history = []
     for r in range(table.rowCount()):
-        url = table.item(r,0).text() if table.item(r,0) else ""
-        history.append({"url": url})
-    with open(HISTORY_FILE, "w") as f:
-        json.dump(history, f, indent=4)
+        title_item = table.item(r, 0)
+        channel_item = table.item(r, 1)
+        url_item = table.item(r, 2)
+        
+        title = title_item.text() if title_item else "Unknown Title"
+        channel = channel_item.text() if channel_item else "Unknown Channel"
+        url = url_item.text() if url_item else ""
+        
+        # Skip empty rows
+        if not url.strip():
+            continue
+            
+        history.append({
+            "title": title,
+            "channel": channel,
+            "url": url
+        })
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=4, ensure_ascii=False)
 
-def add_history_entry(table, url, enabled=True):
+def add_history_entry(table, title="", channel="", url="", enabled=True):
     if not enabled:
         return
     row = table.rowCount()
     table.insertRow(row)
-    table.setItem(row, 0, QTableWidgetItem(url))
+    
+    # Set default values if empty
+    if not title:
+        title = "Unknown Title"
+    if not channel:
+        channel = "Unknown Channel"
+    
+    table.setItem(row, 0, QTableWidgetItem(title))
+    table.setItem(row, 1, QTableWidgetItem(channel))
+    table.setItem(row, 2, QTableWidgetItem(url))
     save_history(table)
 
 def delete_selected_history(table, log_callback):
@@ -69,10 +107,10 @@ def search_history(table, txt):
 def export_history(file_path):
     """Export history data to a JSON file"""
     try:
-        with open(HISTORY_FILE, "r") as f:
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
             history = json.load(f)
-        with open(file_path, "w") as f:
-            json.dump(history, f, indent=4)
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=4, ensure_ascii=False)
         return True
     except Exception as e:
         return False

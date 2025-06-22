@@ -70,9 +70,6 @@ class QueueAddDialog(QDialog):
                 download_type += " - Playlist"
             self.parent.page_queue.queue_table.setItem(row, 3, QTableWidgetItem(download_type))
             self.parent.page_queue.queue_table.setItem(row, 4, QTableWidgetItem("0%"))
-            
-            # Update history entry
-            self.parent.add_history_entry(url)
             self.parent.run_task(task, row)
             self.accept()
         else:
