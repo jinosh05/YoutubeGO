@@ -194,7 +194,7 @@ class MainWindow(QMainWindow):
                     playlist = ("playlist" in typ)
                     current_format = "mp4"
                     row_idx = r
-                    tsk = DownloadTask(url, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, output_format=current_format, from_queue=True)
+                    tsk = DownloadTask(url, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, output_format=current_format, audio_format=self.user_profile.get_audio_format() if audio else None, from_queue=True)
                     self.run_task(tsk, row_idx)
                     self.queue_table.setItem(r, 4, QTableWidgetItem("Started"))
                     count_started += 1

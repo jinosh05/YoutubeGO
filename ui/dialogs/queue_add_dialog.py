@@ -26,7 +26,7 @@ class QueueAddDialog(QDialog):
         frm.addRow("URL:", self.url_edit)
         frm.addRow(self.audio_checkbox)
         frm.addRow(self.playlist_checkbox)
-        frm.addRow("Format:", self.format_combo)
+        frm.addRow("Video Format:", self.format_combo)
         frm.addRow(self.subtitles_checkbox)
         layout.addLayout(frm)
         
@@ -55,6 +55,7 @@ class QueueAddDialog(QDialog):
             playlist=playlist,
             subtitles=subtitles,
             output_format=output_format,
+            audio_format=self.parent.user_profile.get_audio_format() if audio_only else None,
             from_queue=True
         )
         
