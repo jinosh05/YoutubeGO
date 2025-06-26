@@ -5,7 +5,12 @@ from ui.main_window import MainWindow
 from core.version import get_version
 
 @pytest.fixture
-def main_window(qapp, temp_data_dir, mock_ffmpeg):
+def main_window(qapp, temp_data_dir, mock_ffmpeg, monkeypatch):
+    
+    def mock_exec(self):
+        return QDialog.Accepted
+    monkeypatch.setattr('ui.dialogs.profile_dialog.ProfileDialog.exec_', mock_exec)
+    
     window = MainWindow(ffmpeg_found=True, ffmpeg_path="dummy")
     yield window
     window.close()
