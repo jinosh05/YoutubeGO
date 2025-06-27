@@ -6,19 +6,17 @@ from subprocess import CREATE_NO_WINDOW
 
 def check_ffmpeg():
     try:
-        startupinfo = None
-        if platform.system() == "Windows":
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            startupinfo.wShowWindow = subprocess.SW_HIDE
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
         
         result = subprocess.run(
-            ["where" if platform.system() == "Windows" else "which", "ffmpeg"],
+            ["where", "ffmpeg"],
             capture_output=True,
             text=True,
             timeout=5,
             startupinfo=startupinfo,
-            creationflags=CREATE_NO_WINDOW if platform.system() == "Windows" else 0
+            creationflags=CREATE_NO_WINDOW
         )
         
         if result.returncode == 0:

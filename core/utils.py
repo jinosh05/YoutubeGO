@@ -51,13 +51,8 @@ def get_data_dir():
     """
     Get the application data directory path.
     On Windows: %APPDATA%/YoutubeGO
-    On Linux: ~/.local/share/youtubego
     """
-    if sys.platform == 'win32':
-        base_dir = os.getenv('APPDATA')
-    else:  
-        base_dir = os.path.expanduser('~/.local/share')
-
+    base_dir = os.getenv('APPDATA')
     data_dir = os.path.join(base_dir, 'YoutubeGO')
     os.makedirs(data_dir, exist_ok=True)
 

@@ -23,20 +23,8 @@ To comply with LGPL-3.0 while maintaining usability, YouTubeGO provides:
   * This license notice
   * GNU GPL v3 license
 
-### Linux
-
-* `YoutubeGO.AppImage`
-  → Portable onefile AppImage build
-
-* `YoutubeGO-Linux.zip`
-  → Contains:
-
-  * `YoutubeGO.AppImage`
-  * This license notice
-  * GNU GPL v3 license
-
-These distributions allow users to inspect and rebuild the application using their own versions of the Qt libraries.
-While the onefile formats embed Qt components for ease of use, full source code is provided to allow custom builds that link against user-modified Qt libraries if desired.
+This distribution allows users to inspect and rebuild the application using their own versions of the Qt libraries.
+While the onefile format embeds Qt components for ease of use, full source code is provided to allow custom builds that link against user-modified Qt libraries if desired.
 
 ---
 
@@ -64,7 +52,7 @@ No additional documentation is required.
 * The core application **YouTubeGO** is licensed under the **GNU GPL v3**.
 * PySide6 (Qt) components are licensed under the **LGPL-3.0**.
 
-This project ensures compliance by making both source code and dynamic linking structure available through `onedir` and `AppImage` formats.
+This project ensures compliance by making both source code and dynamic linking structure available through the `onedir` format.
 
 
 

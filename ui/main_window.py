@@ -265,10 +265,7 @@ class MainWindow(QMainWindow):
                 # History will be written directly by the downloader
     def open_download_folder(self):
         folder = self.user_profile.get_download_path()
-        if platform.system() == "Windows":
-            os.startfile(folder)
-        else:
-            subprocess.run(["xdg-open", folder])
+        os.startfile(folder)
     def append_log(self, text):
         self.log_manager.append_log(text)
     def toggle_history_logging(self, state):

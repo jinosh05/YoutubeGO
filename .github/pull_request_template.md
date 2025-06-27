@@ -5,9 +5,9 @@
 <!-- List any relevant issues this PR closes -->
 Closes #
 
-## Checklist
+## Testing Checklist
 - [ ] Tested on Windows
-- [ ] Tested on Linux
-- [ ] No breaking changes introduced
-- [ ] Documentation updated if necessary
+- [ ] All tests pass
+- [ ] Documentation updated (if needed)
+- [ ] Code follows project style guidelines
 

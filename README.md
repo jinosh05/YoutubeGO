@@ -115,16 +115,12 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 - **FFmpeg Detection**  
   Automatically detects FFmpeg installation and prompts for setup if missing.
 
-- **Cross-Platform Compatibility**  
-  Fully supported on **Linux** and **Windows**.
-
 ## ⚙️ Installation
 
 ### Quick Download
-You can download the latest release from. [Releases](https://github.com/Efeckc17/YoutubeGO/releases) page:
+You can download the latest release from [Releases](https://github.com/Efeckc17/YoutubeGO/releases) page:
 
 - **Windows**: Download the `.exe` file - includes all necessary dependencies
-- **Linux**: Download the `.AppImage` file - requires FFmpeg to be installed separately
 
 ### Prerequisites
 - Python 3.7 or higher (only if running from source)
@@ -143,12 +139,7 @@ python --version
 # Install dependencies
 pip install -r requirements.txt
 
-# Install FFmpeg for audio and video processing
-
-# Linux
-sudo apt install ffmpeg
-
-# Windows (via winget)
+# Install FFmpeg for audio/video processing
 winget install FFmpeg
 ```
 
