@@ -67,6 +67,7 @@ class DownloadQueueWorker(QRunnable):
         self.cookie_file = os.path.join(self.data_dir, "youtube_cookies.txt")
         self.logger = YTLogger(log_signal)
         self._ydl = None
+        self.playlist_title = None
 
     def __del__(self):
         self.cleanup()
@@ -109,9 +110,7 @@ class DownloadQueueWorker(QRunnable):
 
     def run(self):
         try:
-            
             self.log_signal.emit(f"Starting download to: {self.task.folder}")
-            
             
             if not os.path.exists(self.task.folder):
                 os.makedirs(self.task.folder, exist_ok=True)
@@ -149,6 +148,13 @@ class DownloadQueueWorker(QRunnable):
                         error_msg += "- Platform limitations or regional restrictions"
                         self.log_signal.emit(error_msg)
                         return
+
+                    if self.task.playlist and "title" in info:
+                        self.playlist_title = info.get("title", "Unknown Playlist")
+                        playlist_folder = os.path.join(self.task.folder, self.playlist_title)
+                        os.makedirs(playlist_folder, exist_ok=True)
+                        self.log_signal.emit(f"Created playlist directory: {playlist_folder}")
+                        self.task.folder = playlist_folder
 
                     if "entries" in info and isinstance(info["entries"], list):
                         if info["entries"] and info["entries"][0]:
