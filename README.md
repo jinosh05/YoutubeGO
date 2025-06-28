@@ -3,7 +3,7 @@
 <div align="center">
   <img src="assets/banner.png" alt="YoutubeGO Logo" width="650"/>
   
-  ### Modern YouTube Downloader with Advanced Features
+  ### Modern Downloader with Advanced Features
   
   [![Python](https://img.shields.io/badge/Python-3.7%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
   [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://pypi.org/project/PySide6/)
@@ -40,7 +40,7 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 ### 🌐 Links
 [![Website](https://img.shields.io/badge/Visit-Website-1DA1F2?style=for-the-badge&logo=web&logoColor=white)](https://youtubego.org)
-[![Discord](https://img.shields.io/badge/Join-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/SyMTVFYcbb)
+[![Discord](https://img.shields.io/badge/Join-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/p4xYhqFwPR)
 
 ## 🌐 Languages
 
@@ -51,6 +51,9 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 ### 🎯 Core Features
 - **Multi-Platform Support**  
   Download videos and audio from platforms supporting HTTP streams, including YouTube, Vimeo, and more.
+
+- **Smart Playlist Organization**  
+  Automatically organizes playlist downloads into dedicated folders named after the playlist.
 
 - **Playlist Downloads**  
   Save entire playlists with sequential processing in just a few clicks.
