@@ -90,14 +90,13 @@ class SettingsPage(QWidget):
         self.proxy_edit = QLineEdit()
         self.proxy_edit.setText(self.parent.user_profile.get_proxy())
         self.proxy_edit.setPlaceholderText("Proxy or bandwidth limit...")
+        self.proxy_edit.textChanged.connect(self.proxy_changed)
         self.theme_combo = QComboBox()
         self.theme_combo.addItems(["Dark","Light"])
         self.theme_combo.setCurrentText(self.parent.user_profile.get_theme())
+        self.theme_combo.currentTextChanged.connect(self.theme_changed)
         fl.addRow("Proxy/BW:", self.proxy_edit)
         fl.addRow("Theme:", self.theme_combo)
-        theme_btn = AnimatedButton("Apply Theme")
-        theme_btn.clicked.connect(self.change_theme_clicked)
-        fl.addWidget(theme_btn)
         layout.addWidget(g_tech)
 
         # Resolution Group
@@ -108,11 +107,9 @@ class SettingsPage(QWidget):
         self.res_combo = QComboBox()
         self.res_combo.addItems(["144p","240p","360p","480p","720p","1080p","1440p","2160p","4320p"])
         self.res_combo.setCurrentText(self.parent.user_profile.get_default_resolution())
+        self.res_combo.currentTextChanged.connect(self.resolution_changed)
         r_hl.addWidget(QLabel("Resolution:"))
         r_hl.addWidget(self.res_combo)
-        a_btn = AnimatedButton("Apply")
-        a_btn.clicked.connect(self.apply_resolution)
-        r_hl.addWidget(a_btn)
         layout.addWidget(g_res)
 
         # Audio Format Group
@@ -123,11 +120,9 @@ class SettingsPage(QWidget):
         self.audio_format_combo = QComboBox()
         self.audio_format_combo.addItems(self.parent.user_profile.get_available_audio_formats())
         self.audio_format_combo.setCurrentText(self.parent.user_profile.get_audio_format())
+        self.audio_format_combo.currentTextChanged.connect(self.audio_format_changed)
         a_hl.addWidget(QLabel("Format:"))
         a_hl.addWidget(self.audio_format_combo)
-        audio_btn = AnimatedButton("Apply")
-        audio_btn.clicked.connect(self.apply_audio_format)
-        a_hl.addWidget(audio_btn)
         layout.addWidget(g_audio)
 
         # Download Path Group
@@ -155,23 +150,22 @@ class SettingsPage(QWidget):
         self.parent.max_concurrent_downloads = int(val)
         self.parent.append_log(f"Max concurrent downloads set to {val}")
 
-    def change_theme_clicked(self):
-        theme = self.theme_combo.currentText()
+    def proxy_changed(self, text):
+        self.parent.user_profile.set_proxy(text)
+        self.parent.append_log(f"Proxy setting updated: {text}")
+
+    def theme_changed(self, theme):
+        self.parent.user_profile.set_theme(theme)
         self.parent.theme_manager.change_theme(theme)
+        self.parent.append_log(f"Theme changed to: {theme}")
 
-    def apply_resolution(self):
-        sr = self.res_combo.currentText()
-        self.parent.user_profile.set_default_resolution(sr)
-        prx = self.proxy_edit.text().strip()
-        self.parent.user_profile.set_proxy(prx)
-        self.parent.append_log(f"Resolution set: {sr}, Proxy: {prx}")
-        QMessageBox.information(self, "Settings", f"Resolution: {sr}\nProxy: {prx}")
+    def resolution_changed(self, resolution):
+        self.parent.user_profile.set_default_resolution(resolution)
+        self.parent.append_log(f"Default resolution set to: {resolution}")
 
-    def apply_audio_format(self):
-        audio_format = self.audio_format_combo.currentText()
-        self.parent.user_profile.set_audio_format(audio_format)
-        self.parent.append_log(f"Audio format set to: {audio_format}")
-        QMessageBox.information(self, "Settings", f"Audio format set to: {audio_format}")
+    def audio_format_changed(self, format):
+        self.parent.user_profile.set_audio_format(format)
+        self.parent.append_log(f"Audio format set to: {format}")
 
     def select_download_path(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Download Folder")

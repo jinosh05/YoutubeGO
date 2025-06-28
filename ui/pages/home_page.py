@@ -71,8 +71,8 @@ class HomePage(QWidget):
         grid_layout.setSpacing(15)
 
         features = [
-            ("Video Download", "Download videos in MP4 format with various quality options", 1),
-            ("Audio Download", "Extract audio in MP3 format from videos", 2),
+            ("Video Download", "Download videos with various quality options", 1),
+            ("Audio Download", "Download audio in your preferred format", 2),
             ("Download History", "View and manage your download history", 3),
             ("Settings", "Configure download settings and preferences", 4),
             ("Profile", "Manage your user profile and preferences", 5),
