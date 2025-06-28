@@ -3,8 +3,18 @@ name: Windows Tests
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'ui/**'
+      - 'core/**'
+      - 'build_meta/**'
+      - 'assets/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'ui/**'
+      - 'core/**'
+      - 'build_meta/**'
+      - 'assets/**'
 
 jobs:
   test:
