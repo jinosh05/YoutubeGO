@@ -51,17 +51,25 @@ def get_data_dir():
     """
     Get the application data directory path.
     On Windows: %APPDATA%/YoutubeGO
+    On Linux: ~/.local/share/YoutubeGO
+    On macOS: ~/Library/Application Support/YoutubeGO
     """
-    base_dir = os.getenv('APPDATA')
+    if sys.platform.startswith("win"):
+        base_dir = os.getenv('APPDATA')
+    elif sys.platform.startswith("darwin"):
+        base_dir = os.path.expanduser('~/Library/Application Support')
+    else:  
+        base_dir = os.path.expanduser('~/.local/share')
+    
     data_dir = os.path.join(base_dir, 'YoutubeGO')
     os.makedirs(data_dir, exist_ok=True)
 
-    # Create subdirectories
+   
     images_dir = os.path.join(data_dir, 'images')
     os.makedirs(images_dir, exist_ok=True)
 
     return data_dir
 
 def get_images_dir():
-    """Get the directory path for profile images."""
+    
     return os.path.join(get_data_dir(), 'images')

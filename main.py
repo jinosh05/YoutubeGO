@@ -16,55 +16,54 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-def set_windows_app_id():
+def set_platform_specific_settings():
     if sys.platform.startswith("win"):
         try:
             app_id = f"YoutubeGO.App.{get_version(short=True)}"
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
-            
-            # Set process DPI awareness
-            ctypes.windll.shcore.SetProcessDpiAwareness(2)  # PROCESS_PER_MONITOR_DPI_AWARE
-            
-            # Set up Windows taskbar icon
-            myappid = f'YoutubeGO.{get_version()}'  # arbitrary string
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+            ctypes.windll.shcore.SetProcessDpiAwareness(2)
         except Exception as e:
-            print(f"Failed to set Windows app ID: {e}")
-            pass
+            print(f"Failed to set Windows-specific settings: {e}")
 
 def cleanup_shared_memory(shared_mem):
-    if shared_mem.isAttached():
+    if shared_mem and shared_mem.isAttached():
         shared_mem.detach()
-    if shared_mem.isAttached():
+    if shared_mem and shared_mem.isAttached():
         shared_mem.forceDetach()
 
+def create_shared_memory():
+    if sys.platform.startswith("win"):
+        shared_mem = QSharedMemory(f"YoutubeGO {get_version(short=True)}")
+        semaphore = QSystemSemaphore(f"YoutubeGO_Semaphore_{get_version(short=True)}", 1)
+        return shared_mem, semaphore
+    return None, None
+
 def main():
-    set_windows_app_id()
+    set_platform_specific_settings()
     
-    shared_mem = QSharedMemory(f"YoutubeGO {get_version(short=True)}")
-    semaphore = QSystemSemaphore(f"YoutubeGO_Semaphore_{get_version(short=True)}", 1)
+    shared_mem, semaphore = create_shared_memory()
     
-    atexit.register(cleanup_shared_memory, shared_mem)
-    
-    if not shared_mem.create(1):
-        app = QApplication.instance()
-        if app is None:
-            app = QApplication(sys.argv)
+    if shared_mem:
+        atexit.register(cleanup_shared_memory, shared_mem)
         
-        for widget in app.topLevelWidgets():
-            if isinstance(widget, MainWindow):
-                if widget.isMinimized():
-                    widget.showNormal()
-                widget.setWindowState(widget.windowState() & ~Qt.WindowMinimized)
-                widget.activateWindow()
-                widget.raise_()
-                widget.show()
-                return
-        return
+        if not shared_mem.create(1):
+            app = QApplication.instance()
+            if app is None:
+                app = QApplication(sys.argv)
+            
+            for widget in app.topLevelWidgets():
+                if isinstance(widget, MainWindow):
+                    if widget.isMinimized():
+                        widget.showNormal()
+                    widget.setWindowState(widget.windowState() & ~Qt.WindowMinimized)
+                    widget.activateWindow()
+                    widget.raise_()
+                    widget.show()
+                    return
+            return
     
     app = QApplication(sys.argv)
     
-    # Set application icon
     icon_path = resource_path(os.path.join("assets", "app.ico"))
     if os.path.exists(icon_path):
         app_icon = QIcon(icon_path)
@@ -78,16 +77,18 @@ def main():
     
     win = MainWindow(ffmpeg_found=ffmpeg_found, ffmpeg_path=ffmpeg_path)
     
-    # Set window icon explicitly
     if os.path.exists(icon_path):
         win.setWindowIcon(app_icon)
     
     def cleanup():
-        cleanup_shared_memory(shared_mem)
-        if semaphore.acquire():
+        if shared_mem:
+            cleanup_shared_memory(shared_mem)
+        if semaphore and semaphore.acquire():
             semaphore.release()
 
-    atexit.register(cleanup)
+    if shared_mem:
+        atexit.register(cleanup)
+    
     win.show()
     sys.exit(app.exec())
 

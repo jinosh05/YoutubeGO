@@ -6,17 +6,25 @@ from subprocess import CREATE_NO_WINDOW
 
 def check_ffmpeg():
     try:
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = subprocess.SW_HIDE
+        if sys.platform.startswith("win"):
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            command = ["where", "ffmpeg"]
+            kwargs = {
+                "startupinfo": startupinfo,
+                "creationflags": CREATE_NO_WINDOW
+            }
+        else:
+            command = ["which", "ffmpeg"]
+            kwargs = {}
         
         result = subprocess.run(
-            ["where", "ffmpeg"],
+            command,
             capture_output=True,
             text=True,
             timeout=5,
-            startupinfo=startupinfo,
-            creationflags=CREATE_NO_WINDOW
+            **kwargs
         )
         
         if result.returncode == 0:
