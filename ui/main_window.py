@@ -265,7 +265,16 @@ class MainWindow(QMainWindow):
                 # History will be written directly by the downloader
     def open_download_folder(self):
         folder = self.user_profile.get_download_path()
-        os.startfile(folder)
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(folder)
+            elif sys.platform.startswith('darwin'):  # macOS
+                subprocess.run(['open', folder])
+            else:  # Linux
+                subprocess.run(['xdg-open', folder])
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"Could not open folder: {str(e)}")
+            self.append_log(f"Failed to open folder: {str(e)}")
     def append_log(self, text):
         self.log_manager.append_log(text)
     def toggle_history_logging(self, state):
