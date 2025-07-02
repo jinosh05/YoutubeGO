@@ -1,0 +1,73 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Convert icon
+        run: |
+          mkdir icon.iconset
+          sips -z 16 16   assets/app.png --out icon.iconset/icon_16x16.png
+          sips -z 32 32   assets/app.png --out icon.iconset/icon_16x16@2x.png
+          sips -z 32 32   assets/app.png --out icon.iconset/icon_32x32.png
+          sips -z 64 64   assets/app.png --out icon.iconset/icon_32x32@2x.png
+          sips -z 128 128 assets/app.png --out icon.iconset/icon_128x128.png
+          sips -z 256 256 assets/app.png --out icon.iconset/icon_128x128@2x.png
+          sips -z 256 256 assets/app.png --out icon.iconset/icon_256x256.png
+          sips -z 512 512 assets/app.png --out icon.iconset/icon_256x256@2x.png
+          sips -z 512 512 assets/app.png --out icon.iconset/icon_512x512.png
+          sips -z 1024 1024 assets/app.png --out icon.iconset/icon_512x512@2x.png
+          iconutil -c icns icon.iconset -o assets/app.icns
+
+      - name: Build macOS App
+        run: |
+          pyinstaller --noconfirm --windowed --name YoutubeGo \
+            --add-data "assets:assets" \
+            --add-data "ui/themes:ui/themes" \
+            --icon assets/app.icns \
+            --osx-bundle-identifier com.youtubego.app \
+            main.py
+
+      - name: Create DMG
+        run: |
+          brew install create-dmg
+          create-dmg \
+            --volname "YoutubeGo" \
+            --volicon "assets/app.icns" \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --icon "YoutubeGo.app" 200 190 \
+            --hide-extension "YoutubeGo.app" \
+            --app-drop-link 600 185 \
+            "dist/YoutubeGo.dmg" \
+            "dist/YoutubeGo.app"
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: 'dist/YoutubeGo.dmg'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
