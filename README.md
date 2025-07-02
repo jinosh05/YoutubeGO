@@ -71,11 +71,8 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 - **Batch Processing**  
   Queue multiple downloads and manage them simultaneously. Pause, resume, or cancel downloads easily.
 
-- **Audio Extraction**  
-  Extract audio tracks in multiple formats including **MP3**, **M4A**, **WAV**, **AAC**, **FLAC**, **OPUS**, and **VORBIS**.
-
 - **Profile Management**  
-  Save your name, profile picture, download paths, and social media links. Profiles can be updated directly in the app.
+  Save your preferred settings including username, profile picture, download paths, video resolutions and audio formats.
 
 - **Profile Import/Export**  
   Easily export your profile, settings, history, and profile picture as a single ZIP file, and import them back into the app on any device. Great for backup, migration, or restoring your preferences.
