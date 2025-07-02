@@ -2,7 +2,11 @@ import os
 import platform
 import subprocess
 import sys
-from subprocess import CREATE_NO_WINDOW
+
+if sys.platform == "win32":
+    CREATE_NO_WINDOW = subprocess.CREATE_NO_WINDOW
+else:
+    CREATE_NO_WINDOW = 0
 
 def check_ffmpeg():
     try:
