@@ -113,12 +113,39 @@
 
 ## ⚙️ Установка
 
-### Быстрая загрузка
-Вы можете скачать последний релиз со страницы [Releases](https://github.com/Efeckc17/YoutubeGO/releases):
+### Windows
+- Скачайте последний `.exe` установщик или `.zip` архив со страницы [Releases](https://github.com/Efeckc17/YoutubeGO/releases)
+- Оба пакета включают все зависимости, включая FFmpeg
+- Запустите установщик или распакуйте `.zip` и запустите `YoutubeGO.exe`
 
-- **Windows**: Скачайте файл `.exe` - включает все необходимые зависимости
+### macOS
+- Скачайте последний `.dmg` пакет со страницы [Releases](https://github.com/Efeckc17/YoutubeGO/releases)
+- Установите FFmpeg с помощью [Homebrew](https://brew.sh):
+  ```bash
+  brew install ffmpeg
+  ```
+- Смонтируйте `.dmg` файл и перетащите YoutubeGO в папку Applications
 
-### Требования
+### Linux
+- Скачайте последний `.AppImage` со страницы [Releases](https://github.com/Efeckc17/YoutubeGO/releases)
+- Установите FFmpeg с помощью вашего пакетного менеджера:
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install ffmpeg
+
+  # Fedora
+  sudo dnf install ffmpeg
+
+  # Arch Linux
+  sudo pacman -S ffmpeg
+  ```
+- Сделайте AppImage исполняемым:
+  ```bash
+  chmod +x YoutubeGO.AppImage
+  ```
+- Запустите AppImage
+
+### Из исходного кода
 - Python 3.7 или выше (только при запуске из исходного кода)
 - FFmpeg (для обработки аудио/видео)
 - Git (для клонирования репозитория)

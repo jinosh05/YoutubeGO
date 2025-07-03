@@ -48,8 +48,8 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 ## 🌟 Key Features
 
-### 🎯 Core Features
-- **Multi-Platform Support**  
+### 🛠️ Core Features
+- **Download Support**  
   Download videos and audio from platforms supporting HTTP streams, including YouTube, Vimeo, and more.
 
 - **Smart Playlist Organization**  
@@ -117,31 +117,43 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 ## ⚙️ Installation
 
-### Quick Download
-You can download the latest release from [Releases](https://github.com/Efeckc17/YoutubeGO/releases) page:
+### Windows
+- Download the latest `.exe` installer or `.zip` archive from [Releases](https://github.com/Efeckc17/YoutubeGO/releases)
+- Both packages include all dependencies including FFmpeg
+- Run the installer or extract the `.zip` and run `YoutubeGO.exe`
 
-- **Windows**: Download the `.exe` file - includes all necessary dependencies
+### macOS
+- Download the latest `.dmg` package from [Releases](https://github.com/Efeckc17/YoutubeGO/releases)
+- Install FFmpeg using [Homebrew](https://brew.sh):
+  ```bash
+  brew install ffmpeg
+  ```
+- Mount the `.dmg` file and drag YoutubeGO to Applications folder
 
-### Prerequisites
-- Python 3.7 or higher (only if running from source)
-- FFmpeg (for audio/video processing)
-- Git (for cloning the repository)
+### Linux
+- Download the latest `.AppImage` from [Releases](https://github.com/Efeckc17/YoutubeGO/releases)
+- Install FFmpeg using your package manager:
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install ffmpeg
 
-### Quick Start
-```bash
-# Clone the repository
-git clone https://github.com/Efeckc17/YoutubeGO.git
-cd YoutubeGO
+  # Fedora
+  sudo dnf install ffmpeg
 
-# Ensure Python 3.7+ is installed
-python --version
+  # Arch Linux
+  sudo pacman -S ffmpeg
+  ```
+- Make the AppImage executable:
+  ```bash
+  chmod +x YoutubeGO.AppImage
+  ```
+- Run the AppImage
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Install FFmpeg for audio/video processing
-winget install FFmpeg
-```
+### From Source
+- Clone the repository
+- Ensure Python 3.7+ is installed
+- Install dependencies
+- Install FFmpeg for audio/video processing
 
 ## 🔧 Usage
 
