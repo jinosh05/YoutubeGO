@@ -290,8 +290,22 @@ class MainWindow(QMainWindow):
     def reset_profile(self):
         if os.path.exists(self.user_profile.profile_path):
             os.remove(self.user_profile.profile_path)
-        QMessageBox.information(self, "Reset Profile", "Profile data removed. Please restart.")
-        self.append_log("Profile has been reset.")
+        
+        from core.history import HISTORY_FILE
+        if os.path.exists(HISTORY_FILE):
+            os.remove(HISTORY_FILE)
+            
+        if hasattr(self, 'page_history') and hasattr(self.page_history, 'history_table'):
+            self.page_history.history_table.setRowCount(0)
+            
+        if self.user_profile.data.get("profile_picture") and os.path.exists(self.user_profile.data["profile_picture"]):
+            try:
+                os.remove(self.user_profile.data["profile_picture"])
+            except OSError as e:
+                self.append_log(f"Warning: Could not remove profile picture: {e}")
+        
+        QMessageBox.information(self, "Reset Profile", "Profile data, history, and profile picture removed. Please restart.")
+        self.append_log("Profile, history, and profile picture have been reset.")
     def update_profile_ui(self):
         if self.user_profile.data["profile_picture"]:
             pixmap = QPixmap(self.user_profile.data["profile_picture"]).scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)

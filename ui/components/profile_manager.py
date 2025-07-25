@@ -113,9 +113,20 @@ class ProfileManager:
     def reset_profile(self):
         if os.path.exists(self.user_profile.profile_path):
             os.remove(self.user_profile.profile_path)
+        
+        from core.history import HISTORY_FILE
+        if os.path.exists(HISTORY_FILE):
+            os.remove(HISTORY_FILE)
+            
+        if self.user_profile.data.get("profile_picture") and os.path.exists(self.user_profile.data["profile_picture"]):
+            try:
+                os.remove(self.user_profile.data["profile_picture"])
+            except OSError as e:
+                self.main_window.append_log(f"Warning: Could not remove profile picture: {e}")
+        
         from PySide6.QtWidgets import QMessageBox
-        QMessageBox.information(self.main_window, "Reset Profile", "Profile data removed. Please restart.")
-        self.main_window.append_log("Profile has been reset.")
+        QMessageBox.information(self.main_window, "Reset Profile", "Profile data, history, and profile picture removed. Please restart.")
+        self.main_window.append_log("Profile, history, and profile picture have been reset.")
 
     def update_profile_ui(self):
         from PySide6.QtGui import QPixmap
