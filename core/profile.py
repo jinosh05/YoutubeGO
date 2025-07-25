@@ -24,20 +24,27 @@ class UserProfile:
 
     def load_profile(self):
         if os.path.exists(self.profile_path):
-            with open(self.profile_path, "r") as f:
+            with open(self.profile_path, "r", encoding="utf-8") as f:
                 try:
                     self.data = json.load(f)
                     if "audio_format" not in self.data:  
                         self.data["audio_format"] = "mp3"
                         self.save_profile()
-                except:
+                except json.JSONDecodeError as e:
+                    print(f"Warning: Profile file corrupted, creating new one. Error: {e}")
+                    self.save_profile()
+                except (IOError, OSError) as e:
+                    print(f"Warning: Cannot read profile file: {e}")
+                    self.save_profile()
+                except Exception as e:
+                    print(f"Unexpected error loading profile: {e}")
                     self.save_profile()
         else:
             self.save_profile()
 
     def save_profile(self):
-        with open(self.profile_path, "w") as f:
-            json.dump(self.data, f, indent=4)
+        with open(self.profile_path, "w", encoding="utf-8") as f:
+            json.dump(self.data, f, indent=4, ensure_ascii=False)
 
     def set_profile(self, name, profile_picture, download_path):
         if profile_picture and profile_picture != self.data.get("profile_picture", ""):
