@@ -26,6 +26,25 @@ To comply with LGPL-3.0 while maintaining usability, YouTubeGO provides:
 This distribution allows users to inspect and rebuild the application using their own versions of the Qt libraries.
 While the onefile format embeds Qt components for ease of use, full source code is provided to allow custom builds that link against user-modified Qt libraries if desired.
 
+### macOS
+
+* `YoutubeGO.dmg`
+  → Contains:
+  
+  * macOS application bundle with Qt frameworks
+
+  
+This distribution provides the Qt frameworks in a way that allows users to replace them with their own versions if needed.
+
+### Linux
+
+* `YoutubeGo-x86_64.AppImage`
+  → Self-contained application that includes:
+  
+  * Qt libraries and dependencies
+
+The AppImage format allows users to extract the contents and rebuild with their own Qt libraries as needed.
+
 ---
 
 ## 🛠️ Source & Rebuild Instructions
