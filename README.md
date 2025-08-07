@@ -5,7 +5,7 @@
   
   ### Modern Downloader with Advanced Features
   
-  [![Python](https://img.shields.io/badge/Python-3.7%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+  [![Python](https://img.shields.io/badge/Python-3.13%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
   [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://pypi.org/project/PySide6/)
   [![yt-dlp](https://img.shields.io/badge/Downloader-yt--dlp-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://github.com/yt-dlp/yt-dlp)
   [![requests](https://img.shields.io/badge/HTTP-requests-2496ED?style=for-the-badge&logo=python&logoColor=white)](https://pypi.org/project/requests/)
@@ -14,12 +14,11 @@
 
 ## 📋 Table of Contents
 - [Features](#-key-features)
-- [Installation](#-installation)
+- [Installation](https://github.com/Efeckc17/YoutubeGO/releases)
 - [Usage](#-usage)
-- [ScreenShots](showcase/showcase.md)
-- [Contributing](#-contributions)
-- [License](#-legal)
-- [Project Structure](#-project-structure)
+- [Screenshots](showcase/showcase.md)
+- [Contributing](CONTRIBUTING.md)
+- [License](LICENSE)
 
 ## 🛠️ Tech Stack
 
@@ -151,7 +150,7 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 
 ### From Source
 - Clone the repository
-- Ensure Python 3.7+ is installed
+- Ensure Python 3.13+ is installed
 - Install dependencies
 - Install FFmpeg for audio/video processing
 
