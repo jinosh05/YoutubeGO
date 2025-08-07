@@ -14,7 +14,7 @@ Thanks for your interest in contributing to **YouTubeGO 5.0**! We welcome bug re
 
 ## 📌 Guidelines
 
-- Use Python 3.7+ compatible code
+- Use Python 3.13+ compatible code
 - Follow existing naming/style conventions
 - Keep UI clean and minimal
 - Make sure your code doesn't break existing features
