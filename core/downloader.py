@@ -34,8 +34,8 @@ class YTLogger:
             try:
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
-            except Exception:
-                pass
+            except (OSError, PermissionError) as e:
+                print(f"Warning: Could not remove temp file {temp_file}: {e}")
         self._temp_files.clear()
 
 class DownloadTask:
@@ -76,8 +76,8 @@ class DownloadQueueWorker(QRunnable):
         if self._ydl:
             try:
                 self._ydl.close()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"Warning: Error closing yt-dlp instance: {e}")
             self._ydl = None
         if self.logger:
             self.logger.cleanup()

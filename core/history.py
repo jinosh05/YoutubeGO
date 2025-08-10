@@ -35,7 +35,6 @@ def load_history_initial(table):
                         table.setItem(row, 2, QTableWidgetItem(url))
         except Exception as e:
             print(f"Error loading history: {e}")
-            pass
 
 def save_history(table):
     history = []

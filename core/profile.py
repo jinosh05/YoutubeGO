@@ -60,8 +60,8 @@ class UserProfile:
                     if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
                         try:
                             os.remove(old_pic)
-                        except:
-                            pass
+                        except (OSError, PermissionError) as e:
+                            print(f"Warning: Could not remove old profile picture: {e}")
                     
                     shutil.copy2(profile_picture, new_path)
                     self.data["profile_picture"] = new_path
@@ -87,8 +87,8 @@ class UserProfile:
         if old_pic and os.path.exists(old_pic) and old_pic.startswith(self.images_dir):
             try:
                 os.remove(old_pic)
-            except:
-                pass
+            except (OSError, PermissionError) as e:
+                print(f"Warning: Could not remove profile picture: {e}")
         self.data["profile_picture"] = ""
         self.save_profile()
 
