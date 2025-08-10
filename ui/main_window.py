@@ -272,7 +272,7 @@ class MainWindow(QMainWindow):
                 subprocess.run(['open', folder])
             else:  # Linux
                 subprocess.run(['xdg-open', folder])
-        except Exception as e:
+        except (OSError, subprocess.SubprocessError, FileNotFoundError) as e:
             QMessageBox.warning(self, "Error", f"Could not open folder: {str(e)}")
             self.append_log(f"Failed to open folder: {str(e)}")
     def append_log(self, text):

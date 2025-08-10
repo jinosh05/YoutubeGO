@@ -71,7 +71,7 @@ class UserProfile:
                         pass
                     else:
                         self.data["profile_picture"] = ""
-            except Exception as e:
+            except (OSError, PermissionError, shutil.Error) as e:
                 print(f"Error handling profile picture: {e}")
                 if self.data.get("profile_picture") and os.path.exists(self.data["profile_picture"]):
                     pass

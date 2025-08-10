@@ -24,7 +24,7 @@ class UpdateChecker(QObject):
 
     def check_for_updates(self):
         try:
-            response = requests.get(self.github_api_url, headers=self.headers)
+            response = requests.get(self.github_api_url, headers=self.headers, timeout=10)
             if response.status_code == 200:
                 release_data = response.json()
                 latest_version = release_data["tag_name"]
@@ -37,7 +37,7 @@ class UpdateChecker(QObject):
             else:
                 self.update_error.emit(f"Failed to check for updates: {response.status_code}")
                 self.version_status.emit("Update check failed", "error")
-        except Exception as e:
+        except (requests.RequestException, requests.Timeout, ConnectionError, json.JSONDecodeError) as e:
             self.update_error.emit(f"Error checking for updates: {str(e)}")
             self.version_status.emit("Update check failed", "error")
 

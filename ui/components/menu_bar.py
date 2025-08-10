@@ -93,26 +93,27 @@ class MenuBarManager:
     def open_bug_report(self):
         try:
             webbrowser.open("https://youtubego.org/bug-report.html")
-        except Exception as e:
+        except (OSError, webbrowser.Error) as e:
             QMessageBox.warning(self.main_window, "Error", f"Could not open bug report page: {str(e)}")
 
     def open_support_page(self):
         try:
             webbrowser.open("https://buymeacoffee.com/toxi360")
-        except Exception as e:
+        except (OSError, webbrowser.Error) as e:
             QMessageBox.warning(self.main_window, "Error", f"Could not open support page: {str(e)}")
 
     def show_youtubego_license(self):
         github_license_url = "https://raw.githubusercontent.com/Efeckc17/YoutubeGO/main/LICENSE"
         try:
-            response = requests.get(github_license_url)
+            response = requests.get(github_license_url, timeout=10)
             if response.status_code == 200:
                 license_text = response.text
             else:
                 
                 with open("LICENSE", "r", encoding="utf-8") as f:
                     license_text = f.read()
-        except:
+        except (requests.RequestException, requests.Timeout, ConnectionError) as e:
+            print(f"Warning: Could not fetch license from GitHub: {e}")
             
             with open("LICENSE", "r", encoding="utf-8") as f:
                 license_text = f.read()
@@ -123,9 +124,10 @@ class MenuBarManager:
     def show_qt_license(self):
         qt_license_url = "https://www.qt.io/licensing/"
         try:
-            response = requests.get(qt_license_url)
+            response = requests.get(qt_license_url, timeout=10)
             content = response.text
-        except:
+        except (requests.RequestException, requests.Timeout, ConnectionError) as e:
+            print(f"Warning: Could not fetch Qt license: {e}")
             content = """
             <h3>Qt/PySide6 License Information</h3>
             <p>Qt and PySide6 are licensed under the LGPL v3 license.</p>
@@ -138,9 +140,10 @@ class MenuBarManager:
     def show_ffmpeg_license(self):
         ffmpeg_license_url = "https://www.ffmpeg.org/legal.html"
         try:
-            response = requests.get(ffmpeg_license_url)
+            response = requests.get(ffmpeg_license_url, timeout=10)
             content = response.text
-        except:
+        except (requests.RequestException, requests.Timeout, ConnectionError) as e:
+            print(f"Warning: Could not fetch FFmpeg license: {e}")
             content = """
             <h3>FFmpeg License Information</h3>
             <p>FFmpeg is licensed under the LGPL v2.1+ and GPL v2+.</p>

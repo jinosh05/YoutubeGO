@@ -111,5 +111,6 @@ def export_history(file_path):
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(history, f, indent=4, ensure_ascii=False)
         return True
-    except Exception as e:
+    except (OSError, PermissionError, json.JSONDecodeError, json.JSONEncodeError) as e:
+        print(f"Error exporting history: {e}")
         return False
