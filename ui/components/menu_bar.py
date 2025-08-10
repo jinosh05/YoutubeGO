@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QMenuBar, QMessageBox, QDialog, QVBoxLayout, QText
 from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt
 import requests
+import webbrowser
 
 class LicenseDialog(QDialog):
     def __init__(self, title, content, parent=None):
@@ -54,6 +55,12 @@ class MenuBarManager:
         github_action = QAction("Github: https://github.com/Efeckc17", self.main_window)
         github_action.triggered.connect(self.show_github_info)
         
+        report_bug_action = QAction("Report Bug", self.main_window)
+        report_bug_action.triggered.connect(self.open_bug_report)
+        
+        support_dev_action = QAction("Support Development", self.main_window)
+        support_dev_action.triggered.connect(self.open_support_page)
+        
         # Licenses submenu
         licenses_menu = help_menu.addMenu("Licenses")
         
@@ -74,12 +81,26 @@ class MenuBarManager:
         
         help_menu.addAction(mail_action)
         help_menu.addAction(github_action)
+        help_menu.addAction(report_bug_action)
+        help_menu.addAction(support_dev_action)
 
     def show_contact_info(self):
         QMessageBox.information(self.main_window, "Contact", "For support: toxi360@workmail.com")
 
     def show_github_info(self):
         QMessageBox.information(self.main_window, "GitHub", "https://github.com/Efeckc17")
+
+    def open_bug_report(self):
+        try:
+            webbrowser.open("https://youtubego.org/bug-report.html")
+        except Exception as e:
+            QMessageBox.warning(self.main_window, "Error", f"Could not open bug report page: {str(e)}")
+
+    def open_support_page(self):
+        try:
+            webbrowser.open("https://buymeacoffee.com/toxi360")
+        except Exception as e:
+            QMessageBox.warning(self.main_window, "Error", f"Could not open support page: {str(e)}")
 
     def show_youtubego_license(self):
         github_license_url = "https://raw.githubusercontent.com/Efeckc17/YoutubeGO/main/LICENSE"
