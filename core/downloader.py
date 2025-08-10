@@ -110,11 +110,21 @@ class DownloadQueueWorker(QRunnable):
 
     def run(self):
         try:
+            if self.task.playlist:
+                self.status_signal.emit(self.row, "Analyzing Playlist...")
+            else:
+                self.status_signal.emit(self.row, "Connecting...")
+            
             self.log_signal.emit(f"Starting download to: {self.task.folder}")
             
             if not os.path.exists(self.task.folder):
                 os.makedirs(self.task.folder, exist_ok=True)
                 self.log_signal.emit(f"Created download directory: {self.task.folder}")
+                
+            if self.task.playlist:
+                self.status_signal.emit(self.row, "Loading Playlist...")
+            else:
+                self.status_signal.emit(self.row, "Fetching Media Info...")
             
             if not os.path.exists(self.cookie_file):
                 try:

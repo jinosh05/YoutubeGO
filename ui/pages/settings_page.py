@@ -139,6 +139,99 @@ class SettingsPage(QWidget):
         p_hl.addWidget(self.download_path_edit)
         p_hl.addWidget(b_br)
         layout.addWidget(g_path)
+
+        g_ffmpeg = QGroupBox("FFmpeg Status")
+        g_ffmpeg.setMinimumWidth(300)
+        ffmpeg_layout = QHBoxLayout(g_ffmpeg)
+        ffmpeg_layout.setContentsMargins(10, 10, 10, 10)
+        
+        status_label = QLabel("Status:")
+        status_label.setFixedWidth(60)
+        
+        self.ffmpeg_status_label = QLabel()
+        self.ffmpeg_status_label.setAlignment(Qt.AlignCenter)
+        
+        if self.parent.ffmpeg_found:
+            self.ffmpeg_status_label.setText("✓ FFmpeg Ready")
+            self.ffmpeg_status_label.setStyleSheet("""
+                QLabel {
+                    color: #fff;
+                    font-weight: bold;
+                    font-size: 12pt;
+                    padding: 8px 16px;
+                    border-radius: 12px;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
+                        stop:0 #ff4444, stop:1 #ff6666);
+                    border: 2px solid rgba(255, 68, 68, 0.3);
+                }
+            """)
+            
+            self.ffmpeg_status_label.setToolTip(f"FFmpeg Path: {self.parent.ffmpeg_path}")
+            
+        else:
+            self.ffmpeg_status_label.setText("⚠️ FFmpeg Required")
+            self.ffmpeg_status_label.setStyleSheet("""
+                QLabel {
+                    color: #fff;
+                    font-weight: bold;
+                    font-size: 12pt;
+                    padding: 8px 16px;
+                    border-radius: 12px;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
+                        stop:0 #666666, stop:1 #777777);
+                    border: 2px solid rgba(102, 102, 102, 0.3);
+                }
+            """)
+            
+            self.ffmpeg_status_label.setToolTip("Please install FFmpeg from the official website and ensure it's in your system PATH")
+        
+        ffmpeg_layout.addWidget(status_label)
+        ffmpeg_layout.addWidget(self.ffmpeg_status_label)
+        ffmpeg_layout.addStretch()
+        
+        layout.addWidget(g_ffmpeg)
+
+        g_logs = QGroupBox("Developer Tools")
+        g_logs.setMinimumWidth(300)
+        logs_layout = QHBoxLayout(g_logs)
+        logs_layout.setContentsMargins(10, 10, 10, 10)
+        
+        logs_label = QLabel("Logs:")
+        logs_label.setFixedWidth(60)
+        
+        self.show_logs_btn = AnimatedButton("Show Logs")
+        self.show_logs_btn.setFixedWidth(120)
+        self.show_logs_btn.setFixedHeight(36) 
+        self.show_logs_btn.clicked.connect(self.toggle_logs)
+        
+        self.show_logs_btn.setStyleSheet("""
+            AnimatedButton {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff4444, stop:1 #ff6666);
+                color: #fff;
+                border: none;
+                border-radius: 12px;
+                padding: 8px 16px;
+                font-size: 11pt;
+                font-weight: bold;
+                min-height: 20px;
+            }
+            AnimatedButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff6666, stop:1 #ff4444);
+            }
+            AnimatedButton:pressed {
+                background-color: #cc3333;
+            }
+        """)
+        
+        logs_info = QLabel("View application logs and debug information")
+        logs_info.setStyleSheet("color: #666; font-size: 10pt;")
+        
+        logs_layout.addWidget(logs_label)
+        logs_layout.addWidget(self.show_logs_btn)
+        logs_layout.addWidget(logs_info)
+        logs_layout.addStretch()
+        
+        layout.addWidget(g_logs)
         
         layout.addStretch()
         
@@ -176,4 +269,12 @@ class SettingsPage(QWidget):
                 folder
             )
             self.download_path_edit.setText(folder)
-            self.parent.append_log(f"Download path changed to {folder}") 
+            self.parent.append_log(f"Download path changed to {folder}")
+
+    def toggle_logs(self):
+        self.parent.log_manager.toggle_visibility()
+        
+        if self.parent.log_manager.log_dock_visible:
+            self.show_logs_btn.setText("Hide Logs")
+        else:
+            self.show_logs_btn.setText("Show Logs") 

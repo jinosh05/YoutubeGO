@@ -82,31 +82,7 @@ class MainWindow(QMainWindow):
     def init_ui(self):
         self.status_bar_layout = StatusBarLayout(self)
         self.progress_bar = self.status_bar_layout.progress_bar
-        self.status_label = self.status_bar_layout.status_label
-        self.ffmpeg_label = self.status_bar_layout.ffmpeg_label
-        self.show_logs_btn = self.status_bar_layout.show_logs_btn
-        self.show_logs_btn.setText("Logs")
-        self.show_logs_btn.setVisible(True)
         
-        if self.ffmpeg_found:
-            self.ffmpeg_label.setText("✓ FFmpeg Ready")
-            self.ffmpeg_label.setStyleSheet("""
-                color: #4CAF50;
-                font-weight: bold;
-                padding: 5px 10px;
-                border-radius: 10px;
-                background: rgba(76, 175, 80, 0.1);
-            """)
-        else:
-            self.ffmpeg_label.setText("⚠️ FFmpeg Required")
-            self.ffmpeg_label.setStyleSheet("""
-                color: #FFC107;
-                font-weight: bold;
-                padding: 5px 10px;
-                border-radius: 10px;
-                background: rgba(255, 193, 7, 0.1);
-            """)
-        self.ffmpeg_label.setToolTip(self.ffmpeg_path if self.ffmpeg_found else "Please download FFmpeg from the official website")
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -230,6 +206,11 @@ class MainWindow(QMainWindow):
     def run_task(self, task, row):
         if task.playlist:
             self.tray_manager.show_playlist_indexing_message()
+            self.update_status(row, "Indexing Playlist...")
+        else:
+            self.update_status(row, "Preparing Download...")
+            self.tray_manager.show_message("Download", "Preparing to download...")
+        
         worker = DownloadQueueWorker(task, row, self.progress_signal, self.status_signal, self.log_signal, self.info_signal)
         self.thread_pool.start(worker)
         self.active_workers.append(worker)
@@ -237,14 +218,51 @@ class MainWindow(QMainWindow):
         if row is not None and hasattr(self, 'page_queue') and hasattr(self.page_queue, 'queue_table'):
             if row < self.page_queue.queue_table.rowCount():
                 self.page_queue.queue_table.setItem(row, 4, QTableWidgetItem(f"{int(percent)}%"))
+        
+        if not self.progress_bar.isVisible():
+            self.progress_bar.setVisible(True)
+            
         self.progress_bar.setValue(int(percent))
-        self.progress_bar.setFormat(f" {int(percent)}%")
-        self.status_label.setText(f"Downloading... {percent:.1f}%")
+        self.progress_bar.setFormat(f"Downloading... {int(percent)}%")
     def update_status(self, row, st):
         if row is not None and hasattr(self, 'page_queue') and hasattr(self.page_queue, 'queue_table'):
             if row < self.page_queue.queue_table.rowCount():
                 self.page_queue.queue_table.setItem(row, 4, QTableWidgetItem(st))
-        self.status_label.setText(st)
+        
+        if "Download Completed" in st:
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setFormat("Download Completed ✓")
+            self.progress_bar.setValue(100)
+            QTimer.singleShot(3000, lambda: (
+                self.progress_bar.setVisible(False),
+                self.progress_bar.setFormat("Ready"),
+                self.progress_bar.setValue(0)
+            ))
+        elif "Download Error" in st:
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setFormat("Download Failed ✗")
+            self.progress_bar.setValue(0)
+            QTimer.singleShot(3000, lambda: (
+                self.progress_bar.setVisible(False),
+                self.progress_bar.setFormat("Ready"),
+                self.progress_bar.setValue(0)
+            ))
+        elif "Cancelled" in st:
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setFormat("Download Cancelled")
+            self.progress_bar.setValue(0)
+            QTimer.singleShot(2000, lambda: (
+                self.progress_bar.setVisible(False),
+                self.progress_bar.setFormat("Ready"),
+                self.progress_bar.setValue(0)
+            ))
+        elif st and st != "Ready":
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setFormat(st)
+        else:
+            self.progress_bar.setVisible(False)
+            self.progress_bar.setFormat("Ready")
+            self.progress_bar.setValue(0)
         if "Download Completed" in st:
             self.tray_manager.show_download_completed_message()
             # History page refreshes automatically via showEvent when visible
