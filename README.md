@@ -58,7 +58,15 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
   Save entire playlists with sequential processing in just a few clicks.
 
 - **Multiple Formats**  
-  Download in **MP4** (video) and multiple audio formats (**MP3**, **M4A**, **WAV**, **AAC**, **FLAC**, **OPUS**, **VORBIS**).
+  Download in **MP4** (video) and multiple audio formats (**MP3**, **M4A**, **WAV**, **AAC**, **FLAC**, **OPUS**, **VORBIS**) with **advanced quality control**.
+
+- **Advanced Audio Quality Control** 🎵  
+  Revolutionary audio processing system with **lossless extraction** capabilities:
+  - **Smart Copy Mode**: Zero quality loss for M4A/AAC/OPUS formats
+  - **User-Controlled Bitrates**: 128k, 192k, 256k, 320k, or "best" quality
+  - **Preserve Original Quality**: Avoids unnecessary re-encoding
+  - **High-Fidelity Fallback**: 320k bitrate + 48kHz sampling (vs old 192k + 44.1kHz)
+  - **Format-Specific Optimization**: Automatic best quality selection per format
 
 - **High-Resolution Support**  
   Supports downloads up to **8K, 4K, 2K, 1080p, 720p, 360p**. Select your preferred resolution in Settings.
@@ -69,6 +77,13 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 ### 🛠️ Advanced Features
 - **Batch Processing**  
   Queue multiple downloads and manage them simultaneously. Pause, resume, or cancel downloads easily.
+
+- **Audio Quality Revolution** 🎵  
+  Breakthrough audio processing with **67% bitrate improvement** and **zero-loss extraction**:
+  - Configure audio bitrate (128k to 320k) and quality preservation
+  - Smart copy mode prevents re-encoding when possible
+  - Fixes spectogram frequency loss reported in earlier versions
+  - Comprehensive settings with helpful tooltips for all audio options
 
 - **Profile Management**  
   Save your preferred settings including username, profile picture, download paths, video resolutions and audio formats.
@@ -172,6 +187,8 @@ python main.py
 - Use drag & drop for quick URL addition
 - Enable system tray for background operation
 - Use the scheduler for off-peak downloads
+- **Audio Quality**: Set "Preserve Original: Yes" and 320k bitrate for best quality
+- **Lossless Audio**: Use M4A/FLAC formats with copy mode for zero quality loss
 - Export your profile for easy migration
 
 ## ⚠️ Notes
