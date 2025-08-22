@@ -53,6 +53,7 @@ class VideoPage(QWidget):
             self.parent.user_profile.get_proxy(),
             audio_only=False,
             playlist=playlist,
+            audio_quality=self.parent.user_profile.get_audio_quality(),
             from_queue=False
         )
         

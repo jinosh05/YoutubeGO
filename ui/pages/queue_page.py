@@ -99,6 +99,7 @@ class QueuePage(QWidget):
                 subtitles=subtitles,
                 output_format=output_format,
                 audio_format=self.parent.user_profile.get_audio_format() if audio_only else None,
+                audio_quality=self.parent.user_profile.get_audio_quality() if audio_only else "320",
                 from_queue=True
             )
             
@@ -146,6 +147,7 @@ class QueuePage(QWidget):
                         playlist=playlist,
                         output_format=output_format,
                         audio_format=self.parent.user_profile.get_audio_format() if audio_only else None,
+                        audio_quality=self.parent.user_profile.get_audio_quality() if audio_only else "320",
                         from_queue=True
                     )
                     

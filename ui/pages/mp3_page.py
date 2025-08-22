@@ -52,7 +52,8 @@ class AudioPage(QWidget):
             audio_only=True,
             playlist=playlist,
             from_queue=False,
-            audio_format=self.parent.user_profile.get_audio_format() 
+            audio_format=self.parent.user_profile.get_audio_format(),
+            audio_quality=self.parent.user_profile.get_audio_quality()
         )
         
      

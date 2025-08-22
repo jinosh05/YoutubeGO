@@ -18,7 +18,9 @@ class UserProfile:
             "history_enabled": True, 
             "theme": "Dark", 
             "proxy": "", 
-            "audio_format": "mp3"
+            "audio_format": "mp3",
+            "audio_quality": "320",
+            "preserve_quality": True
         }
         self.load_profile()
 
@@ -29,7 +31,11 @@ class UserProfile:
                     self.data = json.load(f)
                     if "audio_format" not in self.data:  
                         self.data["audio_format"] = "mp3"
-                        self.save_profile()
+                    if "audio_quality" not in self.data:
+                        self.data["audio_quality"] = "320"
+                    if "preserve_quality" not in self.data:
+                        self.data["preserve_quality"] = True
+                    self.save_profile()
                 except json.JSONDecodeError as e:
                     print(f"Warning: Profile file corrupted, creating new one. Error: {e}")
                     self.save_profile()
@@ -135,3 +141,20 @@ class UserProfile:
 
     def get_available_audio_formats(self):
         return ["mp3", "m4a", "wav", "aac", "flac", "opus", "vorbis"]
+
+    def get_audio_quality(self):
+        return self.data.get("audio_quality", "320")
+
+    def set_audio_quality(self, quality):
+        self.data["audio_quality"] = quality
+        self.save_profile()
+
+    def get_available_audio_qualities(self):
+        return ["128", "192", "256", "320", "best"]
+
+    def get_preserve_quality(self):
+        return self.data.get("preserve_quality", True)
+
+    def set_preserve_quality(self, preserve):
+        self.data["preserve_quality"] = preserve
+        self.save_profile()

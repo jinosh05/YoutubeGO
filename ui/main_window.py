@@ -170,7 +170,7 @@ class MainWindow(QMainWindow):
                     playlist = ("playlist" in typ)
                     current_format = "mp4"
                     row_idx = r
-                    tsk = DownloadTask(url, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, output_format=current_format, audio_format=self.user_profile.get_audio_format() if audio else None, from_queue=True)
+                    tsk = DownloadTask(url, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, output_format=current_format, audio_format=self.user_profile.get_audio_format() if audio else None, audio_quality=self.user_profile.get_audio_quality() if audio else "320", from_queue=True)
                     self.run_task(tsk, row_idx)
                     self.queue_table.setItem(r, 4, QTableWidgetItem("Started"))
                     count_started += 1
@@ -192,7 +192,7 @@ class MainWindow(QMainWindow):
                 t = self.scheduler_table.item(r, 2).text().lower()
                 s = (self.scheduler_table.item(r, 3).text() == "Yes")
                 audio = ("audio" in t)
-                task = DownloadTask(u, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=False, subtitles=s, from_queue=True)
+                task = DownloadTask(u, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=False, subtitles=s, audio_format=self.user_profile.get_audio_format() if audio else None, audio_quality=self.user_profile.get_audio_quality() if audio else "320", from_queue=True)
                 self.run_task(task, r)
                 self.scheduler_table.setItem(r, 4, QTableWidgetItem("Started"))
     def start_download_simple(self, url_edit, audio=False, playlist=False):
@@ -200,7 +200,7 @@ class MainWindow(QMainWindow):
         if not link:
             QMessageBox.warning(self, "Error", "No URL given.")
             return
-        task = DownloadTask(link, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, from_queue=False)
+        task = DownloadTask(link, self.user_profile.get_default_resolution(), self.user_profile.get_download_path(), self.user_profile.get_proxy(), audio_only=audio, playlist=playlist, audio_format=self.user_profile.get_audio_format() if audio else None, audio_quality=self.user_profile.get_audio_quality() if audio else "320", from_queue=False)
         # History will be written directly by the downloader
         self.run_task(task, None)
     def run_task(self, task, row):

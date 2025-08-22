@@ -148,7 +148,8 @@ class SchedulerPage(QWidget):
                     subtitles=subtitles,
                     from_queue=True,
                     output_format="mp4",
-                    audio_format=self.parent.user_profile.get_audio_format() if "audio" in type_text else None
+                    audio_format=self.parent.user_profile.get_audio_format() if "audio" in type_text else None,
+                    audio_quality=self.parent.user_profile.get_audio_quality() if "audio" in type_text else "320"
                 )
                 
                 self.parent.run_task(task, row)

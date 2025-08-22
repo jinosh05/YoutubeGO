@@ -60,6 +60,14 @@ class SettingsPage(QWidget):
         version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         version_label.setCursor(Qt.CursorShape.PointingHandCursor)
         version_label.mousePressEvent = lambda e: self.parent.check_for_updates()
+        version_label.setToolTip(
+            "YoutubeGO Version Information\n\n"
+            "Click to check for updates:\n"
+            "• Automatic update detection\n"
+            "• Download latest features\n"
+            "• Get bug fixes and improvements\n\n"
+            "Stay updated for best performance!"
+        )
         
         header_layout.addStretch()
         header_layout.addWidget(lbl, alignment=Qt.AlignCenter)
@@ -77,6 +85,14 @@ class SettingsPage(QWidget):
         self.concurrent_combo.addItems(["1","2","3","4","5","10"])
         self.concurrent_combo.setCurrentText(str(self.parent.max_concurrent_downloads))
         self.concurrent_combo.currentIndexChanged.connect(self.set_max_concurrent_downloads)
+        self.concurrent_combo.setToolTip(
+            "Maximum simultaneous downloads:\n"
+            "• 1 - Single download (safest, slowest)\n"
+            "• 2-3 - Balanced performance\n"
+            "• 4-5 - Fast downloads (recommended)\n"
+            "• 10 - Maximum speed (may cause issues)\n\n"
+            "Higher numbers = faster but more CPU/network usage"
+        )
         g_layout.addWidget(QLabel("Concurrent:"))
         g_layout.addWidget(self.concurrent_combo)
         layout.addWidget(g_con)
@@ -91,10 +107,24 @@ class SettingsPage(QWidget):
         self.proxy_edit.setText(self.parent.user_profile.get_proxy())
         self.proxy_edit.setPlaceholderText("Proxy or bandwidth limit...")
         self.proxy_edit.textChanged.connect(self.proxy_changed)
+        self.proxy_edit.setToolTip(
+            "Proxy/Bandwidth settings:\n"
+            "• HTTP Proxy: http://proxy.server.com:8080\n"
+            "• SOCKS5 Proxy: socks5://proxy.server.com:1080\n"
+            "• Bandwidth limit: --limit-rate 1M\n\n"
+            "Leave empty for direct connection"
+        )
+        
         self.theme_combo = QComboBox()
         self.theme_combo.addItems(["Dark","Light"])
         self.theme_combo.setCurrentText(self.parent.user_profile.get_theme())
         self.theme_combo.currentTextChanged.connect(self.theme_changed)
+        self.theme_combo.setToolTip(
+            "Application theme:\n"
+            "• Dark - Easy on eyes, modern look\n"
+            "• Light - Traditional interface\n\n"
+            "Changes apply immediately"
+        )
         fl.addRow("Proxy/BW:", self.proxy_edit)
         fl.addRow("Theme:", self.theme_combo)
         layout.addWidget(g_tech)
@@ -108,6 +138,14 @@ class SettingsPage(QWidget):
         self.res_combo.addItems(["144p","240p","360p","480p","720p","1080p","1440p","2160p","4320p"])
         self.res_combo.setCurrentText(self.parent.user_profile.get_default_resolution())
         self.res_combo.currentTextChanged.connect(self.resolution_changed)
+        self.res_combo.setToolTip(
+            "Default video resolution:\n"
+            "• 144p-360p - Low quality, small files\n"
+            "• 480p-720p - Good balance (recommended)\n"
+            "• 1080p-1440p - High quality, larger files\n"
+            "• 2160p-4320p - Ultra HD, very large files\n\n"
+            "Higher resolution = better quality but slower downloads"
+        )
         r_hl.addWidget(QLabel("Resolution:"))
         r_hl.addWidget(self.res_combo)
         layout.addWidget(g_res)
@@ -121,9 +159,54 @@ class SettingsPage(QWidget):
         self.audio_format_combo.addItems(self.parent.user_profile.get_available_audio_formats())
         self.audio_format_combo.setCurrentText(self.parent.user_profile.get_audio_format())
         self.audio_format_combo.currentTextChanged.connect(self.audio_format_changed)
+        self.audio_format_combo.setToolTip(
+            "Audio format selection:\n"
+            "• MP3 - Universal compatibility, lossy\n"
+            "• M4A/AAC - Good quality, iOS friendly\n"
+            "• FLAC - Lossless quality (large files)\n"
+            "• OPUS - Modern, efficient codec\n"
+            "• WAV - Uncompressed (very large files)\n"
+            "• VORBIS - Open source alternative\n\n"
+            "For best quality: FLAC > OPUS > M4A > MP3"
+        )
         a_hl.addWidget(QLabel("Format:"))
         a_hl.addWidget(self.audio_format_combo)
         layout.addWidget(g_audio)
+
+        # Audio Quality Group
+        g_quality = QGroupBox("Audio Quality")
+        g_quality.setMinimumWidth(300)
+        q_layout = QFormLayout(g_quality)
+        q_layout.setContentsMargins(10, 10, 10, 10)
+        
+        self.audio_quality_combo = QComboBox()
+        self.audio_quality_combo.addItems(self.parent.user_profile.get_available_audio_qualities())
+        self.audio_quality_combo.setCurrentText(self.parent.user_profile.get_audio_quality())
+        self.audio_quality_combo.currentTextChanged.connect(self.audio_quality_changed)
+        self.audio_quality_combo.setToolTip(
+            "Audio bitrate quality:\n"
+            "• 128k - Basic quality (small file size)\n"
+            "• 192k - Good quality\n"
+            "• 256k - High quality\n"
+            "• 320k - Maximum quality (larger file size)\n"
+            "• best - Use original quality without re-encoding"
+        )
+        
+        self.preserve_quality_combo = QComboBox()
+        self.preserve_quality_combo.addItems(["Yes", "No"])
+        current_preserve = "Yes" if self.parent.user_profile.get_preserve_quality() else "No"
+        self.preserve_quality_combo.setCurrentText(current_preserve)
+        self.preserve_quality_combo.currentTextChanged.connect(self.preserve_quality_changed)
+        self.preserve_quality_combo.setToolTip(
+            "Preserve Original Quality:\n"
+            "• Yes - Use copy mode when possible (no quality loss)\n"
+            "• No - Always re-encode audio (may reduce quality)\n\n"
+            "Recommended: Yes for best audio quality"
+        )
+        
+        q_layout.addRow("Bitrate (kbps):", self.audio_quality_combo)
+        q_layout.addRow("Preserve Original:", self.preserve_quality_combo)
+        layout.addWidget(g_quality)
 
         # Download Path Group
         g_path = QGroupBox("Download Path")
@@ -133,8 +216,17 @@ class SettingsPage(QWidget):
         self.download_path_edit = QLineEdit()
         self.download_path_edit.setReadOnly(True)
         self.download_path_edit.setText(self.parent.user_profile.get_download_path())
+        self.download_path_edit.setToolTip(
+            "Download destination folder:\n"
+            "• All downloads will be saved here\n"
+            "• Playlists create subfolders automatically\n"
+            "• Make sure you have enough disk space\n\n"
+            "Click Browse to change location"
+        )
+        
         b_br = AnimatedButton("Browse")
         b_br.clicked.connect(self.select_download_path)
+        b_br.setToolTip("Click to select a different download folder")
         p_hl.addWidget(QLabel("Folder:"))
         p_hl.addWidget(self.download_path_edit)
         p_hl.addWidget(b_br)
@@ -161,12 +253,20 @@ class SettingsPage(QWidget):
                     padding: 8px 16px;
                     border-radius: 12px;
                     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                        stop:0 #ff4444, stop:1 #ff6666);
-                    border: 2px solid rgba(255, 68, 68, 0.3);
+                        stop:0 #4CAF50, stop:1 #66BB6A);
+                    border: 2px solid rgba(76, 175, 80, 0.3);
                 }
             """)
             
-            self.ffmpeg_status_label.setToolTip(f"FFmpeg Path: {self.parent.ffmpeg_path}")
+            self.ffmpeg_status_label.setToolTip(
+                f"FFmpeg Status: Ready\n"
+                f"Path: {self.parent.ffmpeg_path}\n\n"
+                "FFmpeg enables:\n"
+                "• High-quality audio conversion\n"
+                "• Copy mode (no quality loss)\n"
+                "• Multiple format support\n"
+                "• Advanced audio processing"
+            )
             
         else:
             self.ffmpeg_status_label.setText("⚠️ FFmpeg Required")
@@ -178,12 +278,22 @@ class SettingsPage(QWidget):
                     padding: 8px 16px;
                     border-radius: 12px;
                     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                        stop:0 #666666, stop:1 #777777);
-                    border: 2px solid rgba(102, 102, 102, 0.3);
+                        stop:0 #ff9800, stop:1 #ffa726);
+                    border: 2px solid rgba(255, 152, 0, 0.3);
                 }
             """)
             
-            self.ffmpeg_status_label.setToolTip("Please install FFmpeg from the official website and ensure it's in your system PATH")
+            self.ffmpeg_status_label.setToolTip(
+                "FFmpeg Status: Not Found\n\n"
+                "Why you need FFmpeg:\n"
+                "• High-quality audio conversion\n"
+                "• Multiple format support\n"
+                "• Copy mode for lossless extraction\n\n"
+                "How to install:\n"
+                "• Download from: https://ffmpeg.org\n"
+                "• Add to system PATH\n"
+                "• Restart YoutubeGO after installation"
+            )
         
         ffmpeg_layout.addWidget(status_label)
         ffmpeg_layout.addWidget(self.ffmpeg_status_label)
@@ -203,6 +313,14 @@ class SettingsPage(QWidget):
         self.show_logs_btn.setFixedWidth(120)
         self.show_logs_btn.setFixedHeight(36) 
         self.show_logs_btn.clicked.connect(self.toggle_logs)
+        self.show_logs_btn.setToolTip(
+            "Developer logs and debug information:\n"
+            "• View real-time download progress\n"
+            "• See detailed error messages\n"
+            "• Monitor FFmpeg operations\n"
+            "• Debug connection issues\n\n"
+            "Useful for troubleshooting problems"
+        )
         
         self.show_logs_btn.setStyleSheet("""
             AnimatedButton {
@@ -259,6 +377,16 @@ class SettingsPage(QWidget):
     def audio_format_changed(self, format):
         self.parent.user_profile.set_audio_format(format)
         self.parent.append_log(f"Audio format set to: {format}")
+
+    def audio_quality_changed(self, quality):
+        self.parent.user_profile.set_audio_quality(quality)
+        self.parent.append_log(f"Audio quality set to: {quality} kbps")
+
+    def preserve_quality_changed(self, preserve_text):
+        preserve = preserve_text == "Yes"
+        self.parent.user_profile.set_preserve_quality(preserve)
+        mode = "enabled" if preserve else "disabled"
+        self.parent.append_log(f"Quality preservation {mode}")
 
     def select_download_path(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Download Folder")

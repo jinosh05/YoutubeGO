@@ -39,7 +39,7 @@ class YTLogger:
         self._temp_files.clear()
 
 class DownloadTask:
-    def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False, audio_format=None):
+    def __init__(self, url, resolution, folder, proxy, audio_only=False, playlist=False, subtitles=False, output_format="mp4", from_queue=False, audio_format=None, audio_quality="320"):
         self.url = url
         self.resolution = resolution
         self.folder = folder
@@ -50,6 +50,7 @@ class DownloadTask:
         self.output_format = output_format
         self.from_queue = from_queue
         self.audio_format = audio_format
+        self.audio_quality = audio_quality
 
 class DownloadQueueWorker(QRunnable):
     def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None):
@@ -208,16 +209,33 @@ class DownloadQueueWorker(QRunnable):
 
                 if self.task.audio_only:
                     audio_format = self.task.audio_format if hasattr(self.task, 'audio_format') and self.task.audio_format else "mp3"
-                    download_options.update({
-                        "final_ext": audio_format,
-                        "format": f"ba[acodec^={audio_format}]/ba/b",
-                        "postprocessors": [{
-                            "key": "FFmpegExtractAudio",
-                            "nopostoverwrites": False,
-                            "preferredcodec": audio_format,
-                            "preferredquality": "0"
-                        }]
-                    })
+                    audio_quality = getattr(self.task, 'audio_quality', '320')
+                    
+                    if audio_format in ['m4a', 'aac', 'opus'] and audio_format != 'mp3':
+                        download_options.update({
+                            "final_ext": audio_format,
+                            "format": f"ba[acodec^={audio_format}]/ba/best",
+                            "postprocessors": [{
+                                "key": "FFmpegExtractAudio",
+                                "nopostoverwrites": False,
+                                "preferredcodec": "copy",
+                                "when": "post_process"
+                            }]
+                        })
+                        self.log_signal.emit(f"Audio format set to: {audio_format} (copy mode - no re-encoding)")
+                    else:
+                        
+                        download_options.update({
+                            "final_ext": audio_format,
+                            "format": "ba/best",
+                            "postprocessors": [{
+                                "key": "FFmpegExtractAudio",
+                                "nopostoverwrites": False,
+                                "preferredcodec": audio_format,
+                                "preferredquality": audio_quality
+                            }]
+                        })
+                        self.log_signal.emit(f"Audio format set to: {audio_format} (quality: {audio_quality})")
                     self.log_signal.emit(f"Audio format set to: {audio_format}")
                 else:
                     try:
@@ -253,12 +271,14 @@ class DownloadQueueWorker(QRunnable):
                                 ydl.download([self.task.url])
                             elif "unable to obtain file audio codec" in str(e):
                                 ydl_opts = download_options.copy()
+                               
                                 ydl_opts['postprocessor_args'] = [
-                                    '-ar', '44100',
-                                    '-ac', '2',
-                                    '-b:a', '192k',
-                                    '-vn'
+                                    '-ar', '48000',    
+                                    '-ac', '2',        
+                                    '-b:a', '320k',    
+                                    '-vn'              
                                 ]
+                                self.log_signal.emit("Using high-quality fallback encoding parameters")
                                 with yt_dlp.YoutubeDL(ydl_opts) as ydl2:
                                     self._ydl = ydl2
                                     ydl2.download([self.task.url])
