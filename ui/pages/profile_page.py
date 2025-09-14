@@ -78,6 +78,11 @@ class ProfilePage(QWidget):
         self.preferences_layout.addWidget(QLabel("Proxy:"), 5, 0)
         self.preferences_layout.addWidget(self.proxy_value, 5, 1)
         
+        self.geo_country_value = QLabel()
+        self.geo_country_value.setStyleSheet("font-weight: bold;")
+        self.preferences_layout.addWidget(QLabel("Geo-Bypass Country:"), 6, 0)
+        self.preferences_layout.addWidget(self.geo_country_value, 6, 1)
+        
         self.preferences_group.setLayout(self.preferences_layout)
         layout.addWidget(self.preferences_group)
         
@@ -96,6 +101,11 @@ class ProfilePage(QWidget):
         self.download_path_value.setText(self.parent.user_profile.get_download_path())
         self.history_value.setText("Yes" if self.parent.user_profile.is_history_enabled() else "No")
         self.proxy_value.setText(self.parent.user_profile.get_proxy() or "Not Set")
+        
+        geo_country = self.parent.user_profile.get_geo_bypass_country()
+        countries = self.parent.user_profile.get_available_geo_bypass_countries()
+        country_name = countries.get(geo_country, geo_country)
+        self.geo_country_value.setText(f"{country_name} ({geo_country})")
 
     def pick_pic(self):
         path, _ = QFileDialog.getOpenFileName(self, "Select Profile Picture", "", "Images (*.png *.jpg *.jpeg)")

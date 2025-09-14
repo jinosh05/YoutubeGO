@@ -103,6 +103,17 @@ Please see [QtLicense.md](QtLicense.md) for full LGPL-3.0 compliance information
 - **Queue System Optimization**  
   Concurrency management with pause & resume all functionality and bandwidth limiting support via proxy settings.
 
+- **Geographic Bypass** 🌍  
+  Advanced geo-restriction bypass with **10 country options**:
+  - **United States** (US) - Default, maximum content access
+  - **Russia** (RU) - Bypass EU restrictions and access regional content
+  - **Germany** (DE) - European region access
+  - **United Kingdom** (GB) - UK-specific content
+  - **Japan** (JP) - Asian content and region-locked videos
+  - **France** (FR), **Canada** (CA), **Australia** (AU), **Netherlands** (NL), **Sweden** (SE)
+  - User-selectable country preference saved in profile settings
+  - Automatic IP simulation for bypassing geographic content blocks
+
 - **Auto-Updater**  
   Automatically checks for updates and installs them.
 
@@ -182,6 +193,7 @@ python main.py
 - Use the MP4 or MP3 pages to download videos or extract audio
 - Add multiple downloads to the queue and manage them from the Queue page
 - Schedule downloads in advance using the Scheduler
+- **Geographic Bypass**: Go to Settings → Geo-Bypass Settings to select your preferred country for bypassing regional content restrictions
 
 ### Tips & Tricks
 - Use drag & drop for quick URL addition

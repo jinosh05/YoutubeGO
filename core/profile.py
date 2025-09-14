@@ -20,7 +20,8 @@ class UserProfile:
             "proxy": "", 
             "audio_format": "mp3",
             "audio_quality": "320",
-            "preserve_quality": True
+            "preserve_quality": True,
+            "geo_bypass_country": "US"
         }
         self.load_profile()
 
@@ -35,6 +36,8 @@ class UserProfile:
                         self.data["audio_quality"] = "320"
                     if "preserve_quality" not in self.data:
                         self.data["preserve_quality"] = True
+                    if "geo_bypass_country" not in self.data:
+                        self.data["geo_bypass_country"] = "US"
                     self.save_profile()
                 except json.JSONDecodeError as e:
                     print(f"Warning: Profile file corrupted, creating new one. Error: {e}")
@@ -158,3 +161,24 @@ class UserProfile:
     def set_preserve_quality(self, preserve):
         self.data["preserve_quality"] = preserve
         self.save_profile()
+
+    def get_geo_bypass_country(self):
+        return self.data.get("geo_bypass_country", "US")
+
+    def set_geo_bypass_country(self, country):
+        self.data["geo_bypass_country"] = country
+        self.save_profile()
+
+    def get_available_geo_bypass_countries(self):
+        return {
+            "US": "United States",
+            "RU": "Russia",
+            "DE": "Germany", 
+            "GB": "United Kingdom",
+            "FR": "France",
+            "JP": "Japan",
+            "CA": "Canada",
+            "AU": "Australia",
+            "NL": "Netherlands",
+            "SE": "Sweden"
+        }

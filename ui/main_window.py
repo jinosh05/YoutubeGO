@@ -211,7 +211,7 @@ class MainWindow(QMainWindow):
             self.update_status(row, "Preparing Download...")
             self.tray_manager.show_message("Download", "Preparing to download...")
         
-        worker = DownloadQueueWorker(task, row, self.progress_signal, self.status_signal, self.log_signal, self.info_signal)
+        worker = DownloadQueueWorker(task, row, self.progress_signal, self.status_signal, self.log_signal, self.info_signal, self.user_profile)
         self.thread_pool.start(worker)
         self.active_workers.append(worker)
     def update_progress(self, row, percent):

@@ -53,7 +53,7 @@ class DownloadTask:
         self.audio_quality = audio_quality
 
 class DownloadQueueWorker(QRunnable):
-    def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None):
+    def __init__(self, task, row, progress_signal, status_signal, log_signal, info_signal=None, user_profile=None):
         super().__init__()
         self.task = task
         self.row = row
@@ -61,6 +61,7 @@ class DownloadQueueWorker(QRunnable):
         self.status_signal = status_signal
         self.log_signal = log_signal
         self.info_signal = info_signal
+        self.user_profile = user_profile
         self.cancel = False
         self.data_dir = get_data_dir()
         if not os.path.exists(self.data_dir):
@@ -85,6 +86,10 @@ class DownloadQueueWorker(QRunnable):
         gc.collect()
 
     def _get_base_options(self):
+        geo_country = "US"
+        if self.user_profile:
+            geo_country = self.user_profile.get_geo_bypass_country()
+        
         return {
             "cookiefile": self.cookie_file,
             "ignoreerrors": True,
@@ -94,7 +99,7 @@ class DownloadQueueWorker(QRunnable):
             "socket_timeout": 10,
             "updatetime": False,
             "geo_bypass": True,
-            "geo_bypass_country": "US",
+            "geo_bypass_country": geo_country,
             "force_ipv4": True
         }
 

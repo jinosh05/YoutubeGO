@@ -208,6 +208,38 @@ class SettingsPage(QWidget):
         q_layout.addRow("Preserve Original:", self.preserve_quality_combo)
         layout.addWidget(g_quality)
 
+        
+        g_geo = QGroupBox("Geo-Bypass Settings")
+        g_geo.setMinimumWidth(300)
+        geo_layout = QFormLayout(g_geo)
+        geo_layout.setContentsMargins(10, 10, 10, 10)
+        
+        self.geo_country_combo = QComboBox()
+        countries = self.parent.user_profile.get_available_geo_bypass_countries()
+        for code, name in countries.items():
+            self.geo_country_combo.addItem(f"{name} ({code})", code)
+        
+        current_country = self.parent.user_profile.get_geo_bypass_country()
+        for i in range(self.geo_country_combo.count()):
+            if self.geo_country_combo.itemData(i) == current_country:
+                self.geo_country_combo.setCurrentIndex(i)
+                break
+        
+        self.geo_country_combo.currentIndexChanged.connect(self.geo_country_changed)
+        self.geo_country_combo.setToolTip(
+            "Geographic bypass country:\n"
+            "• US - United States (default, most content)\n"
+            "• RU - Russia (bypass EU restrictions)\n"
+            "• DE - Germany (EU region access)\n"
+            "• GB - United Kingdom (UK content)\n"
+            "• JP - Japan (Asian content)\n"
+            "• Other countries for specific regional content\n\n"
+            "Changes which country's IP is simulated to bypass geo-blocks"
+        )
+        
+        geo_layout.addRow("Country:", self.geo_country_combo)
+        layout.addWidget(g_geo)
+
         # Download Path Group
         g_path = QGroupBox("Download Path")
         g_path.setMinimumWidth(300)
@@ -387,6 +419,12 @@ class SettingsPage(QWidget):
         self.parent.user_profile.set_preserve_quality(preserve)
         mode = "enabled" if preserve else "disabled"
         self.parent.append_log(f"Quality preservation {mode}")
+
+    def geo_country_changed(self, index):
+        country_code = self.geo_country_combo.itemData(index)
+        country_name = self.geo_country_combo.currentText()
+        self.parent.user_profile.set_geo_bypass_country(country_code)
+        self.parent.append_log(f"Geo-bypass country set to: {country_name}")
 
     def select_download_path(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Download Folder")
