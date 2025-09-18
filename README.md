@@ -1,4 +1,4 @@
-#  YoutubeGO 5.0 🎥. ﮩ٨ـﮩﮩ٨ـ♡ﮩ٨ـﮩﮩ٨ـ
+# YoutubeGO 5.0 
 
 <div align="center">
   <img src="assets/banner.png" alt="YoutubeGO Logo" width="650"/>
