@@ -1,3 +1,5 @@
+I just realized that downloads are not available in version 5.0.19. I didn't notice sooner because I don't have a Windows computer with me right now. I apologize. You can continue using version 5.0.18. I will fix the 5.0.19 issue and re-release it soon.
+
 # YoutubeGO 5.0 
 
 <div align="center">
